@@ -1,0 +1,115 @@
+make,model,year,mileage,engine,transmission,fuel,city,price
+Suzuki,Mehran,2009,"106,000 km",800 cc,Manual,CNG,Karachi,2.0 lacs
+Suzuki,Mehran,2023,"19,000 km",800 cc,Manual,Petrol,Karachi,670000
+Honda,Civic,2018,"22,000 km",1800 cc,Automatic,Petrol,Islamabad,2030000
+Toyota,Corolla,2012,"166,000 km",1300 cc,Manual,CNG,Islamabad,8.5 lacs
+Honda,Civic,2006,"61,000 km",1800 cc,Manual,Petrol,Lahore,770000
+Suzuki,Cultus,2022,"35,000 km",1000 cc,Manual,Petrol,Islamabad,1150000
+Honda,City,2011,"100,000 km",1300 cc,Manual,CNG,Karachi,7.6 lacs
+Honda,City,2011,"132,000 km",1300 cc,Automatic,Petrol,Lahore,790000
+Honda,City,2019,"97,000 km",1300 cc,Manual,CNG,Karachi,1400000
+Toyota,Corolla,2023,"81,000 km",1300 cc,Automatic,CNG,Lahore,21.4 lacs
+Suzuki,Mehran,2024,"23,000 km",800 cc,Automatic,Petrol,Lahore,630000
+Suzuki,Cultus,2020,"112,000 km",1000 cc,Manual,CNG,Islamabad,810000
+Toyota,Yaris,2015,"92,000 km",1300 cc,Automatic,CNG,Lahore,13.7 lacs
+Toyota,Corolla,2007,"74,000 km",1300 cc,Manual,Petrol,Islamabad,670000
+Suzuki,Alto,2014,"170,000 km",660 cc,Automatic,Petrol,Islamabad,550000
+Honda,Civic,2016,"10,000 km",1800 cc,Automatic,Petrol,Islamabad,19.9 lacs
+Toyota,Corolla,2020,"20,000 km",1300 cc,Automatic,Petrol,Islamabad,1800000
+Suzuki,Cultus,2017,"105,000 km",1000 cc,Automatic,Petrol,Karachi,750000
+Honda,Civic,2017,"145,000 km",1800 cc,Manual,Petrol,Islamabad,15.5 lacs
+Suzuki,Mehran,2018,"96,000 km",800 cc,Automatic,Petrol,Karachi,400000
+Toyota,Corolla,2010,"43,000 km",1300 cc,Manual,Petrol,Lahore,840000
+Toyota,Yaris,2023,"51,000 km",1300 cc,Manual,Petrol,Lahore,24.4 lacs
+Honda,City,2016,"161,000 km",1300 cc,Manual,CNG,Islamabad,1050000
+Honda,City,2006,"121,000 km",1300 cc,Automatic,Petrol,Lahore,580000
+Honda,Civic,2008,"128,000 km",1800 cc,Manual,Petrol,Karachi,8.8 lacs
+Suzuki,Cultus,2019,"46,000 km",1000 cc,Manual,Petrol,Karachi,840000
+Honda,City,2009,"142,000 km",1300 cc,Automatic,CNG,Karachi,610000
+Toyota,Corolla,2011,"162,000 km",1300 cc,Automatic,Petrol,Islamabad,7.6 lacs
+Suzuki,Mehran,2020,"36,000 km",800 cc,Automatic,Petrol,Lahore,460000
+Honda,Civic,2014,"26,000 km",1800 cc,Automatic,CNG,Lahore,1480000
+Honda,Civic,2010,"137,000 km",1800 cc,Automatic,Petrol,Islamabad,9.1 lacs
+Honda,City,2005,"199,000 km",1300 cc,Manual,CNG,Lahore,440000
+Honda,City,2016,"47,000 km",1300 cc,Manual,CNG,Islamabad,1230000
+Toyota,Yaris,2021,"89,000 km",1300 cc,Manual,Petrol,Lahore,21.1 lacs
+Suzuki,Alto,2012,"56,000 km",660 cc,Automatic,CNG,Karachi,570000
+Toyota,Corolla,2013,"125,000 km",1300 cc,Automatic,Petrol,Islamabad,920000
+Suzuki,Mehran,2016,"25,000 km",800 cc,Manual,Petrol,Karachi,3.6 lacs
+Suzuki,Mehran,2011,"128,000 km",800 cc,Manual,Petrol,Islamabad,220000
+Suzuki,Mehran,2007,"218,000 km",800 cc,Automatic,CNG,Karachi,140000
+Honda,Civic,2010,"116,000 km",1800 cc,Automatic,Petrol,Islamabad,10.7 lacs
+Honda,Civic,2019,"107,000 km",1800 cc,Manual,CNG,Karachi,2070000
+Suzuki,Cultus,2009,"12,000 km",1000 cc,Automatic,CNG,Karachi,430000
+Honda,City,2024,"126,000 km",1300 cc,Automatic,Petrol,Islamabad,20.4 lacs
+Honda,City,2009,"10,000 km",1300 cc,Manual,CNG,Islamabad,740000
+Suzuki,Cultus,2018,"54,000 km",1000 cc,Manual,Petrol,Lahore,870000
+Suzuki,Cultus,2014,"133,000 km",1000 cc,Automatic,Petrol,Islamabad,5.2 lacs
+Honda,Civic,2009,"20,000 km",1800 cc,Automatic,Petrol,Islamabad,1180000
+Honda,City,2021,"112,000 km",1300 cc,Manual,CNG,Karachi,1720000
+Honda,City,2021,"9,000 km",1300 cc,Manual,CNG,Karachi,20.4 lacs
+Toyota,Yaris,2009,"49,000 km",1300 cc,Manual,CNG,Karachi,870000
+Suzuki,Mehran,2021,"140,000 km",800 cc,Manual,CNG,Karachi,450000
+Suzuki,Cultus,2011,"75,000 km",1000 cc,Manual,CNG,Lahore,4.5 lacs
+Honda,City,2005,"199,000 km",1300 cc,Manual,Petrol,Lahore,460000
+Honda,City,2021,"160,000 km",1300 cc,Automatic,Petrol,Islamabad,1510000
+Honda,City,2020,"134,000 km",1300 cc,Automatic,CNG,Karachi,15.7 lacs
+Toyota,Yaris,2019,"40,000 km",1300 cc,Automatic,Petrol,Lahore,1900000
+Toyota,Corolla,2012,"114,000 km",1300 cc,Automatic,Petrol,Karachi,850000
+Suzuki,Alto,2016,"41,000 km",660 cc,Manual,Petrol,Karachi,7.4 lacs
+Suzuki,Alto,2008,"106,000 km",660 cc,Manual,CNG,Karachi,410000
+Suzuki,Cultus,2018,"136,000 km",1000 cc,Automatic,Petrol,Lahore,710000
+Suzuki,Mehran,2007,"189,000 km",800 cc,Automatic,CNG,Lahore,1.4 lacs
+Honda,Civic,2005,"103,000 km",1800 cc,Automatic,CNG,Karachi,710000
+Toyota,Corolla,2012,"31,000 km",1300 cc,Automatic,Petrol,Karachi,970000
+Suzuki,Mehran,2009,"214,000 km",800 cc,Automatic,Petrol,Karachi,1.6 lacs
+Honda,City,2021,"151,000 km",1300 cc,Automatic,Petrol,Lahore,1530000
+Toyota,Corolla,2010,"113,000 km",1300 cc,Automatic,Petrol,Islamabad,840000
+Toyota,Corolla,2013,"26,000 km",1300 cc,Manual,Petrol,Lahore,11.4 lacs
+Toyota,Yaris,2008,"121,000 km",1300 cc,Automatic,Petrol,Islamabad,700000
+Suzuki,Cultus,2006,"139,000 km",1000 cc,Manual,Petrol,Lahore,310000
+Toyota,Corolla,2010,"56,000 km",1300 cc,Automatic,CNG,Karachi,9.2 lacs
+Suzuki,Mehran,2019,"133,000 km",800 cc,Automatic,Petrol,Karachi,400000
+Suzuki,Mehran,2006,"8,000 km",800 cc,Manual,CNG,Lahore,170000
+Suzuki,Cultus,2019,"32,000 km",1000 cc,Automatic,CNG,Lahore,9.4 lacs
+Honda,City,2017,"134,000 km",1300 cc,Manual,Petrol,Lahore,1140000
+Suzuki,Cultus,2009,"108,000 km",1000 cc,Manual,Petrol,Karachi,420000
+Toyota,Corolla,2013,"115,000 km",1300 cc,Manual,CNG,Lahore,9.2 lacs
+Toyota,Yaris,2021,"176,000 km",1300 cc,Manual,CNG,Lahore,1900000
+Toyota,Corolla,2019,"52,000 km",1300 cc,Automatic,Petrol,Lahore,1580000
+Suzuki,Mehran,2015,"145,000 km",800 cc,Manual,Petrol,Karachi,2.8 lacs
+Suzuki,Mehran,2010,"5,000 km",800 cc,Manual,Petrol,Lahore,240000
+Honda,City,2011,"68,000 km",1300 cc,Manual,Petrol,Lahore,850000
+Toyota,Yaris,2007,"41,000 km",1300 cc,Manual,Petrol,Karachi,7.9 lacs
+Suzuki,Mehran,2014,"166,000 km",800 cc,Manual,CNG,Islamabad,240000
+Toyota,Yaris,2024,"104,000 km",1300 cc,Automatic,Petrol,Lahore,2610000
+Suzuki,Alto,2024,"169,000 km",660 cc,Automatic,CNG,Islamabad,10.5 lacs
+Toyota,Yaris,2021,"40,000 km",1300 cc,Manual,CNG,Islamabad,2380000
+Toyota,Yaris,2012,"26,000 km",1300 cc,Manual,CNG,Lahore,1100000
+Toyota,Corolla,2017,"218,000 km",1300 cc,Manual,CNG,Karachi,10.7 lacs
+Suzuki,Alto,2022,"179,000 km",660 cc,Automatic,Petrol,Lahore,910000
+Toyota,Yaris,2007,"196,000 km",1300 cc,Manual,CNG,Islamabad,660000
+Toyota,Corolla,2020,"69,000 km",1300 cc,Automatic,Petrol,Islamabad,18.4 lacs
+Toyota,Yaris,2011,"64,000 km",1300 cc,Automatic,Petrol,Lahore,1080000
+Toyota,Corolla,2020,"180,000 km",1300 cc,Manual,CNG,Islamabad,1390000
+Suzuki,Alto,2011,"24,000 km",660 cc,Automatic,Petrol,Islamabad,5.6 lacs
+Suzuki,Alto,2014,"164,000 km",660 cc,Manual,Petrol,Karachi,550000
+Honda,Civic,2013,"177,000 km",1800 cc,Manual,CNG,Lahore,1060000
+Suzuki,Mehran,2021,"78,000 km",800 cc,Automatic,Petrol,Islamabad,4.9 lacs
+Suzuki,Cultus,2014,"26,000 km",1000 cc,Manual,Petrol,Lahore,690000
+Toyota,Corolla,2021,"120,000 km",1300 cc,Automatic,Petrol,Karachi,1870000
+Toyota,Corolla,2023,"28,000 km",1300 cc,Automatic,Petrol,Karachi,21.8 lacs
+Honda,City,2021,"76,000 km",1300 cc,Automatic,Petrol,Lahore,1840000
+Honda,Civic,2017,"11,000 km",1800 cc,Automatic,CNG,Lahore,1890000
+Honda,Civic,2014,"191,000 km",1800 cc,Automatic,Petrol,Lahore,11.2 lacs
+Toyota,Corolla,2015,"5,000 km",1300 cc,Automatic,Petrol,Karachi,1300000
+Suzuki,Cultus,2005,"194,000 km",1000 cc,Automatic,Petrol,Lahore,240000
+Honda,Civic,2023,"24,000 km",1800 cc,Automatic,Petrol,Karachi,29.6 lacs
+Suzuki,Mehran,2008,"18,000 km",800 cc,Automatic,CNG,Karachi,220000
+Suzuki,Cultus,2013,"116,000 km",1000 cc,Manual,Petrol,Lahore,520000
+Toyota,Corolla,2017,"146,000 km",1300 cc,Manual,Petrol,Islamabad,12.5 lacs
+Honda,Civic,2019,"162,000 km",1800 cc,Automatic,Petrol,Karachi,1880000
+Suzuki,Mehran,2009,"106,000 km",800 cc,Manual,CNG,Karachi,2.0 lacs
+Toyota,Corolla,1850,"50,000 km",1300 cc,Manual,Petrol,Karachi,2000000
+Honda,Civic,2018,"60,000 km",1800 cc,Manual,Petrol,Lahore,
+Suzuki,Alto,2019,"30,000 km",660 cc,Manual,Petrol,Karachi,900 crore

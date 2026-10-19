@@ -1,0 +1,8 @@
+# Each entry becomes one MLflow run. Add or change entries to compare more settings.
+experiments:
+  - {name: baseline_median, model: baseline, params: {}}
+  - {name: ridge_alpha_1, model: ridge, params: {alpha: 1.0}}
+  - {name: ridge_alpha_10, model: ridge, params: {alpha: 10.0}}
+  - {name: rf_100_depth12, model: random_forest, params: {n_estimators: 100, max_depth: 12}}
+  - {name: rf_300_depth20, model: random_forest, params: {n_estimators: 300, max_depth: 20}}
+  - {name: lgbm_300, model: lightgbm, params: {n_estimators: 300, learning_rate: 0.05}}

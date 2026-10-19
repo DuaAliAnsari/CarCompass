@@ -1,0 +1,7 @@
+# Maps raw dataset column names (left) to the standard names the pipeline uses (right).
+# The synthetic sample only needs "engine -> engine_cc". When you download the real
+# Kaggle dataset, open its CSV, look at the header, and add one line per column here.
+# Standard names: make, model, year, mileage, engine_cc, transmission, fuel, city, price
+column_map:
+  engine: engine_cc
+  # example for a real dataset:  "Car Name": model
