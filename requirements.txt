@@ -1,3 +1,6 @@
 -r requirements-serve.txt
 mlflow>=2.12
 pyyaml>=6.0
+pandera
+pyarrow
+tabulate

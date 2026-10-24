@@ -1,6 +1,12 @@
 """Data preparation: schema mapping, validation, de-duplication and split.
 
 Run:  python -m src.prepare_data --input data/sample/sample_listings.csv
+
+For the real PakWheels file (combined name column, optional extra cleaning rules,
+MLflow logging):
+
+    python -m src.prepare_data --input data/raw/pakwheels.csv \
+        --min-model-count 5 --min-city-count 20 --check-low-mileage --log-mlflow
 """
 from __future__ import annotations
 
@@ -28,8 +34,21 @@ RANGES = {
 }
 # Rows equal on all of DEDUP_COLS are duplicates and are dropped.
 DEDUP_COLS = ["make", "model", "year", "mileage", "price", "city"]
-# Near-copies of one listing share these columns, so they stay on the same side of the split.
+# Near-copies of one listing share these columns, so they stay on the same side of
+# the split.
 GROUP_COLS = ["make", "model", "year", "mileage", "city"]
+
+# PakWheels gives one combined name such as "Toyota Corolla XLI 1.3". We split it
+# into make and model. Add to these sets if a make or model has two words.
+TWO_WORD_MAKES = {"land rover", "mercedes benz", "rolls royce", "alfa romeo",
+                  "aston martin"}
+TWO_WORD_MODELS = {"land cruiser", "grand cherokee", "grand vitara", "wagon r",
+                   "n wgn", "n box", "n one"}
+
+# Optional low-mileage rule: a car this old with fewer km than this is treated as a
+# data error (odometer left at 0 or typed wrongly) and dropped.
+LOW_MILEAGE_MIN_AGE = 3
+LOW_MILEAGE_KM = 1_000
 
 
 def parse_price_pkr(value) -> float:
@@ -67,10 +86,53 @@ def parse_number(value) -> float:
         return np.nan
 
 
+def split_name(value) -> tuple:
+    """Split 'Toyota Corolla XLI 1.3' into ('Toyota', 'Corolla').
+
+    The variant ('XLI 1.3') is dropped because the model does not use it.
+    Returns (nan, nan) when the name is missing.
+    """
+    if value is None or (isinstance(value, float) and np.isnan(value)):
+        return np.nan, np.nan
+    tokens = str(value).strip().split()
+    if not tokens:
+        return np.nan, np.nan
+    lowered = [t.lower() for t in tokens]
+
+    # PakWheels lists these without the "Land Rover" make in front.
+    if " ".join(lowered[:2]) == "range rover":
+        return "Land Rover", "Range Rover"
+
+    n_make = 2 if " ".join(lowered[:2]) in TWO_WORD_MAKES else 1
+    make = " ".join(tokens[:n_make])
+
+    rest = tokens[n_make:]
+    if not rest:
+        return make, np.nan
+    if " ".join(lowered[n_make:n_make + 2]) in TWO_WORD_MODELS:
+        return make, " ".join(rest[:2])
+    return make, rest[0]
+
+
+def _fill_from_name(df: pd.DataFrame) -> pd.DataFrame:
+    """If a 'name' column exists, use it to fill make and model where missing."""
+    if "name" not in df.columns:
+        return df
+    parts = df["name"].map(split_name)
+    for i, col in enumerate(("make", "model")):
+        from_name = parts.map(lambda pair, i=i: pair[i])
+        if col in df.columns:
+            df[col] = df[col].where(df[col].notna(), from_name)
+        else:
+            df[col] = from_name
+    return df
+
+
 def map_schema(df: pd.DataFrame, column_map: dict | None = None) -> pd.DataFrame:
     """Rename raw columns to the standard schema and parse strings into numbers."""
     df = df.rename(columns=column_map or {}).copy()
     df.columns = [str(c).strip().lower() for c in df.columns]
+    df = _fill_from_name(df)
     for col in STANDARD_COLUMNS:
         if col not in df:
             df[col] = np.nan
@@ -113,26 +175,120 @@ def drop_duplicates(df: pd.DataFrame):
     return df, before - len(df)
 
 
+def apply_quality_rules(df: pd.DataFrame, min_model_count: int = 0,
+                        min_city_count: int = 0, check_low_mileage: bool = False):
+    """Optional extra cleaning for the real dataset. All rules are off by default.
+
+    - check_low_mileage: drop old cars with an implausibly low odometer reading.
+    - min_model_count: drop make/model pairs with fewer listings than this, since
+      the model cannot learn a price for a car it has barely seen.
+    - min_city_count: group cities with fewer listings than this into 'Other'.
+    """
+    df = df.copy()
+    report = {}
+
+    if check_low_mileage:
+        age = date.today().year - df["year"]
+        bad = (age >= LOW_MILEAGE_MIN_AGE) & (df["mileage"] < LOW_MILEAGE_KM)
+        report["dropped_low_mileage"] = int(bad.sum())
+        df = df[~bad]
+
+    if min_model_count > 0:
+        counts = df.groupby(["make", "model"])["price"].transform("size")
+        rare = counts < min_model_count
+        report["dropped_rare_model"] = int(rare.sum())
+        df = df[~rare]
+
+    if min_city_count > 0:
+        city_counts = df["city"].value_counts()
+        rare_cities = city_counts[city_counts < min_city_count].index
+        mask = df["city"].isin(rare_cities)
+        df.loc[mask, "city"] = "Other"
+        report["listings_with_city_grouped"] = int(mask.sum())
+
+    return df.reset_index(drop=True), report
+
+
+def add_listing_group(df: pd.DataFrame) -> pd.DataFrame:
+    """Give every row a listing_group id: rows describing the same car share one id.
+
+    The split keeps each group on one side, so near-copies of a listing cannot
+    appear in both train and test.
+    """
+    df = df.copy()
+    keys = df[GROUP_COLS].astype(str).agg("|".join, axis=1)
+    df["listing_group"] = keys.map(
+        lambda k: hashlib.md5(k.encode("utf-8")).hexdigest()[:10]
+    )
+    return df
+
+
+def check_schema(df: pd.DataFrame) -> str:
+    """Validate the cleaned data with Pandera. Returns 'passed' or 'skipped'.
+
+    Raises a Pandera error if the data breaks the schema. If Pandera is not
+    installed the check is skipped (run `pip install pandera` to enable it).
+    """
+    try:
+        import pandera.pandas as pa
+    except ImportError:
+        try:
+            import pandera as pa
+        except ImportError:
+            return "skipped (pandera not installed)"
+
+    low_year, high_year = RANGES["year"]
+    schema = pa.DataFrameSchema(
+        {
+            "make": pa.Column(str, nullable=False),
+            "model": pa.Column(str, nullable=False),
+            "year": pa.Column(int, pa.Check.in_range(low_year, high_year)),
+            "mileage": pa.Column(int, pa.Check.in_range(*RANGES["mileage"])),
+            "price": pa.Column(float, pa.Check.in_range(*RANGES["price"])),
+            "engine_cc": pa.Column(
+                float, pa.Check.in_range(*RANGES["engine_cc"]), nullable=True
+            ),
+            "transmission": pa.Column(str, nullable=True),
+            "fuel": pa.Column(str, nullable=True),
+            "city": pa.Column(str, nullable=True),
+            "listing_group": pa.Column(str, nullable=False),
+        },
+        strict=True,
+    )
+    schema.validate(df)
+    return "passed"
+
+
 def split(df: pd.DataFrame, test_size: float = 0.2, seed: int = 42):
     """80/20 split where near-copies of one listing always land on the same side."""
-    groups = df[GROUP_COLS].astype(str).agg("|".join, axis=1)
+    groups = df["listing_group"]
     splitter = GroupShuffleSplit(n_splits=1, test_size=test_size, random_state=seed)
     train_idx, test_idx = next(splitter.split(df, groups=groups))
-    return df.iloc[train_idx].reset_index(drop=True), df.iloc[test_idx].reset_index(drop=True)
+    return (df.iloc[train_idx].reset_index(drop=True),
+            df.iloc[test_idx].reset_index(drop=True))
 
 
 def prepare(raw: pd.DataFrame, column_map: dict | None = None, test_size: float = 0.2,
-            seed: int = 42):
+            seed: int = 42, min_model_count: int = 0, min_city_count: int = 0,
+            check_low_mileage: bool = False):
     """Full preparation. Returns (train, test, quality_report)."""
     df = map_schema(raw, column_map)
     rows_in = len(df)
     df, report = validate(df)
     df, dropped_dupes = drop_duplicates(df)
+    df, rule_report = apply_quality_rules(
+        df, min_model_count, min_city_count, check_low_mileage
+    )
+    df = add_listing_group(df)
+    report["schema_check"] = check_schema(df)
     train, test = split(df, test_size, seed)
+    report.update(rule_report)
     report.update(
         rows_in=rows_in,
         dropped_duplicates=dropped_dupes,
         rows_out=len(df),
+        rows_pre_2010=int((df["year"] < 2010).sum()),
+        rows_2010_and_later=int((df["year"] >= 2010).sum()),
         train_rows=len(train),
         test_rows=len(test),
         seed=seed,
@@ -151,15 +307,91 @@ def load_column_map(path) -> dict:
     return (yaml.safe_load(path.read_text()) or {}).get("column_map", {})
 
 
+def write_markdown_report(report: dict, path) -> None:
+    """Human-readable version of the quality report."""
+    lines = [
+        "# Data quality report",
+        "",
+        "| Step | Rows |",
+        "|---|---|",
+        f"| Rows read | {report['rows_in']} |",
+        f"| Dropped: missing required values | {report['dropped_missing']} |",
+        f"| Dropped: out of range | {report['dropped_out_of_range']} |",
+        f"| Dropped: duplicates | {report['dropped_duplicates']} |",
+    ]
+    if "dropped_low_mileage" in report:
+        lines.append(f"| Dropped: low mileage | {report['dropped_low_mileage']} |")
+    if "dropped_rare_model" in report:
+        lines.append(f"| Dropped: rare make/model | {report['dropped_rare_model']} |")
+    if "listings_with_city_grouped" in report:
+        lines.append(
+            f"| City grouped as 'Other' | {report['listings_with_city_grouped']} |"
+        )
+    lines += [
+        f"| Engine set to missing | {report['engine_set_to_missing']} |",
+        f"| **Rows kept** | **{report['rows_out']}** |",
+        f"| Kept: pre-2010 cars | {report['rows_pre_2010']} |",
+        f"| Kept: 2010 and later | {report['rows_2010_and_later']} |",
+        f"| Train rows | {report['train_rows']} |",
+        f"| Test rows | {report['test_rows']} |",
+        "",
+        f"Seed: {report['seed']}",
+        f"Pandera schema check: {report['schema_check']}",
+    ]
+    if "train_hash" in report:
+        lines.append(f"Train file hash: `{report['train_hash']}`")
+        lines.append(f"Test file hash: `{report['test_hash']}`")
+    Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def log_to_mlflow(report: dict, out: Path, tracking_uri: str | None = None,
+                  experiment: str = "carcompass-data") -> None:
+    """Record row counts and file hashes of this data version in MLflow."""
+    import mlflow  # imported here so plain data prep does not need MLflow
+
+    if tracking_uri:
+        mlflow.set_tracking_uri(tracking_uri)
+    mlflow.set_experiment(experiment)
+    keys = ("seed", "train_hash", "test_hash", "schema_check")
+    params = {k: report[k] for k in keys if k in report}
+    counts = {
+        k: v for k, v in report.items()
+        if isinstance(v, (int, float)) and k not in ("seed",)
+    }
+    with mlflow.start_run(run_name="prepare_data"):
+        mlflow.log_params(params)
+        mlflow.log_metrics(counts)
+        for name in ("quality_report.json", "quality_report.md"):
+            if (out / name).exists():
+                mlflow.log_artifact(str(out / name))
+
+
 def main():
     parser = argparse.ArgumentParser(description="Prepare listings for training.")
     parser.add_argument("--input", default="data/sample/sample_listings.csv")
     parser.add_argument("--out", default="data/processed")
     parser.add_argument("--schema", default="configs/schema.yaml")
+    parser.add_argument("--min-model-count", type=int, default=0,
+                        help="drop make/model pairs with fewer listings (0 = off)")
+    parser.add_argument("--min-city-count", type=int, default=0,
+                        help="group cities with fewer listings as 'Other' (0 = off)")
+    parser.add_argument("--check-low-mileage", action="store_true",
+                        help="drop old cars with implausibly low mileage")
+    parser.add_argument("--report", default="reports/data_quality.md",
+                        help="where to write the human-readable quality report")
+    parser.add_argument("--log-mlflow", action="store_true",
+                        help="log row counts and file hashes to MLflow")
+    parser.add_argument("--tracking-uri", default=None)
     args = parser.parse_args()
 
-    raw = pd.read_csv(args.input)
-    train, test, report = prepare(raw, load_column_map(args.schema))
+    raw = pd.read_csv(args.input, encoding="utf-8-sig")  # utf-8-sig drops the BOM
+    train, test, report = prepare(
+        raw,
+        load_column_map(args.schema),
+        min_model_count=args.min_model_count,
+        min_city_count=args.min_city_count,
+        check_low_mileage=args.check_low_mileage,
+    )
 
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -168,6 +400,11 @@ def main():
     report["train_hash"] = file_hash(out / "train.csv")
     report["test_hash"] = file_hash(out / "test.csv")
     (out / "quality_report.json").write_text(json.dumps(report, indent=2))
+    write_markdown_report(report, out / "quality_report.md")
+    Path(args.report).parent.mkdir(parents=True, exist_ok=True)
+    write_markdown_report(report, args.report)
+    if args.log_mlflow:
+        log_to_mlflow(report, out, args.tracking_uri)
     print(json.dumps(report, indent=2))
 
 

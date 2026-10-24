@@ -13,3 +13,6 @@ models/*.json
 .DS_Store
 .idea/
 .vscode/
+mlflow.db
+notebooks/inspect_out.txt
+notebooks/inspect_raw.py
