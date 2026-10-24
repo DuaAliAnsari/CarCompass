@@ -192,10 +192,11 @@ def validate(df, cfg):
     except ImportError:  # older pandera versions
         import pandera as pa
     b = cfg["bounds"]
+    non_empty = pa.Check(lambda s: s.astype(str).str.len() > 0)
     schema = pa.DataFrameSchema(
         {
-            "make": pa.Column(nullable=False, checks=pa.Check(lambda s: s.astype(str).str.len() > 0)),
-            "model": pa.Column(nullable=False, checks=pa.Check(lambda s: s.astype(str).str.len() > 0)),
+            "make": pa.Column(nullable=False, checks=non_empty),
+            "model": pa.Column(nullable=False, checks=non_empty),
             "year": pa.Column(float, pa.Check.in_range(*b["year"]), coerce=True),
             "mileage": pa.Column(float, pa.Check.in_range(*b["mileage"]), coerce=True),
             "price": pa.Column(float, pa.Check.in_range(*b["price"]), coerce=True),
@@ -208,23 +209,51 @@ def validate(df, cfg):
 
 
 def write_report(cfg, log, df, h):
-    lines = ["# Data-quality report", "", f"Source: `{cfg['raw_path']}`", "",
-             "## Rows after each step", "", "| Step | Before | After | Removed |", "|---|---|---|---|"]
-    lines.append(f"| raw rows | | {log['raw rows']:,} | |")
+    lines = [
+        "# Data-quality report",
+        "",
+        f"Source: `{cfg['raw_path']}`",
+        "",
+        "## Rows after each step",
+        "",
+        "| Step | Before | After | Removed |",
+        "|---|---|---|---|",
+        f"| raw rows | | {log['raw rows']:,} | |",
+    ]
     for k, v in log.items():
         if isinstance(v, tuple):
             lines.append(f"| {k} | {v[0]:,} | {v[1]:,} | {v[0] - v[1]:,} |")
-    lines += ["", f"Final rows: {log['final rows']:,} (train {log['train rows']:,}, test {log['test rows']:,})", "",
-              f"Train file hash (sha256, first 16 chars): `{h}`", "",
-              "## Era counts", "",
-              f"Pre-2010: {(df.year < 2010).sum():,} | 2010 and later: {(df.year >= 2010).sum():,}", "",
-              "## Missing values (fraction)", "",
-              df[["engine_cc", "body_type", "color", "location", "fuel", "transmission", "assembly"]]
-              .isna().mean().round(3).to_frame("missing").to_markdown(), "",
-              "## Price (PKR)", "", df.price.describe().round(0).to_frame("price").to_markdown(), "",
-              "## Top 15 make/model", "",
-              df.groupby(["make", "model"]).size().sort_values(ascending=False).head(15)
-              .to_frame("listings").to_markdown()]
+
+    pre = (df.year < 2010).sum()
+    post = (df.year >= 2010).sum()
+    optional = ["engine_cc", "body_type", "color", "location", "fuel", "transmission", "assembly"]
+    missing = df[optional].isna().mean().round(3).to_frame("missing")
+    price = df.price.describe().round(0).to_frame("price")
+    top = df.groupby(["make", "model"]).size().sort_values(ascending=False).head(15)
+
+    lines += [
+        "",
+        f"Final rows: {log['final rows']:,} "
+        f"(train {log['train rows']:,}, test {log['test rows']:,})",
+        "",
+        f"Train file hash (sha256, first 16 chars): `{h}`",
+        "",
+        "## Era counts",
+        "",
+        f"Pre-2010: {pre:,} | 2010 and later: {post:,}",
+        "",
+        "## Missing values (fraction)",
+        "",
+        missing.to_markdown(),
+        "",
+        "## Price (PKR)",
+        "",
+        price.to_markdown(),
+        "",
+        "## Top 15 make/model",
+        "",
+        top.to_frame("listings").to_markdown(),
+    ]
     p = Path(cfg["report_path"])
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text("\n".join(lines), encoding="utf-8")
@@ -235,7 +264,11 @@ def log_mlflow(cfg, log, h):
     mlflow.set_tracking_uri(cfg.get("mlflow_tracking_uri", "sqlite:///mlflow.db"))
     mlflow.set_experiment("carcompass-data")
     with mlflow.start_run(run_name="prepare_data"):
-        mlflow.log_params({"seed": cfg["seed"], "test_size": cfg["test_size"], "raw_path": cfg["raw_path"]})
+        mlflow.log_params({
+            "seed": cfg["seed"],
+            "test_size": cfg["test_size"],
+            "raw_path": cfg["raw_path"],
+        })
         mlflow.log_metrics({
             "raw_rows": log["raw rows"], "final_rows": log["final rows"],
             "train_rows": log["train rows"], "test_rows": log["test rows"],
