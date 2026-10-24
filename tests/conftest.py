@@ -1,10 +1,14 @@
-from pathlib import Path
+import os
 
-import pandas as pd
-import pytest
+os.environ.setdefault("MLFLOW_ALLOW_FILE_STORE", "true")
 
-from src.prepare_data import load_column_map, prepare
-from src.train import train_all
+from pathlib import Path  # noqa: E402
+
+import pandas as pd  # noqa: E402
+import pytest  # noqa: E402
+
+from src.prepare_data import load_column_map, prepare  # noqa: E402
+from src.train import train_all  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 SMALL_CONFIGS = [

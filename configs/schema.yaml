@@ -1,7 +1,15 @@
 # Maps raw dataset column names (left) to the standard names the pipeline uses (right).
-# The synthetic sample only needs "engine -> engine_cc". When you download the real
-# Kaggle dataset, open its CSV, look at the header, and add one line per column here.
 # Standard names: make, model, year, mileage, engine_cc, transmission, fuel, city, price
+# "nam" is the combined listing name, e.g. "Suzuki Alto VXL AGS 2022"; prepare_data
+# splits it into make and model. "Province" is the only location column in the
+# PakWheels dataset. Names that a file does not have are simply ignored.
 column_map:
-  engine: engine_cc
-  # example for a real dataset:  "Car Name": model
+  engine: engine_cc          # small sample file used by the tests
+  nam: name                  # PakWheels (Kaggle) columns from here down
+  Price: price
+  Year: year
+  Millage: mileage
+  Fuel: fuel
+  Transmission: transmission
+  Province: city
+  "Engine Capacity": engine_cc
