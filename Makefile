@@ -2,7 +2,7 @@ PY := .venv/bin/python
 IMAGE := carcompass
 TAG := dev
 
-.PHONY: setup prepare train run test lint format mlflow-ui docker-build docker-run all
+.PHONY: setup prepare train prepare-real train-real run test lint format mlflow-ui docker-build docker-run all
 
 setup:
 	python3.11 -m venv .venv || python3 -m venv .venv
@@ -14,6 +14,16 @@ prepare:
 
 train: prepare
 	$(PY) -m src.train
+
+# Real Dataset A (put the CSV at data/raw/pakistan_used_cars.csv first).
+prepare-real:
+	$(PY) -m src.prepare_data --input data/raw/pakistan_used_cars.csv \
+		--min-model-count 5 --min-city-count 20 --check-low-mileage \
+		--log-mlflow --tracking-uri sqlite:///mlflow.db
+
+# Trains on the real data and registers the champion as @production in MLflow.
+train-real: prepare-real
+	MLFLOW_TRACKING_URI=sqlite:///mlflow.db $(PY) -m src.train
 
 run:
 	$(PY) -m uvicorn src.app:app --reload --port 8000
