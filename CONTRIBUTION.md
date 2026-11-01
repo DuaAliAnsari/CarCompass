@@ -10,9 +10,17 @@
 
 ## Milestone 1: member-to-task table
 
-| Task | Member | Branch / PR |
-|---|---|---|
-| _fill in_ | | |
+| Task | Member | Reviewer | Branch / PR |
+|---|---|---|---|
+| Repo setup, Makefile, ruff config, CI workflow, Dockerfile, PR template | Dua Ali Ansari | Fatima Arif | initial commit on `main` |
+| FastAPI app (`/predict`, `/explain`, `/health`, `/metrics`, `/docs`), Pydantic schemas | Dua Ali Ansari | Fatima Arif | initial commit on `main` |
+| Tests: API, model loading, data preparation | Dua Ali Ansari | Fatima Arif | initial commit on `main` |
+| Real-data run, JSON request logs, `make prepare-real` / `train-real`, README results and champion justification | Dua Ali Ansari | Sagar Lekhraj | `feat/m1-finish` |
+| Data preparation: PKR parsing, range checks, dedup with `listing_group`, grouped 80/20 split, Pandera check, data-quality report | Fatima Arif | Sagar Lekhraj | `feat/prepare-data` (PR #1) |
+| Training: baseline, Ridge, RF, LightGBM, era models, quantile check, `VERSION.json`, `@production` alias | Fatima Arif | Sagar Lekhraj | `feat/train-models` (PR #2) |
+| README sections: datasets, licences, limitations | Sagar Lekhraj | Dua Ali Ansari | `feat/readme-datasets` |
+| Review of the PRs above and walkthrough of the code before tagging | Sagar Lekhraj | | PR review comments |
+| Final tag `v1.0-milestone1` | Dua Ali Ansari | | tag on `main` |
 
 ## Milestone 2: member-to-task table
 
