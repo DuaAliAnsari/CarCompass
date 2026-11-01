@@ -4,6 +4,8 @@ Run:  uvicorn src.app:app --reload
 """
 from __future__ import annotations
 
+import json
+import logging
 import os
 import time
 from typing import Optional
@@ -12,6 +14,13 @@ from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from src.model_utils import Artifacts, load_artifacts, max_year, predict_price
+
+logger = logging.getLogger("carcompass")
+if not logger.handlers:
+    _handler = logging.StreamHandler()
+    _handler.setFormatter(logging.Formatter("%(message)s"))  # message is already JSON
+    logger.addHandler(_handler)
+    logger.setLevel(logging.INFO)
 
 APP_VERSION = os.getenv("APP_VERSION", "dev")  # set to the image tag when deploying
 DEFAULT_MODEL_DIR = os.getenv("MODEL_DIR", "models")
@@ -42,14 +51,27 @@ def create_app(model_dir: str | None = None) -> FastAPI:
     async def track_requests(request: Request, call_next):
         stats = request.app.state.stats
         start = time.perf_counter()
+        status = 500
         try:
             response = await call_next(request)
+            status = response.status_code
         except Exception:
             stats["errors"] += 1
             raise
         finally:
+            elapsed = time.perf_counter() - start
             stats["requests"] += 1
-            stats["total_latency"] += time.perf_counter() - start
+            stats["total_latency"] += elapsed
+            art = request.app.state.artifacts
+            logger.info(json.dumps({
+                "event": "request",
+                "method": request.method,
+                "path": request.url.path,
+                "status": status,
+                "latency_ms": round(1000 * elapsed, 2),
+                "app_version": APP_VERSION,
+                "model_version": art.meta["version"] if art else None,
+            }))
         if response.status_code >= 500:
             stats["errors"] += 1
         return response
