@@ -37,3 +37,21 @@ def test_newer_car_costs_more_than_older_car(model_dir):
     new = predict_price(art, {**car, "year": 2023, "mileage": 10000})
     old = predict_price(art, {**car, "year": 2006, "mileage": 200000})
     assert new["estimated_price_pkr"] > old["estimated_price_pkr"]
+
+
+def test_metrics_by_source_reports_each_source():
+    import numpy as np
+    import pandas as pd
+    from sklearn.dummy import DummyRegressor
+
+    from src.model_utils import FEATURES
+    from src.train import metrics_by_source
+
+    df = pd.DataFrame({c: [1.0] * 6 for c in FEATURES})
+    df["price"] = [100.0, 100.0, 100.0, 200.0, 200.0, 200.0]
+    df["source"] = ["a", "a", "a", "b", "b", "b"]
+    pipe = DummyRegressor(strategy="constant", constant=np.log1p(100.0))
+    pipe.fit(df[FEATURES], df["price"])
+    out = metrics_by_source(pipe, df)
+    assert out["a"]["mae_pkr"] < 1e-6 and out["b"]["mae_pkr"] > 50
+    assert metrics_by_source(pipe, df.assign(source="a")) == {}

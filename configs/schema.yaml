@@ -13,3 +13,9 @@ column_map:
   Transmission: transmission
   Province: city
   "Engine Capacity": engine_cc
+  # Second PakWheels scrape (Sep-Oct 2022): lower-case column names
+  title: name
+  model_year: year
+  engine_type: fuel
+  engine_capacity: engine_cc
+  registered_in: city        # same meaning as Dataset A's "Province" column (where the car is registered)

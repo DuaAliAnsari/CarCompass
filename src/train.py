@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import subprocess
 import time
@@ -111,6 +112,22 @@ def _metrics(y_true, pred_log):
         "mae_pkr": float(mean_absolute_error(y_true, pred)),
         "mdape": float(np.median(np.abs(pred - y_true) / y_true)),
     }
+
+
+def metrics_by_source(pipe, test_df) -> dict:
+    """Test MAE and MdAPE for each data source (only when the data has several).
+
+    Shows whether mixing datasets helps or hurts each source's own prices.
+    """
+    if "source" not in test_df.columns or test_df["source"].nunique() < 2:
+        return {}
+    pred = np.expm1(pipe.predict(test_df[FEATURES]))
+    out = {}
+    for name in sorted(test_df["source"].unique()):
+        mask = (test_df["source"] == name).to_numpy()
+        m = _metrics(test_df["price"].to_numpy()[mask], np.log1p(pred[mask]))
+        out[str(name)] = {"rows": int(mask.sum()), **m}
+    return out
 
 
 def fit_and_evaluate(pipe, fit_df, cal_df, test_df):
@@ -284,6 +301,17 @@ def train_all(train_df, test_df, configs, out_dir, tracking_uri=None,
     best = min(results, key=lambda r: r["metrics"]["mae_pkr"])
     mlflow.MlflowClient().set_tag(best["run_id"], "champion", "true")
 
+    by_source = metrics_by_source(best["pipe"], test_df)
+    if by_source:
+        with mlflow.start_run(run_id=best["run_id"]):
+            for name, m in by_source.items():
+                safe = re.sub(r"[^A-Za-z0-9_.\- /]", "_", name)
+                mlflow.log_metrics({f"mae_pkr_{safe}": m["mae_pkr"],
+                                    f"mdape_{safe}": m["mdape"]})
+        for name, m in by_source.items():
+            print(f"  champion on {name:<24} rows={m['rows']:>6} "
+                  f"MAE={m['mae_pkr']:,.0f} MdAPE={m['mdape']:.1%}")
+
     importance = permutation_importance(
         best["pipe"], test_df[FEATURES], np.log1p(test_df["price"]),
         n_repeats=5, random_state=42,
@@ -308,6 +336,7 @@ def train_all(train_df, test_df, configs, out_dir, tracking_uri=None,
         "run_name": best["cfg"]["name"],
         "params": best["cfg"].get("params", {}),
         "metrics": best["metrics"],
+        "metrics_by_source": by_source,
         "q10": best["q10"],
         "q90": best["q90"],
         "data_hash": data_hash,
@@ -326,6 +355,7 @@ def train_all(train_df, test_df, configs, out_dir, tracking_uri=None,
         "version": version,
         "champion": {"run_name": meta["run_name"], "model": meta["model"],
                      "params": meta["params"], "metrics": meta["metrics"],
+                     "metrics_by_source": by_source,
                      "mlflow_run_id": meta["run_id"], "file": MODEL_FILE},
         "data_hash": data_hash,
         "git_commit": commit,
@@ -350,6 +380,8 @@ def main():
     parser.add_argument("--test", default="data/processed/test.csv")
     parser.add_argument("--config", default="configs/train.yaml")
     parser.add_argument("--out", default="models")
+    parser.add_argument("--experiment", default="carcompass-price",
+                        help="MLflow experiment name (use another for a data experiment)")
     parser.add_argument("--no-extras", action="store_true",
                         help="skip era models and the quantile check")
     parser.add_argument("--no-register", action="store_true",
@@ -360,8 +392,9 @@ def main():
     train_df, test_df = pd.read_csv(args.train), pd.read_csv(args.test)
     uri = mlflow.get_tracking_uri()
     has_database = uri.startswith(("sqlite", "postgresql", "mysql", "http"))
-    train_all(train_df, test_df, configs, args.out, data_hash=file_hash(args.train),
-              extras=not args.no_extras, register=has_database and not args.no_register)
+    train_all(train_df, test_df, configs, args.out, experiment=args.experiment,
+              data_hash=file_hash(args.train), extras=not args.no_extras,
+              register=has_database and not args.no_register)
 
 
 if __name__ == "__main__":

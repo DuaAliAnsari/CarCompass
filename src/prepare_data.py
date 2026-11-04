@@ -7,6 +7,13 @@ MLflow logging):
 
     python -m src.prepare_data --input data/raw/pakwheels.csv \
         --min-model-count 5 --min-city-count 20 --check-low-mileage --log-mlflow
+
+Two price datasets at once (each file becomes one `source`):
+
+    python -m src.prepare_data \
+        --input data/raw/pakistan_used_cars.csv data/raw/pakwheels_2022.csv \
+        --out data/processed_merged --report reports/data_quality_merged.md \
+        --rescale-prices
 """
 from __future__ import annotations
 
@@ -49,6 +56,12 @@ TWO_WORD_MODELS = {"land cruiser", "grand cherokee", "grand vitara", "wagon r",
 # data error (odometer left at 0 or typed wrongly) and dropped.
 LOW_MILEAGE_MIN_AGE = 3
 LOW_MILEAGE_KM = 1_000
+
+
+# Cross-source price check: only make/model/year groups with at least this many
+# listings in BOTH sources are compared.
+AGREEMENT_MIN_ROWS = 3
+AGREEMENT_TOLERANCE = 0.15   # medians within +-15% count as agreeing
 
 
 def parse_price_pkr(value) -> float:
@@ -128,8 +141,13 @@ def _fill_from_name(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def map_schema(df: pd.DataFrame, column_map: dict | None = None) -> pd.DataFrame:
-    """Rename raw columns to the standard schema and parse strings into numbers."""
+def map_schema(df: pd.DataFrame, column_map: dict | None = None,
+               source: str = "default") -> pd.DataFrame:
+    """Rename raw columns to the standard schema and parse strings into numbers.
+
+    `source` labels where the rows came from (usually the file name), so two
+    datasets can be mixed and still told apart.
+    """
     df = df.rename(columns=column_map or {}).copy()
     df.columns = [str(c).strip().lower() for c in df.columns]
     df = _fill_from_name(df)
@@ -141,7 +159,8 @@ def map_schema(df: pd.DataFrame, column_map: dict | None = None) -> pd.DataFrame
         df[col] = df[col].map(parse_number)
     for col in CATEGORICAL:
         df[col] = df[col].map(normalize_text)
-    return df[STANDARD_COLUMNS]
+    df["source"] = source
+    return df[STANDARD_COLUMNS + ["source"]]
 
 
 def validate(df: pd.DataFrame):
@@ -223,6 +242,61 @@ def add_listing_group(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def price_agreement(df: pd.DataFrame, min_rows: int = AGREEMENT_MIN_ROWS,
+                    tolerance: float = AGREEMENT_TOLERANCE) -> dict:
+    """Do two sources price the same make/model/year alike?
+
+    For every make/model/year with at least `min_rows` listings in both the first
+    source and another source, compare the two median prices. Prices drift over
+    time, so a ratio far from 1 means the scrape dates (or markets) differ and the
+    sources should not be mixed blindly.
+    """
+    sources = list(dict.fromkeys(df["source"]))
+    result = {}
+    if len(sources) < 2:
+        return result
+    base = sources[0]
+    key = ["make", "model", "year"]
+    med = df.groupby(key + ["source"])["price"].agg(["median", "size"]).reset_index()
+    base_rows = med[med["source"] == base].set_index(key)
+    for other in sources[1:]:
+        other_rows = med[med["source"] == other].set_index(key)
+        both = base_rows.join(other_rows, lsuffix="_base", rsuffix="_other", how="inner")
+        both = both[(both["size_base"] >= min_rows) & (both["size_other"] >= min_rows)]
+        if both.empty:
+            result[other] = {"base": base, "groups_compared": 0, "sources_agree": False}
+            continue
+        ratio = both["median_other"] / both["median_base"]
+        within = float(((ratio - 1).abs() <= tolerance).mean())
+        median_ratio = float(ratio.median())
+        result[other] = {
+            "base": base,
+            "groups_compared": int(len(both)),
+            "median_price_ratio": round(median_ratio, 3),
+            "share_within_tolerance": round(within, 3),
+            "sources_agree": bool(abs(median_ratio - 1) <= tolerance and within >= 0.5),
+        }
+    return result
+
+
+def rescale_sources(train: pd.DataFrame, test: pd.DataFrame, min_groups: int = 20) -> dict:
+    """Bring older sources to the first source's price level (modifies train and test).
+
+    The factor is the inverse of the median price ratio over make/model/year groups
+    present in both sources, measured on the TRAIN rows only so the test set does not
+    influence it. It corrects an overall level shift (inflation between scrape dates)
+    but not differences that vary by car. Returns {source: factor}.
+    """
+    factors = {}
+    for other, info in price_agreement(train).items():
+        ok = info.get("groups_compared", 0) >= min_groups and "median_price_ratio" in info
+        factor = 1.0 / info["median_price_ratio"] if ok else 1.0
+        factors[other] = round(factor, 4)
+        for frame in (train, test):
+            frame.loc[frame["source"] == other, "price"] *= factor
+    return factors
+
+
 def check_schema(df: pd.DataFrame) -> str:
     """Validate the cleaned data with Pandera. Returns 'passed' or 'skipped'.
 
@@ -252,6 +326,7 @@ def check_schema(df: pd.DataFrame) -> str:
             "fuel": pa.Column(str, nullable=True),
             "city": pa.Column(str, nullable=True),
             "listing_group": pa.Column(str, nullable=False),
+            "source": pa.Column(str, nullable=False),
         },
         strict=True,
     )
@@ -268,12 +343,24 @@ def split(df: pd.DataFrame, test_size: float = 0.2, seed: int = 42):
             df.iloc[test_idx].reset_index(drop=True))
 
 
-def prepare(raw: pd.DataFrame, column_map: dict | None = None, test_size: float = 0.2,
+def prepare(raw, column_map: dict | None = None, test_size: float = 0.2,
             seed: int = 42, min_model_count: int = 0, min_city_count: int = 0,
-            check_low_mileage: bool = False):
-    """Full preparation. Returns (train, test, quality_report)."""
-    df = map_schema(raw, column_map)
+            check_low_mileage: bool = False, rescale_prices: bool = False):
+    """Full preparation. Returns (train, test, quality_report).
+
+    `raw` is one DataFrame, or a dict {source_name: DataFrame} to mix several
+    datasets. Sources are cleaned together, so a listing that appears in both
+    (same make, model, year, mileage, price, city) is kept once.
+    rescale_prices=True then moves every later source to the first source's price
+    level (see rescale_sources); use it when the scrape dates differ.
+    """
+    if isinstance(raw, dict):
+        df = pd.concat([map_schema(frame, column_map, name)
+                        for name, frame in raw.items()], ignore_index=True)
+    else:
+        df = map_schema(raw, column_map)
     rows_in = len(df)
+    rows_in_by_source = df["source"].value_counts().to_dict()
     df, report = validate(df)
     df, dropped_dupes = drop_duplicates(df)
     df, rule_report = apply_quality_rules(
@@ -293,6 +380,16 @@ def prepare(raw: pd.DataFrame, column_map: dict | None = None, test_size: float 
         test_rows=len(test),
         seed=seed,
     )
+    if df["source"].nunique() > 1:
+        report["rows_in_by_source"] = {k: int(v) for k, v in rows_in_by_source.items()}
+        report["rows_out_by_source"] = {
+            k: int(v) for k, v in df["source"].value_counts().items()}
+        report["test_rows_by_source"] = {
+            k: int(v) for k, v in test["source"].value_counts().items()}
+        report["price_agreement"] = price_agreement(df)
+        if rescale_prices:
+            report["price_rescale_factors"] = rescale_sources(train, test)
+            report["price_agreement_after_rescale"] = price_agreement(train)
     return train, test, report
 
 
@@ -338,6 +435,36 @@ def write_markdown_report(report: dict, path) -> None:
         f"Seed: {report['seed']}",
         f"Pandera schema check: {report['schema_check']}",
     ]
+    if "rows_out_by_source" in report:
+        lines += ["", "## Sources", "", "| Source | Rows read | Rows kept | Test rows |",
+                  "|---|---|---|---|"]
+        for name, kept in report["rows_out_by_source"].items():
+            lines.append(
+                f"| {name} | {report['rows_in_by_source'].get(name, 0)} | {kept} | "
+                f"{report['test_rows_by_source'].get(name, 0)} |")
+    for other, info in report.get("price_agreement", {}).items():
+        lines += ["", f"## Price agreement: {other} vs {info['base']}", ""]
+        if info["groups_compared"] == 0:
+            lines.append("No make/model/year group had enough listings in both sources.")
+        else:
+            lines += [
+                f"- make/model/year groups compared: {info['groups_compared']}",
+                f"- median price ratio ({other} / {info['base']}): "
+                f"{info['median_price_ratio']}",
+                f"- groups within 15%: {info['share_within_tolerance']:.0%}",
+                f"- sources agree: **{'yes' if info['sources_agree'] else 'no'}**",
+            ]
+    if "price_rescale_factors" in report:
+        lines += ["", "## Price rescaling", "",
+                  "Prices of later sources were multiplied by these factors (measured on "
+                  "train rows only) to match the first source's price level:", ""]
+        for name, factor in report["price_rescale_factors"].items():
+            lines.append(f"- {name}: x{factor}")
+        for other, info in report.get("price_agreement_after_rescale", {}).items():
+            if info.get("groups_compared"):
+                lines.append(
+                    f"- after rescaling, {other}: median ratio {info['median_price_ratio']}, "
+                    f"{info['share_within_tolerance']:.0%} of groups within 15%")
     if "train_hash" in report:
         lines.append(f"Train file hash: `{report['train_hash']}`")
         lines.append(f"Test file hash: `{report['test_hash']}`")
@@ -368,7 +495,8 @@ def log_to_mlflow(report: dict, out: Path, tracking_uri: str | None = None,
 
 def main():
     parser = argparse.ArgumentParser(description="Prepare listings for training.")
-    parser.add_argument("--input", default="data/sample/sample_listings.csv")
+    parser.add_argument("--input", nargs="+", default=["data/sample/sample_listings.csv"],
+                        help="one CSV, or several to mix datasets (one source per file)")
     parser.add_argument("--out", default="data/processed")
     parser.add_argument("--schema", default="configs/schema.yaml")
     parser.add_argument("--min-model-count", type=int, default=0,
@@ -377,6 +505,8 @@ def main():
                         help="group cities with fewer listings as 'Other' (0 = off)")
     parser.add_argument("--check-low-mileage", action="store_true",
                         help="drop old cars with implausibly low mileage")
+    parser.add_argument("--rescale-prices", action="store_true",
+                        help="move later sources to the first source's price level")
     parser.add_argument("--report", default="reports/data_quality.md",
                         help="where to write the human-readable quality report")
     parser.add_argument("--log-mlflow", action="store_true",
@@ -384,13 +514,15 @@ def main():
     parser.add_argument("--tracking-uri", default=None)
     args = parser.parse_args()
 
-    raw = pd.read_csv(args.input, encoding="utf-8-sig")  # utf-8-sig drops the BOM
+    frames = {Path(f).stem: pd.read_csv(f, encoding="utf-8-sig")  # utf-8-sig drops the BOM
+              for f in args.input}
     train, test, report = prepare(
-        raw,
+        frames,
         load_column_map(args.schema),
         min_model_count=args.min_model_count,
         min_city_count=args.min_city_count,
         check_low_mileage=args.check_low_mileage,
+        rescale_prices=args.rescale_prices,
     )
 
     out = Path(args.out)

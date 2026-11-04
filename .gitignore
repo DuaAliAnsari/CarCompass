@@ -8,6 +8,8 @@ mlruns/
 mlartifacts/
 data/raw/
 data/processed/
+data/processed_merged/
+models_merged/
 models/*.joblib
 models/*.json
 .DS_Store
