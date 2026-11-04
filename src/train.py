@@ -53,6 +53,8 @@ ERA_FILES = {"pre2010": "price_model_pre2010.joblib",
              "2010plus": "price_model_2010plus.joblib"}
 REGISTERED_NAME = "carcompass-price"
 MIN_ERA_ROWS = 30  # skip an era model if it would have fewer rows than this
+SOURCE_COL = "source"  # "A" or "B"; only present when dataset B was added in prep
+B_WEIGHT = 0.3  # a dataset B row counts 30% as much as a dataset A row when fitting
 
 
 def build_estimator(name: str, params: dict):
@@ -79,6 +81,23 @@ def build_pipeline(name: str, params: dict) -> Pipeline:
     ])
     pre = ColumnTransformer([("num", numeric, NUMERIC), ("cat", categorical, CATEGORICAL)])
     return Pipeline([("pre", pre), ("model", build_estimator(name, params))])
+
+
+def fit_weights(df: pd.DataFrame):
+    """Sample weights for fitting. Dataset B rows have older (2021) prices, so they
+    count less. Returns None when the data has no 'source' column (A only)."""
+    if SOURCE_COL not in df.columns:
+        return None
+    return np.where(df[SOURCE_COL] == "B", B_WEIGHT, 1.0)
+
+
+def fit_pipeline(pipe, df, y):
+    """pipe.fit that applies fit_weights when they exist."""
+    weights = fit_weights(df)
+    if weights is None:
+        pipe.fit(df[FEATURES], y)
+    else:
+        pipe.fit(df[FEATURES], y, model__sample_weight=weights)
 
 
 def typical_values(df: pd.DataFrame) -> dict:
@@ -120,9 +139,11 @@ def fit_and_evaluate(pipe, fit_df, cal_df, test_df):
     cal_df (q10, q90) give the low/high price range; coverage says how often the
     real test price falls inside that range (the target is about 80%).
     """
+    if SOURCE_COL in cal_df.columns:
+        cal_df = cal_df[cal_df[SOURCE_COL] == "A"]  # range from current-price rows only
     y_fit, y_cal = np.log1p(fit_df["price"]), np.log1p(cal_df["price"])
     y_test = test_df["price"].to_numpy()
-    pipe.fit(fit_df[FEATURES], y_fit)
+    fit_pipeline(pipe, fit_df, y_fit)
     residuals = y_cal.to_numpy() - pipe.predict(cal_df[FEATURES])
     q10, q90 = float(np.quantile(residuals, 0.10)), float(np.quantile(residuals, 0.90))
 
@@ -199,7 +220,7 @@ def quantile_models_check(fit_df, test_df, champion_coverage, data_hash, commit)
         for alpha in (0.1, 0.9):
             pipe = build_pipeline("lightgbm", {**params, "objective": "quantile",
                                                "alpha": alpha})
-            pipe.fit(fit_df[FEATURES], y_fit)
+            fit_pipeline(pipe, fit_df, y_fit)
             preds.append(np.expm1(pipe.predict(test_df[FEATURES])))
     except ImportError:
         print("Skipping quantile check: lightgbm is not installed.")
@@ -344,12 +365,27 @@ def train_all(train_df, test_df, configs, out_dir, tracking_uri=None,
     return meta
 
 
+def resolve_tracking_uri(cli_uri=None) -> str:
+    """Pick the MLflow tracking URI.
+
+    MLflow turns the space in a folder name like 'CAYA Technology' into %20 and then
+    tries to create a folder with that literal name, which fails on Windows. A
+    relative SQLite path (next to where the command is run) avoids the problem.
+    """
+    uri = cli_uri or mlflow.get_tracking_uri()
+    if "%20" in uri:
+        return "sqlite:///mlflow.db"
+    return uri
+
+
 def main():
     parser = argparse.ArgumentParser(description="Train price models.")
     parser.add_argument("--train", default="data/processed/train.csv")
     parser.add_argument("--test", default="data/processed/test.csv")
     parser.add_argument("--config", default="configs/train.yaml")
     parser.add_argument("--out", default="models")
+    parser.add_argument("--tracking-uri", default=None,
+                        help="MLflow tracking URI (default: the MLflow default)")
     parser.add_argument("--no-extras", action="store_true",
                         help="skip era models and the quantile check")
     parser.add_argument("--no-register", action="store_true",
@@ -358,9 +394,10 @@ def main():
 
     configs = yaml.safe_load(Path(args.config).read_text())["experiments"]
     train_df, test_df = pd.read_csv(args.train), pd.read_csv(args.test)
-    uri = mlflow.get_tracking_uri()
+    uri = resolve_tracking_uri(args.tracking_uri)
     has_database = uri.startswith(("sqlite", "postgresql", "mysql", "http"))
-    train_all(train_df, test_df, configs, args.out, data_hash=file_hash(args.train),
+    train_all(train_df, test_df, configs, args.out, tracking_uri=uri,
+              data_hash=file_hash(args.train),
               extras=not args.no_extras, register=has_database and not args.no_register)
 
 
