@@ -22,7 +22,7 @@ year: the 2010+ specialist for cars from 2010 on, the global A+B model for the r
 
 ## Quick start
 
-Requires Python 3.11 (Linux, macOS, or WSL on Windows) and `make`.
+Requires Python 3.11, `make`, and Git (Linux, macOS, or WSL on Windows).
 
 ```bash
 git clone https://github.com/DuaAliAnsari/CarCompass.git && cd CarCompass
@@ -93,12 +93,17 @@ which rows a model is trained on (`configs/model_families.yaml`); every family r
 
 ### Shared dataset (`src/prepare_multi.py`)
 
+`src/prepare_multi.py` builds the A+B dataset. It loads Dataset B through
+`src/prepare_combined.py` and reuses the shared cleaning, validation, duplicate-removal
+and Pandera checks in `src/prepare_data.py`. The latter also runs independently as the
+Dataset A-only preparation path.
+
 1. Both files are mapped to one schema (`configs/schema.yaml`, `configs/schema_b.yaml`)
-   and cleaned with the rules below. Dataset B's `RegisteredIn` has the same meaning as
+   and cleaned using the shared rules. Dataset B's `RegisteredIn` has the same meaning as
    Dataset A's `Province`.
 2. Duplicates are removed inside each source and then **across sources**: 8,558 B
-   listings were the same car as an A listing (same make, model, year, mileage, city),
-   so only the A copy is kept.
+   listings match an A listing on make, model, year, mileage and city, so only the A
+   copy is kept.
 3. One group-aware split (seed 42) for all families: **fit** 64% (training),
    **val** 8% (choosing champions and routing), **cal** 8% (price range),
    **test** 20% (final scores only). A listing group is always on one side.
@@ -180,6 +185,10 @@ What this shows:
 Full report: `reports/model_comparison.md`. Served models: `models/manifest.json`.
 
 ## Data preparation (`src/prepare_data.py`)
+
+`src/prepare_data.py` holds the shared cleaning, validation, duplicate-removal and
+Pandera-checking rules used by the A+B pipeline. On its own, it is also the Dataset A-only
+preparation path.
 
 1. Map raw columns to one schema (`configs/schema.yaml`) and parse values like `27.4 lacs` into PKR.
 2. Validation: drop rows with missing required fields or values outside these ranges:
@@ -266,14 +275,17 @@ make lint    # ruff
 
 ## Docker
 
+The Docker image includes the exported model artifacts in `deploy/models/`. After
+PR #6, you do not need to retrain the models before building the image.
+
 ```bash
-make train                 # the image copies models/, so train first
+make export-models         # exports the models into deploy/models/
 make docker-build TAG=v1.0
 make docker-run TAG=v1.0   # http://localhost:8000
 ```
 
-`models/*.joblib` is git-ignored. Before building the image you deploy, make sure the
-champion model is in `models/` (see `RUNBOOK.md`).
+If the served models change, run `make export-models` again before building the image.
+See `RUNBOOK.md` for deployment details.
 
 ## Project status
 
@@ -282,8 +294,8 @@ champion model is in `models/` (see `RUNBOOK.md`).
 - [x] Milestone 1: trained on real Dataset A, results table and best-run note filled in
 - [x] Multi-model: shared A+B dataset, five families, validation-based champions,
       routing manifest, `/models`, MLflow registry per family
+- [ ] Milestone 2: vision model with Roboflow, `/classify-image`
 - [ ] Milestone 2: deploy, `RUNBOOK.md`, cURL examples against the live URL
-- [ ] Milestone 2: vision models, `/classify-image`, MLflow Model Registry export
 
 ## Repository layout
 
