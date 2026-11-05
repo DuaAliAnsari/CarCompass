@@ -212,14 +212,21 @@ def apply_quality_rules(df: pd.DataFrame, min_model_count: int = 0,
 def add_listing_group(df: pd.DataFrame) -> pd.DataFrame:
     """Give every row a listing_group id: rows describing the same car share one id.
 
-    The split keeps each group on one side, so near-copies of a listing cannot
-    appear in both train and test.
+    The split keeps each group on one side, so near-copies of a listing
+    cannot appear in both train and test.
     """
     df = df.copy()
-    keys = df[GROUP_COLS].astype(str).agg("|".join, axis=1)
+
+    keys = df[GROUP_COLS].apply(
+        lambda row: "|".join(str(value) for value in row),
+        axis=1,
+    )
+
+    # Generate a consistent ID for each listing group.
     df["listing_group"] = keys.map(
         lambda k: hashlib.md5(k.encode("utf-8")).hexdigest()[:10]
     )
+
     return df
 
 
