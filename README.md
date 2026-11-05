@@ -42,10 +42,12 @@ View experiments: `make mlflow-ui`, then open http://localhost:5000.
 
 ### Training the five model families (Dataset A + Dataset B)
 
-Save Dataset A as `data/raw/pakistan_used_cars.csv` and Dataset B as
-`data/raw/usedCars.json`, then:
+`python scripts/download_data.py` downloads both datasets from Kaggle (needs a Kaggle API
+token) and saves Dataset A as `data/raw/pakistan_used_cars.csv` and Dataset B as
+`data/raw/usedCars.json`. Or place the two files there yourself. Then:
 
 ```bash
+python scripts/download_data.py   # once
 make train-multi       # builds the shared dataset, trains 5 families x 12 runs (about 1-2 h)
 make run               # the API now serves the models listed in models/manifest.json
 ```

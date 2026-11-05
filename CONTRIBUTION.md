@@ -2,11 +2,11 @@
 
 ## Team
 
-| Name | ERP ID |
-|---|---|
-| Dua Ali Ansari | 28649 |
-| Sagar Lekhraj | 29325 |
-| Fatima Arif | 31585 |
+| Member | Name | ERP ID |
+|---|---|---|
+| 1 | Sagar Lekhraj | 29325 |
+| 2 | Dua Ali Ansari | 28649 |
+| 3 | Fatima Arif | 31585 |
 
 ## Milestone 1: member-to-task table
 
@@ -20,7 +20,11 @@
 | Training: baseline, Ridge, RF, LightGBM, era models, quantile check, `VERSION.json`, `@production` alias | Fatima Arif | Sagar Lekhraj | `feat/train-models` (PR #2) |
 | README sections: datasets, licences, limitations | Sagar Lekhraj | Dua Ali Ansari | `feat/readme-datasets` |
 | Review of the PRs above and walkthrough of the code before tagging | Sagar Lekhraj | | PR review comments |
-| Final tag `v1.0-milestone1` | Dua Ali Ansari | | tag on `main` |
+| Dataset B (`usedCars.json`): schema mapping, B-only and A+B preparation, B sample weight | Fatima Arif | Sagar Lekhraj | `feat/dataset-b` |
+| README and Makefile update for the real PakWheels data | Fatima Arif | Sagar Lekhraj | `docs/readme-contribution` |
+| Merged-dataset experiment with a 2022 scrape (not merged: the scrape is not in our data) | Dua Ali Ansari | Sagar Lekhraj | `feat/two-datasets` |
+| Multi-model setup: shared A+B dataset with cross-source dedup, five model families, validation-based champions with a size limit, routing manifest and router, `/models`, `/options`, assembly feature, test page at `/`, Dataset B download, tests | Sagar Lekhraj | _teammate who approves the PR_ | `feat/multi-model` |
+| Final tag `v1.0-milestone1` | Sagar Lekhraj | | tag on `main` |
 
 ## Milestone 2: member-to-task table
 
