@@ -258,6 +258,7 @@ def check_schema(df: pd.DataFrame) -> str:
             "transmission": pa.Column(str, nullable=True),
             "fuel": pa.Column(str, nullable=True),
             "city": pa.Column(str, nullable=True),
+            "assembly": pa.Column(str, nullable=True),
             "listing_group": pa.Column(str, nullable=False),
         },
         strict=True,

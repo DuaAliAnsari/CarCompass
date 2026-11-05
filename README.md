@@ -9,12 +9,16 @@ service that is tracked in MLflow, containerised with Docker, tested in CI and d
 ## Architecture
 
 ```
- data/raw (Dataset A)        src/prepare_data.py          src/train.py                 src/app.py
- ┌───────────────┐  ──►  validate, dedup, split  ──►  train + MLflow runs  ──►  FastAPI /predict /explain
- └───────────────┘        data/processed/*.csv         models/price_model.joblib     /health /metrics /docs
+ Dataset A (CSV) ─┐     src/prepare_multi.py           src/train_families.py              src/app.py
+                  ├──►  map, validate, dedup A∪B  ──►  5 families × 12 runs (MLflow)  ──►  FastAPI + router
+ Dataset B (JSON)─┘     one fit/val/cal/test split     champion per family (val MAE)       /predict /explain
+                        data/processed_multi/          models/manifest.json + *.joblib     /models /health /metrics
                                                                     │
                                                           Docker image ──► Render / Railway
 ```
+
+The router sends each request to the model that won on validation rows for that car's
+year: the 2010+ specialist for cars from 2010 on, the global A+B model for the rest.
 
 ## Quick start
 
@@ -36,7 +40,20 @@ curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" \
 
 View experiments: `make mlflow-ui`, then open http://localhost:5000.
 
-### Training on the real dataset
+### Training the five model families (Dataset A + Dataset B)
+
+Save Dataset A as `data/raw/pakistan_used_cars.csv` and Dataset B as
+`data/raw/usedCars.json`, then:
+
+```bash
+make train-multi       # builds the shared dataset, trains 5 families x 12 runs (about 1-2 h)
+make run               # the API now serves the models listed in models/manifest.json
+```
+
+The big random forests need a lot of memory. If training is stopped, run
+`python -m src.train_families --resume`: runs already logged in MLflow are skipped.
+
+### Training on Dataset A only (Milestone 1)
 
 `make train` uses the small synthetic sample. For the real results:
 
@@ -58,6 +75,108 @@ make mlflow-ui                           # inspect runs at http://localhost:5000
   is downloaded, not committed. Edit `configs/schema.yaml` so the column names match.
 - Licences and credits for every dataset used go in the **Credits** section below.
 
+## Multi-model setup: five price families
+
+Design: `Multi-model/CarCompass_Proposed_Multi_Model_Architecture.md`. A *family* says
+which rows a model is trained on (`configs/model_families.yaml`); every family runs all
+12 experiments in `configs/train.yaml`.
+
+| Family | Trained on | Role |
+|---|---|---|
+| `price_global_ab` | Dataset A + Dataset B (B rows weighted 0.3) | default candidate |
+| `price_dataset_a` | Dataset A only | default candidate / benchmark |
+| `price_dataset_b` | Dataset B only | default candidate / benchmark |
+| `price_new_cars_2010plus` | A + B, cars from 2010 on | specialist |
+| `price_old_cars_pre2010` | A + B, cars before 2010 | specialist |
+
+### Shared dataset (`src/prepare_multi.py`)
+
+1. Both files are mapped to one schema (`configs/schema.yaml`, `configs/schema_b.yaml`)
+   and cleaned with the rules below. Dataset B's `RegisteredIn` has the same meaning as
+   Dataset A's `Province`.
+2. Duplicates are removed inside each source and then **across sources**: 8,558 B
+   listings were the same car as an A listing (same make, model, year, mileage, city),
+   so only the A copy is kept.
+3. One group-aware split (seed 42) for all families: **fit** 64% (training),
+   **val** 8% (choosing champions and routing), **cal** 8% (price range),
+   **test** 20% (final scores only). A listing group is always on one side.
+4. Dataset B was scraped in August 2021, so its prices are scaled to Dataset A's level
+   (factor 1.42, measured on fit rows only).
+
+Result: 97,786 listings (A 58,553, B 39,233). Details: `reports/data_quality_multi.md`.
+
+### How champions and routing are chosen
+
+- **Champion of a family:** lowest **validation** MAE among models of at most 100 MB
+  (`max_model_mb`). Test rows are never used to choose. The large random forests
+  (`rf_300_depth20`, 350-760 MB each) are trained and logged but cannot be served on a
+  small hosting plan; LightGBM is within 3% of them at about 12 MB.
+- **Default model:** the candidate with the lowest validation MAE on all validation
+  rows (A and B).
+- **Specialist:** switched on only if it beats the default by at least 1% on the
+  validation rows of its own years (`configs/routing.yaml`).
+- Every champion is registered in the MLflow Model Registry
+  (`carcompass-price-global-ab`, ...) with alias `champion`; the served models also get
+  alias `production`.
+
+### Results
+
+All runs of `price_global_ab` (validation MAE in PKR, 7,865 validation rows):
+
+| Run | Val MAE | Val MdAPE | Model size |
+|---|---|---|---|
+| baseline_median | 2,304,820 | 48.7% | — |
+| baseline_mean | 2,300,997 | 48.2% | — |
+| baseline_q40 | 2,316,177 | 49.8% | — |
+| ridge_alpha_01 | 1,145,734 | 22.0% | — |
+| ridge_alpha_1 | 1,145,734 | 22.0% | — |
+| ridge_alpha_10 | 1,145,733 | 22.0% | — |
+| rf_100_depth12 | 399,073 | 7.4% | — |
+| rf_200_depth16 | 340,613 | 6.4% | — |
+| rf_300_depth20 | 324,644 | 6.2% | 763 MB (over the limit) |
+| lgbm_300 | 381,185 | 7.1% | — |
+| lgbm_600_lr03 | 352,052 | 6.5% | — |
+| **lgbm_900_lr02 (champion)** | **333,743** | **6.3%** | **12.6 MB** |
+
+Family champions, each scored on its own test rows:
+
+| Family | Champion | Val MAE | Test MAE | Test MdAPE | Range coverage |
+|---|---|---|---|---|---|
+| `price_global_ab` | `lgbm_900_lr02` | 333,743 | 370,313 | 6.5% | 80% |
+| `price_dataset_a` | `lgbm_900_lr02` | 347,817 | 387,479 | 6.1% | 80% |
+| `price_dataset_b` | `lgbm_900_lr02` | 292,036 | 319,170 | 5.8% | 80% |
+| `price_new_cars_2010plus` | `lgbm_900_lr02` | 376,902 | 413,633 | 5.1% | 80% |
+| `price_old_cars_pre2010` | `lgbm_600_lr03` | 240,116 | 263,931 | 9.9% | 80% |
+
+**Fair comparison: every model on the same 19,525 test rows** (MAE in PKR):
+
+| Model | All test | A rows | B rows | Pre-2010 | 2010+ |
+|---|---|---|---|---|---|
+| `price_global_ab` | 370,313 | 389,722 | 342,167 | 257,490 | 428,281 |
+| `price_dataset_a` | 413,223 | 387,479 | 450,554 | 271,935 | 485,816 |
+| `price_dataset_b` | 636,365 | 855,102 | 319,170 | 274,047 | 822,524 |
+| `price_new_cars_2010plus` | | | | | 413,633 |
+| `price_old_cars_pre2010` | | | | 263,931 | |
+| **served system** (global + 2010+ specialist) | **360,636** | **376,881** | **337,079** | 257,490 | 413,633 |
+
+What this shows:
+
+- **Adding Dataset B helps.** On all test rows the A+B model (370,313) beats the A-only
+  model (413,223) by about 10%, and it is almost as good as the A-only model on A's own
+  rows (389,722 vs 387,479). The B-only model does not carry over to A's listings
+  (855,102 on A rows).
+- **Routing (validation rows):** `price_global_ab` is the default (val MAE 333,743 vs
+  379,527 for A only and 560,441 for B only). The **2010+ specialist is switched on**
+  (+1.4% better than the default on 2010+ validation cars). The **pre-2010 specialist
+  is not** (1.2% worse than the default on pre-2010 cars), so older cars go to the
+  global model. On Dataset A alone (Milestone 1) neither era model helped; with the
+  extra B rows the 2010+ one now does.
+- The served system's test MAE is **360,636 PKR**, 2.6% better than the global model alone.
+- **Assembly** (Local / Imported) is a new input from both datasets. It helps a little:
+  val MAE 333,743 with it, 334,935 without.
+
+Full report: `reports/model_comparison.md`. Served models: `models/manifest.json`.
+
 ## Data preparation (`src/prepare_data.py`)
 
 1. Map raw columns to one schema (`configs/schema.yaml`) and parse values like `27.4 lacs` into PKR.
@@ -73,11 +192,13 @@ make mlflow-ui                           # inspect runs at http://localhost:5000
 
 All limits live in `src/prepare_data.py`.
 
-## Experiments and best run
+## Milestone 1 results: Dataset A only (`src/train.py`)
 
 `configs/train.yaml` lists the runs (median baseline, Ridge, Random Forest, LightGBM).
 Each run logs its parameters, MAE, median % error, interval coverage, the data hash and the git commit.
-The lowest test MAE becomes the champion and is saved as `models/price_model_<version>.joblib`.
+The champion is the run with the lowest **validation** MAE (the training rows are split
+into fit 70%, val 15% and cal 15%), saved as `models/price_model_<version>.joblib`.
+The table below was produced before this change, when the lowest test MAE was used.
 
 Results on the held-out test set (11,701 listings, seed 42). Coverage is the share of true
 prices inside the 10th-90th percentile range; a well-calibrated range gives about 80%.
@@ -122,19 +243,20 @@ so the residual method was kept.
 
 | Endpoint | Purpose |
 |---|---|
-| `POST /predict` | price, range, assumed fields, model version |
+| `POST /predict` | price, range, assumed fields, model version, `selected_model` |
 | `POST /explain` | same plus the model's top factors |
-| `GET /health` | liveness check |
+| `GET /models` | the models being served, their years, versions and test MAE |
+| `GET /health` | liveness check, models served |
 | `GET /metrics` | request count, average latency, errors |
 | `GET /docs` | auto-generated API docs |
 
-Optional inputs (`engine_cc`, `transmission`, `fuel`, `city`) narrow the range. If they are
+Optional inputs (`engine_cc`, `transmission`, `fuel`, `city`, `assembly`) narrow the range. If they are
 missing, typical values for that make/model are used, flagged in `assumed_fields`, and the range widens.
 
 ## Tests and lint
 
 ```bash
-make test    # pytest: data preparation, model loading, API endpoints
+make test    # pytest: data preparation, A+B dedup and split, router, model loading, API
 make lint    # ruff
 ```
 
@@ -154,15 +276,20 @@ champion model is in `models/` (see `RUNBOOK.md`).
 - [x] Milestone 1 skeleton: prepare, train + MLflow, API, tests, CI
 - [x] Milestone 1: structured JSON request logs
 - [x] Milestone 1: trained on real Dataset A, results table and best-run note filled in
+- [x] Multi-model: shared A+B dataset, five families, validation-based champions,
+      routing manifest, `/models`, MLflow registry per family
 - [ ] Milestone 2: deploy, `RUNBOOK.md`, cURL examples against the live URL
 - [ ] Milestone 2: vision models, `/classify-image`, MLflow Model Registry export
 
 ## Repository layout
 
 ```
-src/            prepare_data.py, train.py, model_utils.py, app.py
+src/            prepare_data.py, prepare_multi.py, train.py, train_families.py,
+                model_router.py, model_utils.py, app.py
 tests/          pytest files
-configs/        schema.yaml (column mapping), train.yaml (experiments)
+configs/        schema.yaml / schema_b.yaml (column mapping), train.yaml (experiments),
+                model_families.yaml (families), routing.yaml (routing rules)
+reports/        data quality reports, model_comparison.md
 data/sample/    small synthetic sample only
 models/         trained artifacts (git-ignored)
 .github/        CI workflow, PR template
@@ -171,5 +298,6 @@ models/         trained artifacts (git-ignored)
 ## Credits
 
 - Dataset A: _Pakistan Used Cars Dataset_, Kaggle (muhamedumarjamil), https://www.kaggle.com/datasets/muhamedumarjamil/pakistan-used-cars-dataset. Licence: check the "License" field on the Kaggle page and write it here.
+- Dataset B: _Pakistan's Largest PakWheels Automobiles Listings_, Kaggle (asimzahid), https://www.kaggle.com/datasets/asimzahid/pakistans-largest-pakwheels-automobiles-listings. Licence: check the Kaggle page and write it here.
 - Libraries: FastAPI, scikit-learn, MLflow, LightGBM, pandas (cite any template or code you reuse).
 - AI assistance: see `AI_USAGE.md`.

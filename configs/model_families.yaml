@@ -1,0 +1,28 @@
+# The five price-model families. A family says WHICH rows a model trains on; every
+# family runs every experiment in configs/train.yaml and keeps its own champion
+# (lowest validation MAE). Trained by: python -m src.train_families
+data: data/processed_multi/listings.csv
+b_weight: 0.3  # in a family that mixes A and B, a B row counts 30% as much as an A row
+# A champion's model file must be at most this big. The large random forests
+# (400-760 MB each) are still trained and logged, but cannot be served on small
+# hosting plans or loaded side by side by the API.
+max_model_mb: 100
+
+families:
+  price_global_ab:
+    sources: [A, B]
+    role: default_candidate
+  price_dataset_a:
+    sources: [A]
+    role: default_candidate
+  price_dataset_b:
+    sources: [B]
+    role: default_candidate
+  price_new_cars_2010plus:
+    sources: [A, B]
+    year_min: 2010
+    role: specialist
+  price_old_cars_pre2010:
+    sources: [A, B]
+    year_max: 2009
+    role: specialist

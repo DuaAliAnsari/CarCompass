@@ -3,7 +3,9 @@
 
 What this script does, in order:
 1. Trains every model in configs/train.yaml on the training data (one MLflow run each).
-2. Picks the champion: the global model with the lowest test error (MAE).
+   The training data is split into fit (70%), val (15%) and cal (15%) rows.
+2. Picks the champion: the global model with the lowest VALIDATION error (MAE).
+   Test scores are only reported, never used to choose.
 3. Extras (on by default): trains separate pre-2010 and 2010+ "era" models with the
    champion's settings and compares them with the global champion, and checks
    LightGBM quantile models against the residual-based price range.
@@ -34,7 +36,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.inspection import permutation_importance
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_absolute_error
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import GroupShuffleSplit, train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 
@@ -87,14 +89,18 @@ def build_estimator(name: str, params: dict):
     raise ValueError(f"Unknown model: {name}")
 
 
-def build_pipeline(name: str, params: dict) -> Pipeline:
-    """Build preprocessing and model as one sklearn pipeline."""
+def build_pipeline(name: str, params: dict, categorical=None) -> Pipeline:
+    """Build preprocessing and model as one sklearn pipeline.
+
+    categorical overrides the categorical columns (used to test a model without
+    a column); columns the pipeline does not list are ignored at predict time.
+    """
 
     numeric = Pipeline([
         ("impute", SimpleImputer(strategy="median")),
     ])
 
-    categorical = Pipeline([
+    categorical_steps = Pipeline([
         ("impute", SimpleImputer(
             strategy="constant",
             fill_value="unknown",
@@ -104,7 +110,7 @@ def build_pipeline(name: str, params: dict) -> Pipeline:
 
     pre = ColumnTransformer([
         ("num", numeric, NUMERIC),
-        ("cat", categorical, CATEGORICAL),
+        ("cat", categorical_steps, categorical or CATEGORICAL),
     ])
 
     return Pipeline([
@@ -195,6 +201,15 @@ def _metrics(y_true, pred_log):
             np.median(np.abs(pred - y_true) / y_true)
         ),
     }
+
+
+def split_rows(df: pd.DataFrame, size: float, seed: int = 42):
+    """Split rows; near-copies of one listing stay together when listing_group exists."""
+    if "listing_group" not in df.columns:
+        return train_test_split(df, test_size=size, random_state=seed)
+    splitter = GroupShuffleSplit(n_splits=1, test_size=size, random_state=seed)
+    keep, take = next(splitter.split(df, groups=df["listing_group"]))
+    return df.iloc[keep], df.iloc[take]
 
 
 def fit_and_evaluate(pipe, fit_df, cal_df, test_df):
@@ -498,11 +513,8 @@ def train_all(
 
     mlflow.set_experiment(experiment)
 
-    fit_df, cal_df = train_test_split(
-        train_df,
-        test_size=0.15,
-        random_state=42,
-    )
+    fit_df, rest = split_rows(train_df, 0.30)
+    val_df, cal_df = split_rows(rest, 0.50)
 
     commit = git_commit()
     results = []
@@ -543,6 +555,13 @@ def train_all(
                 test_df,
             )
 
+            val = _metrics(
+                val_df["price"].to_numpy(),
+                pipe.predict(val_df[FEATURES]),
+            )
+            metrics["val_mae_pkr"] = val["mae_pkr"]
+            metrics["val_mdape"] = val["mdape"]
+
             mlflow.log_metrics(metrics)
 
             results.append({
@@ -556,7 +575,8 @@ def train_all(
 
             print(
                 f"{cfg['name']:<16} "
-                f"MAE={metrics['mae_pkr']:,.0f} "
+                f"val MAE={metrics['val_mae_pkr']:,.0f} "
+                f"test MAE={metrics['mae_pkr']:,.0f} "
                 f"MdAPE={metrics['mdape']:.1%} "
                 f"coverage={metrics['interval_coverage']:.0%}"
             )
@@ -566,7 +586,7 @@ def train_all(
 
     best = min(
         results,
-        key=lambda r: r["metrics"]["mae_pkr"],
+        key=lambda r: r["metrics"]["val_mae_pkr"],
     )
 
     mlflow.MlflowClient().set_tag(

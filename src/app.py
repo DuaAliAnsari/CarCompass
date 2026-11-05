@@ -1,4 +1,7 @@
-"""FastAPI service: /health, /metrics, /predict, /explain (docs at /docs).
+"""FastAPI service: /health, /metrics, /models, /predict, /explain (docs at /docs).
+
+Each request is answered by the price model the router picks for the car's year
+(see src/model_router.py and models/manifest.json).
 
 Run:  uvicorn src.app:app --reload
 """
@@ -13,7 +16,8 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel, Field
 
-from src.model_utils import Artifacts, load_artifacts, max_year, predict_price
+from src.model_router import ModelRouter
+from src.model_utils import max_year, predict_price
 
 logger = logging.getLogger("carcompass")
 if not logger.handlers:
@@ -35,15 +39,23 @@ class PredictRequest(BaseModel):
     transmission: Optional[str] = None
     fuel: Optional[str] = None
     city: Optional[str] = None
+    assembly: Optional[str] = Field(default=None, examples=["Local"],
+                                    description="Local or Imported")
+
+
+def default_version(router) -> str | None:
+    if router is None:
+        return None
+    return router.models[router.default_name].meta["version"]
 
 
 def create_app(model_dir: str | None = None) -> FastAPI:
     app = FastAPI(title="CarCompass", version=APP_VERSION,
                   description="Used-car price estimation for Pakistan.")
     app.state.stats = {"requests": 0, "errors": 0, "total_latency": 0.0}
-    app.state.artifacts = None
+    app.state.router = None
     try:
-        app.state.artifacts = load_artifacts(model_dir or DEFAULT_MODEL_DIR)
+        app.state.router = ModelRouter.load(model_dir or DEFAULT_MODEL_DIR)
     except FileNotFoundError:
         pass  # the service still starts; /predict answers 503 until a model exists
 
@@ -62,7 +74,7 @@ def create_app(model_dir: str | None = None) -> FastAPI:
             elapsed = time.perf_counter() - start
             stats["requests"] += 1
             stats["total_latency"] += elapsed
-            art = request.app.state.artifacts
+            router = request.app.state.router
             logger.info(json.dumps({
                 "event": "request",
                 "method": request.method,
@@ -70,24 +82,31 @@ def create_app(model_dir: str | None = None) -> FastAPI:
                 "status": status,
                 "latency_ms": round(1000 * elapsed, 2),
                 "app_version": APP_VERSION,
-                "model_version": art.meta["version"] if art else None,
+                "model_version": default_version(router),
             }))
         if response.status_code >= 500:
             stats["errors"] += 1
         return response
 
-    def get_artifacts() -> Artifacts:
-        if app.state.artifacts is None:
+    def get_router() -> ModelRouter:
+        if app.state.router is None:
             raise HTTPException(status_code=503, detail="Model not loaded. Run `make train`.")
-        return app.state.artifacts
+        return app.state.router
+
+    def estimate(req: PredictRequest):
+        name, art = get_router().choose(req.year)
+        result = predict_price(art, req.model_dump())
+        result["selected_model"] = name
+        return result, art
 
     @app.get("/health")
     def health():
-        art = app.state.artifacts
+        router = app.state.router
         return {
             "status": "ok",
-            "model_loaded": art is not None,
-            "model_version": art.meta["version"] if art else None,
+            "model_loaded": router is not None,
+            "model_version": default_version(router),
+            "models_served": sorted(router.models) if router else [],
             "app_version": APP_VERSION,
         }
 
@@ -95,23 +114,25 @@ def create_app(model_dir: str | None = None) -> FastAPI:
     def metrics():
         stats = app.state.stats
         count = stats["requests"]
-        art = app.state.artifacts
         return {
             "request_count": count,
             "error_count": stats["errors"],
             "avg_latency_ms": round(1000 * stats["total_latency"] / count, 2) if count else 0.0,
             "app_version": APP_VERSION,
-            "model_version": art.meta["version"] if art else None,
+            "model_version": default_version(app.state.router),
         }
+
+    @app.get("/models")
+    def models():
+        return get_router().describe()
 
     @app.post("/predict")
     def predict(req: PredictRequest):
-        return predict_price(get_artifacts(), req.model_dump())
+        return estimate(req)[0]
 
     @app.post("/explain")
     def explain(req: PredictRequest):
-        art = get_artifacts()
-        result = predict_price(art, req.model_dump())
+        result, art = estimate(req)
         result["top_factors"] = art.meta["importances"][:5]
         result["note"] = "Factors are the model's overall feature importance, not per-car."
         return result

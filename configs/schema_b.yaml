@@ -11,3 +11,4 @@ column_map:
   vehicleTransmission: transmission
   "vehicleEngine.engineDisplacement": engine_cc
   "extraFeatures.RegisteredIn": city
+  "extraFeatures.Assembly": assembly
