@@ -104,8 +104,8 @@ which rows a model is trained on (`configs/model_families.yaml`); every family r
    and cleaned with the rules below. Dataset B's `RegisteredIn` has the same meaning as
    Dataset A's `Province`.
 2. Duplicates are removed inside each source and then **across sources**: 8,558 B
-   listings were the same car as an A listing (same make, model, year, mileage, city),
-   so only the A copy is kept.
+   listings match an A listing on make, model, year, mileage and city, so only the A
+   copy is kept (see the known limitation below).
 3. One group-aware split (seed 42) for all families: **fit** 64% (training),
    **val** 8% (choosing champions and routing), **cal** 8% (price range),
    **test** 20% (final scores only). A listing group is always on one side.
@@ -113,6 +113,16 @@ which rows a model is trained on (`configs/model_families.yaml`); every family r
    (factor 1.42, measured on fit rows only).
 
 Result: 97,786 listings (A 58,553, B 39,233). Details: `reports/data_quality_multi.md`.
+
+**Known limitation: the cross-source match is loose.** The key (make, model, year,
+mileage, city) also matches different cars. Among the 8,558 matches only 78.5% have
+the same transmission and 71.1% the same engine size, and 62% have a round mileage
+such as 100,000 km. With a stricter key (same transmission, fuel, assembly and engine
+within 50 cc) 5,489 rows still match. So some removed B rows were probably distinct
+cars. The error is on the safe side: no test car can leak into training, so the test
+scores below stay valid; the cost is less Dataset B training data. Planned for
+Milestone 2: keep the B rows, give matching A and B rows the same `listing_group` (so
+they stay on one side of the split), drop only strict-key duplicates, and compare MAE.
 
 ### How champions and routing are chosen
 
@@ -188,19 +198,19 @@ Full report: `reports/model_comparison.md`. Served models: `models/manifest.json
 
 ## Data preparation scripts
 
-The complete M1 A+B workflow is implemented in `src/prepare_multi.py`, with
-Dataset B-specific preparation in `src/prepare_b.py`. It maps both sources using
+The complete M1 A+B workflow is implemented in `src/prepare_multi.py`. It loads
+Dataset B through `src/prepare_combined.py` and maps both sources using
 `configs/schema.yaml` and `configs/schema_b.yaml`, validates and cleans the records,
 removes duplicates within each source and across sources, and writes one shared dataset
 for all five model families. Its group-aware fit/validation/calibration/test split is
 shared across families so model comparisons are fair. Dataset B's older scraped prices
 are adjusted to Dataset A's price level using a factor estimated from fit rows only.
 
-`src/prepare_data.py` is the original Dataset A-only preparation path used by the
-single-source benchmark and synthetic sample workflow. It is retained for comparison
-and reproducibility; it is not the preparation path for the complete A+B M1 system.
-Its rules include price/mileage/year validation, duplicate removal, optional low-mileage
-and low-frequency filtering, and a Pandera schema check.
+`src/prepare_data.py` holds the shared cleaning rules that `prepare_multi.py` reuses:
+price/mileage/year validation, duplicate removal, optional low-mileage and
+low-frequency filtering, and the Pandera schema check. Run on its own, it is also the
+Dataset A-only preparation path used by the single-source benchmark and the synthetic
+sample workflow.
 
 ## Dataset A-only benchmark (earlier single-source experiment)
 
@@ -234,12 +244,12 @@ share of true prices inside the 10th–90th percentile range.
 | lgbm_600_lr03 | 358,351 | 6.4% | 80% |
 | **lgbm_900_lr02 (champion)** | **352,511** | **6.2%** | **80%** |
 
-**Dataset A benchmark observation:** the historical table records `lgbm_900_lr02` at
-PKR 352,511 MAE. That is the Dataset A-only result (often rounded to approximately
-PKR 353k in slides); it must not be presented as the A+B system's score. The complete
-A+B system's results are reported in the five-family tables above. For a presentation,
-state the dataset, split, and whether a figure is validation MAE or test MAE alongside
-any metric.
+**Best run on Dataset A and why:** `lgbm_900_lr02` has the lowest MAE (PKR 352,511)
+and the lowest median percentage error (6.2%). Its MAE is about 85% below the median
+baseline (2.37 million) and about 73% below the best Ridge model (1.29 million). Ridge
+barely changes with alpha, so the linear form is the limit, not the tuning; the tree
+models capture the non-linear effect of make, model, year and mileage. This is the
+Dataset A-only result; the A+B system's scores are in the five-family tables above.
 
 **Global vs era-specific models.** Separate models for pre-2010 and 2010-onward cars were
 tested. Pre-2010 MAE was 267,579 (MdAPE 10.7%) and 2010+ MAE was 396,651 (MdAPE 4.9%).

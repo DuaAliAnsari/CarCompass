@@ -9,8 +9,9 @@ this one file, so their scores are measured on exactly the same rows. Run:
 Steps:
 1. Map both files to the standard schema and validate them with the usual rules.
 2. Remove duplicates inside each source, then across sources: a B listing whose
-   listing_group (make, model, year, mileage, city) is also in A is the same car
-   listed twice, so only the A copy is kept.
+   listing_group (make, model, year, mileage, city) is also in A is treated as a
+   duplicate, so only the A copy is kept. The key also matches some different cars
+   (see "Known limitation" in README.md); this costs B rows but cannot leak.
 3. Apply the quality rules (rare make/model, rare city, low mileage) on A+B together.
 4. One group-aware split into fit / val / cal / test (seed 42). A listing group is
    always on one side only. The split is stored in a `split` column.
