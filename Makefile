@@ -4,7 +4,7 @@ TAG := dev
 RAW_A := data/raw/pakistan_used_cars.csv
 RAW_B := data/raw/usedCars.json
 
-.PHONY: setup prepare train prepare-real train-real prepare-multi train-multi run test lint format mlflow-ui docker-build docker-run all
+.PHONY: setup prepare train prepare-real train-real prepare-multi train-multi export-models run test lint format mlflow-ui docker-build docker-run docker-smoke all
 
 setup:
 	python3.11 -m venv .venv || python3 -m venv .venv
@@ -35,6 +35,10 @@ prepare-multi:
 train-multi: prepare-multi
 	$(PY) -m src.train_families
 
+# Copy the served models into deploy/models/ (committed; used by the Docker image).
+export-models:
+	$(PY) scripts/export_models.py
+
 run:
 	$(PY) -m uvicorn src.app:app --reload --port 8000
 
@@ -55,5 +59,9 @@ docker-build:
 
 docker-run:
 	docker run --rm -p 8000:8000 $(IMAGE):$(TAG)
+
+# Build, start, check /health and /predict, stop. Same check as the CI build job.
+docker-smoke: docker-build
+	sh scripts/docker_smoke_test.sh $(IMAGE):$(TAG)
 
 all: setup train test
