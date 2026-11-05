@@ -4,4 +4,3 @@ pyyaml>=6.0
 pandera
 pyarrow
 tabulate
-lightgbm>=4.0
