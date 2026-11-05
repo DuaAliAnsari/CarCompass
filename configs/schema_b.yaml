@@ -1,0 +1,13 @@
+# Dataset B: "Pakistan's Largest PakWheels Automobiles Listings" (usedCars.json, Aug 2021).
+# Left = column name after json_normalize flattens the file; right = our standard name.
+# make and model are built from manufacturer + model in load_dataset_b, so they are
+# not mapped here. extraFeatures.RegisteredIn is the same field as dataset A's
+# "Province" column, so city means the same thing in both datasets.
+column_map:
+  modelDate: year
+  mileageFromOdometer: mileage
+  price: price
+  fuelType: fuel
+  vehicleTransmission: transmission
+  "vehicleEngine.engineDisplacement": engine_cc
+  "extraFeatures.RegisteredIn": city
