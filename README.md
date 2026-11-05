@@ -22,13 +22,15 @@ year: the 2010+ specialist for cars from 2010 on, the global A+B model for the r
 
 ## Quick start
 
-Requires Python 3.11 (Linux, macOS, or WSL on Windows) and `make`.
+Requires Python 3.11. The complete M1 training workflow uses both real datasets and
+requires a Kaggle API token (or the two raw files downloaded manually).
 
 ```bash
 git clone https://github.com/DuaAliAnsari/CarCompass.git && cd CarCompass
-make setup      # creates .venv and installs dependencies
-make train      # prepares data, trains models, logs runs to MLflow, saves models/
-make run        # API at http://localhost:8000  (docs at /docs)
+make setup
+python scripts/download_data.py   # downloads Dataset A and Dataset B into data/raw/
+make train-multi                  # prepares the shared data and trains all five families
+make run                          # API at http://localhost:8000 (docs at /docs)
 ```
 
 Try it:
@@ -38,46 +40,51 @@ curl -X POST http://localhost:8000/predict -H "Content-Type: application/json" \
   -d '{"make":"Toyota","model":"Corolla","year":2016,"mileage":75000}'
 ```
 
-View experiments: `make mlflow-ui`, then open http://localhost:5000.
+View the experiments in MLflow with `make mlflow-ui`, then open
+http://localhost:5000. The multi-family training run is computationally intensive
+(approximately 1–2 hours on the project setup); the large random forests also require
+substantial memory. If training is interrupted, resume with
+`python -m src.train_families --resume`.
 
-### Training the five model families (Dataset A + Dataset B)
+### Quick pipeline check with the included sample
 
-`python scripts/download_data.py` downloads both datasets from Kaggle (needs a Kaggle API
-token) and saves Dataset A as `data/raw/pakistan_used_cars.csv` and Dataset B as
-`data/raw/usedCars.json`. Or place the two files there yourself. Then:
+`make train` prepares the small **synthetic** CSV in `data/sample/` and runs the original
+single-dataset training script. This is useful for checking the basic preparation and
+training workflow, but it is **not** the full M1 experiment and its results must not be
+reported as results on the real A+B data.
 
-```bash
-python scripts/download_data.py   # once
-make train-multi       # builds the shared dataset, trains 5 families x 12 runs (about 1-2 h)
-make run               # the API now serves the models listed in models/manifest.json
-```
+### Dataset A-only benchmark
 
-The big random forests need a lot of memory. If training is stopped, run
-`python -m src.train_families --resume`: runs already logged in MLflow are skipped.
-
-### Training on Dataset A only (Milestone 1)
-
-`make train` uses the small synthetic sample. For the real results:
+The original single-source experiment can still be reproduced separately:
 
 ```bash
-python scripts/download_data.py          # or place the CSV at data/raw/pakistan_used_cars.csv
-make train-real                          # prepares real data, trains 12 runs, registers @production
-make mlflow-ui                           # inspect runs at http://localhost:5000
+python scripts/download_data.py   # or place Dataset A at data/raw/pakistan_used_cars.csv
+make train-real                   # prepares Dataset A and trains the single-source runs
+make mlflow-ui
 ```
+
+This is retained as a Dataset A benchmark for comparison with the complete A+B system;
+it is not a separate milestone or the full project pipeline.
 
 ## Dataset and task
 
-- **Task:** regression, predict used-car price (PKR), trained on log-price.
-- **Metric:** MAE in PKR on a held-out 20% test set (also reported: median absolute
-  percentage error and interval coverage of the 10th-90th percentile range).
-- **Split:** 80/20, seed 42, near-copies of one listing stay on the same side.
-- **Included sample:** `data/sample/sample_listings.csv` is **synthetic** data made so
-  the pipeline and tests run out of the box. It is not real listings.
-- **Real data:** Dataset A, *Pakistan Used Cars Dataset* (Kaggle, muhamedumarjamil),
-  is downloaded, not committed. Edit `configs/schema.yaml` so the column names match.
-- Licences and credits for every dataset used go in the **Credits** section below.
+- **Task:** regression—estimate a used car's asking price in PKR, with models trained
+  on log-price and predictions converted back to PKR.
+- **Data used by the complete M1 system:** Dataset A and Dataset B, cleaned, mapped to
+  a common schema, and deduplicated across sources before model training.
+- **Evaluation:** MAE in PKR is the primary metric. MdAPE and coverage of the calibrated
+  10th–90th percentile prediction range are also reported.
+- **M1 split:** one group-aware split shared by all model families: fit 64%, validation
+  8%, calibration 8%, and held-out test 20% (seed 42). Validation selects champions
+  and routing; the test partition is reserved for final evaluation.
+- **Included sample:** `data/sample/sample_listings.csv` is synthetic and is provided
+  for a lightweight pipeline check and tests. It is not used for the reported real-data
+  A+B results.
+- **Raw data:** both real datasets are downloaded and are not committed to this repo.
+  Dataset A's mapping is in `configs/schema.yaml`; Dataset B's mapping is in
+  `configs/schema_b.yaml`.
 
-## Multi-model setup: five price families
+## Complete M1 modelling pipeline: five price families
 
 A *family* says
 which rows a model is trained on (`configs/model_families.yaml`); every family runs all
@@ -171,41 +178,46 @@ What this shows:
   379,527 for A only and 560,441 for B only). The **2010+ specialist is switched on**
   (+1.4% better than the default on 2010+ validation cars). The **pre-2010 specialist
   is not** (1.2% worse than the default on pre-2010 cars), so older cars go to the
-  global model. On Dataset A alone (Milestone 1) neither era model helped; with the
-  extra B rows the 2010+ one now does.
+  global model. On the Dataset A-only benchmark neither era model helped; with the
+  additional Dataset B rows the 2010+ specialist now does.
 - The served system's test MAE is **360,636 PKR**, 2.6% better than the global model alone.
 - **Assembly** (Local / Imported) is a new input from both datasets. It helps a little:
   val MAE 333,743 with it, 334,935 without.
 
 Full report: `reports/model_comparison.md`. Served models: `models/manifest.json`.
 
-## Data preparation (`src/prepare_data.py`)
+## Data preparation scripts
 
-1. Map raw columns to one schema (`configs/schema.yaml`) and parse values like `27.4 lacs` into PKR.
-2. Validation: drop rows with missing required fields or values outside these ranges:
-   price 50,000 to 200,000,000 PKR, mileage 0 to 1,000,000 km, year 1980 to next year.
-   An engine size outside 50 to 8000 cc is set to missing instead.
-3. Remove duplicate listings (make, model, year, mileage, price, city).
-4. Extra rules used for the real data (`make prepare-real`): drop cars 3+ years old with
-   under 1,000 km, drop make/model pairs with fewer than 5 listings, group cities with
-   fewer than 20 listings as `Other`.
-5. Pandera schema check, then an 80/20 split (seed 42) that keeps near-copies of one
-   listing on the same side. Writes `data/processed/` and `reports/data_quality.md`.
+The complete M1 A+B workflow is implemented in `src/prepare_multi.py`, with
+Dataset B-specific preparation in `src/prepare_b.py`. It maps both sources using
+`configs/schema.yaml` and `configs/schema_b.yaml`, validates and cleans the records,
+removes duplicates within each source and across sources, and writes one shared dataset
+for all five model families. Its group-aware fit/validation/calibration/test split is
+shared across families so model comparisons are fair. Dataset B's older scraped prices
+are adjusted to Dataset A's price level using a factor estimated from fit rows only.
 
-All limits live in `src/prepare_data.py`.
+`src/prepare_data.py` is the original Dataset A-only preparation path used by the
+single-source benchmark and synthetic sample workflow. It is retained for comparison
+and reproducibility; it is not the preparation path for the complete A+B M1 system.
+Its rules include price/mileage/year validation, duplicate removal, optional low-mileage
+and low-frequency filtering, and a Pandera schema check.
 
-## Milestone 1 results: Dataset A only (`src/train.py`)
+## Dataset A-only benchmark (earlier single-source experiment)
 
-`configs/train.yaml` lists the runs (median baseline, Ridge, Random Forest, LightGBM).
-Each run logs its parameters, MAE, median % error, interval coverage, the data hash and the git commit.
-The champion is the run with the lowest **validation** MAE (the training rows are split
-into fit 70%, val 15% and cal 15%), saved as `models/price_model_<version>.joblib`.
-The table below shows test-set scores from the earlier run, which picked the champion by
-lowest test MAE. The current code picks it on validation MAE, so re-running
-`make train-real` can change the numbers slightly.
+The following section documents the original single-source experiment implemented in
+`src/train.py`. It is retained to show how the Dataset A baseline compares with the
+complete M1 A+B system above. **It is not a separate M1 milestone, and this table is not
+the headline result for the complete project.**
 
-Results on the held-out test set (11,701 listings, seed 42). Coverage is the share of true
-prices inside the 10th-90th percentile range; a well-calibrated range gives about 80%.
+`configs/train.yaml` lists the baseline, Ridge, Random Forest, and LightGBM experiments.
+Each run logs parameters, metrics, data hash, and Git commit to MLflow. The script
+selects its champion using validation MAE. The table below contains historical held-out
+test scores from an earlier run that selected the champion using test MAE; therefore,
+these historical figures should be treated as a Dataset A benchmark, not mixed with the
+A+B validation or test metrics above.
+
+Results on the held-out Dataset A test set (11,701 listings, seed 42). Coverage is the
+share of true prices inside the 10th–90th percentile range.
 
 | Run | MAE (PKR) | MdAPE | Coverage |
 |---|---|---|---|
@@ -222,14 +234,12 @@ prices inside the 10th-90th percentile range; a well-calibrated range gives abou
 | lgbm_600_lr03 | 358,351 | 6.4% | 80% |
 | **lgbm_900_lr02 (champion)** | **352,511** | **6.2%** | **80%** |
 
-**Best run and why:** `lgbm_900_lr02` has the lowest MAE (PKR 352,511) and the lowest median
-percentage error (6.2%), so it is the champion and is registered in MLflow as
-`carcompass-price` with the alias `production`. Its MAE is about 85% lower than the median
-baseline (2.37 million) and about 73% lower than the best Ridge model (1.29 million). Ridge
-barely changes with its regularisation strength, which suggests the linear form is the
-limit, not the tuning. The tree models capture the non-linear way price depends on make,
-model, year and mileage. The three best models are close (Random Forest 300 trees: 363,198;
-LightGBM 600 trees: 358,351), so the gap to the second place is small (about 1.6%).
+**Dataset A benchmark observation:** the historical table records `lgbm_900_lr02` at
+PKR 352,511 MAE. That is the Dataset A-only result (often rounded to approximately
+PKR 353k in slides); it must not be presented as the A+B system's score. The complete
+A+B system's results are reported in the five-family tables above. For a presentation,
+state the dataset, split, and whether a figure is validation MAE or test MAE alongside
+any metric.
 
 **Global vs era-specific models.** Separate models for pre-2010 and 2010-onward cars were
 tested. Pre-2010 MAE was 267,579 (MdAPE 10.7%) and 2010+ MAE was 396,651 (MdAPE 4.9%).
@@ -266,24 +276,30 @@ make lint    # ruff
 
 ## Docker
 
+Train the complete A+B model set first so the image contains the routed model artifacts
+and `models/manifest.json`:
+
 ```bash
-make train                 # the image copies models/, so train first
+make train-multi
 make docker-build TAG=v1.0
 make docker-run TAG=v1.0   # http://localhost:8000
 ```
 
-`models/*.joblib` is git-ignored. Before building the image you deploy, make sure the
-champion model is in `models/` (see `RUNBOOK.md`).
+`models/*.joblib` and the generated manifest are local artifacts and are not committed.
+Before building the image for deployment, make sure the required model artifacts are
+present in `models/` (see `RUNBOOK.md`).
 
 ## Project status
 
-- [x] Milestone 1 skeleton: prepare, train + MLflow, API, tests, CI
-- [x] Milestone 1: structured JSON request logs
-- [x] Milestone 1: trained on real Dataset A, results table and best-run note filled in
-- [x] Multi-model: shared A+B dataset, five families, validation-based champions,
-      routing manifest, `/models`, MLflow registry per family
-- [ ] Milestone 2: deploy, `RUNBOOK.md`, cURL examples against the live URL
-- [ ] Milestone 2: vision models, `/classify-image`, MLflow Model Registry export
+- [x] **M1 data pipeline:** Dataset A and Dataset B ingestion, schema mapping,
+      validation, within-source and cross-source deduplication, and group-aware splits
+- [x] **M1 experiments:** five model families, 12 configurations per family,
+      MLflow tracking, validation-based champion selection, and held-out test evaluation
+- [x] **M1 serving:** FastAPI prediction/explanation endpoints and year-based model routing
+- [x] **M1 quality and reproducibility:** automated tests, linting, CI workflow,
+      data/Git metadata in experiment tracking, and structured request logging
+- [ ] **M2:** complete deployment evidence, live URL/cURL examples, and operational
+      monitoring/runbook validation (see `RUNBOOK.md`)
 
 ## Repository layout
 
