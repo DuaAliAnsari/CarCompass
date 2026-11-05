@@ -25,7 +25,7 @@ year: the 2010+ specialist for cars from 2010 on, the global A+B model for the r
 Requires Python 3.11 (Linux, macOS, or WSL on Windows) and `make`.
 
 ```bash
-git clone <your-repo-url> && cd carcompass
+git clone https://github.com/DuaAliAnsari/CarCompass.git && cd CarCompass
 make setup      # creates .venv and installs dependencies
 make train      # prepares data, trains models, logs runs to MLflow, saves models/
 make run        # API at http://localhost:8000  (docs at /docs)
@@ -79,7 +79,7 @@ make mlflow-ui                           # inspect runs at http://localhost:5000
 
 ## Multi-model setup: five price families
 
-Design: `Multi-model/CarCompass_Proposed_Multi_Model_Architecture.md`. A *family* says
+A *family* says
 which rows a model is trained on (`configs/model_families.yaml`); every family runs all
 12 experiments in `configs/train.yaml`.
 
@@ -200,7 +200,9 @@ All limits live in `src/prepare_data.py`.
 Each run logs its parameters, MAE, median % error, interval coverage, the data hash and the git commit.
 The champion is the run with the lowest **validation** MAE (the training rows are split
 into fit 70%, val 15% and cal 15%), saved as `models/price_model_<version>.joblib`.
-The table below was produced before this change, when the lowest test MAE was used.
+The table below shows test-set scores from the earlier run, which picked the champion by
+lowest test MAE. The current code picks it on validation MAE, so re-running
+`make train-real` can change the numbers slightly.
 
 Results on the held-out test set (11,701 listings, seed 42). Coverage is the share of true
 prices inside the 10th-90th percentile range; a well-calibrated range gives about 80%.
@@ -299,7 +301,7 @@ models/         trained artifacts (git-ignored)
 
 ## Credits
 
-- Dataset A: _Pakistan Used Cars Dataset_, Kaggle (muhamedumarjamil), https://www.kaggle.com/datasets/muhamedumarjamil/pakistan-used-cars-dataset. Licence: check the "License" field on the Kaggle page and write it here.
-- Dataset B: _Pakistan's Largest PakWheels Automobiles Listings_, Kaggle (asimzahid), https://www.kaggle.com/datasets/asimzahid/pakistans-largest-pakwheels-automobiles-listings. Licence: check the Kaggle page and write it here.
+- Dataset A: _Pakistan Used Cars Dataset_, Kaggle (muhamedumarjamil), https://www.kaggle.com/datasets/muhamedumarjamil/pakistan-used-cars-dataset. Licence: CC BY-NC 4.0 (Attribution-NonCommercial 4.0 International).
+- Dataset B: _Pakistan's Largest PakWheels Automobiles Listings_, Kaggle (asimzahid), https://www.kaggle.com/datasets/asimzahid/pakistans-largest-pakwheels-automobiles-listings. Licence: CC BY-NC-SA 4.0. Both licences are non-commercial, so this project is for coursework only. The raw data is not committed to this repository.
 - Libraries: FastAPI, scikit-learn, MLflow, LightGBM, pandas (cite any template or code you reuse).
 - AI assistance: see `AI_USAGE.md`.

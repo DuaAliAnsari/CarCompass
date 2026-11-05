@@ -23,8 +23,8 @@
 | Dataset B (`usedCars.json`): schema mapping, B-only and A+B preparation, B sample weight | Fatima Arif | Sagar Lekhraj | `feat/dataset-b` |
 | README and Makefile update for the real PakWheels data | Fatima Arif | Sagar Lekhraj | `docs/readme-contribution` |
 | Merged-dataset experiment with a 2022 scrape (not merged: the scrape is not in our data) | Dua Ali Ansari | Sagar Lekhraj | `feat/two-datasets` |
-| Multi-model setup: shared A+B dataset with cross-source dedup, five model families, validation-based champions with a size limit, routing manifest and router, `/models`, `/options`, assembly feature, test page at `/`, Dataset B download, tests | Sagar Lekhraj | _teammate who approves the PR_ | `feat/multi-model` |
-| Final tag `v1.0-milestone1` | Sagar Lekhraj | | tag on `main` |
+| Multi-model setup: shared A+B dataset with cross-source dedup, five model families, validation-based champions with a size limit, routing manifest and router, `/models`, `/options`, assembly feature, test page at `/`, Dataset B download, tests | Sagar Lekhraj | Dua Ali Ansari | `feat/multi-model` |
+| Final tag `v1.0-milestone1` | Sagar Lekhraj | Dua Ali Ansari | tag on `main` |
 
 ## Milestone 2: member-to-task table
 
@@ -42,8 +42,8 @@
 
 ## Per-member reflections (2-3 lines each, add at every milestone)
 
-**Dua Ali Ansari:** _what I built and what I learned_
+**Dua Ali Ansari:** I set up the repository, CI, Dockerfile and the FastAPI service with its tests, and ran the real Dataset A training with JSON request logs. I learned how much a reproducible pipeline depends on separating data preparation from training and on logging every run to MLflow.
 
-**Sagar Lekhraj:** _what I built and what I learned_
+**Sagar Lekhraj:** I built the multi-model setup: the shared A+B dataset with cross-source dedup, five model families, validation-based champion selection with a size limit, and the router behind `/predict`. I also wrote the dataset sections of the README and reviewed the other branches. I learned why champions must be chosen on validation rows and not on the test set.
 
-**Fatima Arif:** _what I built and what I learned_
+**Fatima Arif:** I built the data preparation and training code, then added Dataset B (PakWheels) with its own schema mapping and sample weight. I learned that dirty values such as `27.4 lacs` need explicit parsing and range checks before any model is worth comparing.
