@@ -1,7 +1,8 @@
-"""FastAPI service: /health, /metrics, /models, /predict, /explain (docs at /docs).
+"""FastAPI service: /health, /metrics, /models, /options, /predict, /explain.
 
 Each request is answered by the price model the router picks for the car's year
-(see src/model_router.py and models/manifest.json).
+(see src/model_router.py and models/manifest.json). A small test page is served at
+/ (src/static/index.html) and the API docs at /docs.
 
 Run:  uvicorn src.app:app --reload
 """
@@ -11,13 +12,17 @@ import json
 import logging
 import os
 import time
+from pathlib import Path
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field
 
 from src.model_router import ModelRouter
-from src.model_utils import max_year, predict_price
+from src.model_utils import CATEGORICAL, max_year, predict_price
+
+STATIC_DIR = Path(__file__).parent / "static"
 
 logger = logging.getLogger("carcompass")
 if not logger.handlers:
@@ -47,6 +52,25 @@ def default_version(router) -> str | None:
     if router is None:
         return None
     return router.models[router.default_name].meta["version"]
+
+
+def known_values(router) -> dict:
+    """Categories the default model's one-hot encoder learned, plus models per make."""
+    art = router.models[router.default_name]
+    encoder = (art.pipeline.named_steps["pre"].named_transformers_["cat"]
+               .named_steps["onehot"])
+    columns = art.pipeline.named_steps["pre"].transformers_[1][2]
+    values = {
+        col: sorted(str(v) for v in cats if str(v) != "unknown")
+        for col, cats in zip(columns, encoder.categories_)
+        if col in CATEGORICAL
+    }
+    by_make: dict = {}
+    for key in art.meta["defaults"]["by_model"]:
+        make, model = key.split("|", 1)
+        by_make.setdefault(make, []).append(model)
+    values["models_by_make"] = {m: sorted(v) for m, v in sorted(by_make.items())}
+    return values
 
 
 def create_app(model_dir: str | None = None) -> FastAPI:
@@ -122,9 +146,18 @@ def create_app(model_dir: str | None = None) -> FastAPI:
             "model_version": default_version(app.state.router),
         }
 
+    @app.get("/", include_in_schema=False)
+    def home():
+        return FileResponse(STATIC_DIR / "index.html")
+
     @app.get("/models")
     def models():
         return get_router().describe()
+
+    @app.get("/options")
+    def options():
+        """Values the default model was trained on, for form dropdowns."""
+        return known_values(get_router())
 
     @app.post("/predict")
     def predict(req: PredictRequest):
