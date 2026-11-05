@@ -15,9 +15,9 @@ import numpy as np
 import pandas as pd
 
 REQUIRED_INPUT = ["make", "model", "year", "mileage"]
-OPTIONAL = ["engine_cc", "transmission", "fuel", "city"]
+OPTIONAL = ["engine_cc", "transmission", "fuel", "city", "assembly"]
 NUMERIC = ["year", "mileage", "engine_cc"]
-CATEGORICAL = ["make", "model", "transmission", "fuel", "city"]
+CATEGORICAL = ["make", "model", "transmission", "fuel", "city", "assembly"]
 FEATURES = NUMERIC + CATEGORICAL
 
 MODEL_FILE = "price_model.joblib"

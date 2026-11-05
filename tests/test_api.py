@@ -1,3 +1,6 @@
+import json
+import logging
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -53,3 +56,25 @@ def test_predict_returns_503_without_model(tmp_path):
     client = TestClient(create_app(str(tmp_path)))
     assert client.get("/health").json()["model_loaded"] is False
     assert client.post("/predict", json=CAR).status_code == 503
+
+
+def test_requests_are_logged_as_json(client, caplog):
+    with caplog.at_level(logging.INFO, logger="carcompass"):
+        client.post("/predict", json=CAR)
+    entry = json.loads(caplog.records[-1].getMessage())
+    assert entry["path"] == "/predict" and entry["status"] == 200
+    assert entry["latency_ms"] >= 0 and entry["model_version"]
+
+
+def test_home_page_is_served(client):
+    res = client.get("/")
+    assert res.status_code == 200
+    assert "text/html" in res.headers["content-type"]
+    assert "Milestone 1 checks" in res.text
+
+
+def test_options_lists_known_values(client):
+    body = client.get("/options").json()
+    assert "Corolla" in body["models_by_make"]["Toyota"]
+    assert "Toyota" in body["make"]
+    assert "unknown" not in body["make"]

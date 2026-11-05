@@ -1,0 +1,14 @@
+# How the API picks a price model. src/train_families.py applies these rules on the
+# VALIDATION rows and writes the result to models/manifest.json; the API only reads
+# the manifest.
+
+# The default model is the candidate with the lowest validation MAE on all
+# validation rows (A and B). It answers every request no specialist takes.
+default_candidates: [price_global_ab, price_dataset_a, price_dataset_b]
+
+# A specialist is switched on only if, on the validation rows of its own years, its
+# MAE is at least min_gain (as a share) lower than the default model's MAE.
+min_gain: 0.01
+specialists:
+  price_new_cars_2010plus: {year_min: 2010}
+  price_old_cars_pre2010: {year_max: 2009}

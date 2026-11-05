@@ -1,5 +1,6 @@
 # Maps raw dataset column names (left) to the standard names the pipeline uses (right).
-# Standard names: make, model, year, mileage, engine_cc, transmission, fuel, city, price
+# Standard names: make, model, year, mileage, engine_cc, transmission, fuel, city,
+# assembly, price
 # "nam" is the combined listing name, e.g. "Suzuki Alto VXL AGS 2022"; prepare_data
 # splits it into make and model. "Province" is the only location column in the
 # PakWheels dataset. Names that a file does not have are simply ignored.
@@ -13,3 +14,4 @@ column_map:
   Transmission: transmission
   Province: city
   "Engine Capacity": engine_cc
+  Assembly: assembly         # Local or Imported

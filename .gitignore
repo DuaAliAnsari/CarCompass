@@ -16,3 +16,8 @@ models/*.json
 mlflow.db
 notebooks/inspect_out.txt
 notebooks/inspect_raw.py
+data/processed_b/
+data/comparison/
+models_b/
+data/processed_multi/
+train_multi.log

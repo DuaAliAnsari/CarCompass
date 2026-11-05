@@ -212,14 +212,21 @@ def apply_quality_rules(df: pd.DataFrame, min_model_count: int = 0,
 def add_listing_group(df: pd.DataFrame) -> pd.DataFrame:
     """Give every row a listing_group id: rows describing the same car share one id.
 
-    The split keeps each group on one side, so near-copies of a listing cannot
-    appear in both train and test.
+    The split keeps each group on one side, so near-copies of a listing
+    cannot appear in both train and test.
     """
     df = df.copy()
-    keys = df[GROUP_COLS].astype(str).agg("|".join, axis=1)
+
+    keys = df[GROUP_COLS].apply(
+        lambda row: "|".join(str(value) for value in row),
+        axis=1,
+    )
+
+    # Generate a consistent ID for each listing group.
     df["listing_group"] = keys.map(
         lambda k: hashlib.md5(k.encode("utf-8")).hexdigest()[:10]
     )
+
     return df
 
 
@@ -238,6 +245,16 @@ def check_schema(df: pd.DataFrame) -> str:
             return "skipped (pandera not installed)"
 
     low_year, high_year = RANGES["year"]
+
+    def optional_text():
+        # No fixed dtype: a column that is empty in a file (e.g. no assembly in the
+        # sample) is float64 in newer pandas. Every value that is present must be text.
+        return pa.Column(
+            nullable=True,
+            checks=pa.Check(lambda s: s.dropna().map(type).eq(str).all(),
+                            error="values must be text"),
+        )
+
     schema = pa.DataFrameSchema(
         {
             "make": pa.Column(str, nullable=False),
@@ -248,9 +265,10 @@ def check_schema(df: pd.DataFrame) -> str:
             "engine_cc": pa.Column(
                 float, pa.Check.in_range(*RANGES["engine_cc"]), nullable=True
             ),
-            "transmission": pa.Column(str, nullable=True),
-            "fuel": pa.Column(str, nullable=True),
-            "city": pa.Column(str, nullable=True),
+            "transmission": optional_text(),
+            "fuel": optional_text(),
+            "city": optional_text(),
+            "assembly": optional_text(),
             "listing_group": pa.Column(str, nullable=False),
         },
         strict=True,
