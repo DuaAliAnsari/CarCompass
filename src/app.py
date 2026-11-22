@@ -1,8 +1,8 @@
 """FastAPI service: /health, /metrics, /models, /options, /predict, /explain.
 
 Each request is answered by the price model the router picks for the car's year
-(see src/model_router.py and models/manifest.json). A small test page is served at
-/ (src/static/index.html) and the API docs at /docs.
+(see src/model_router.py and models/manifest.json). The site in src/static/ is
+served at /, /experiments, /system, /pipeline and /demo. API docs are at /docs.
 
 Run:  uvicorn src.app:app --reload
 """
@@ -17,6 +17,7 @@ from typing import Optional
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from src.model_router import ModelRouter
@@ -146,9 +147,30 @@ def create_app(model_dir: str | None = None) -> FastAPI:
             "model_version": default_version(app.state.router),
         }
 
+    def page(name: str) -> FileResponse:
+        return FileResponse(STATIC_DIR / name)
+
     @app.get("/", include_in_schema=False)
     def home():
-        return FileResponse(STATIC_DIR / "index.html")
+        return page("index.html")
+
+    @app.get("/experiments", include_in_schema=False)
+    def experiments_page():
+        return page("experiments.html")
+
+    @app.get("/system", include_in_schema=False)
+    def system_page():
+        return page("system.html")
+
+    @app.get("/pipeline", include_in_schema=False)
+    def pipeline_page():
+        return page("pipeline.html")
+
+    @app.get("/demo", include_in_schema=False)
+    def demo_page():
+        return page("demo.html")
+
+    app.mount("/assets", StaticFiles(directory=STATIC_DIR), name="assets")
 
     @app.get("/models")
     def models():

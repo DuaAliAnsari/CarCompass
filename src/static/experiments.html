@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Experiments · CarCompass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head">
+    <p class="eyebrow">Validation chooses, the test set only reports</p>
+    <h1>What we trained, and what we kept.</h1>
+    <p class="lede">Five families, twelve configurations each. Champions are the lowest validation MAE among models of at most 100 MB.</p>
+  </header>
+
+  <section class="stat-grid" aria-label="Experiment headlines">
+    <article class="stat-card"><span>Served test MAE</span><b>360,636</b><span>PKR, routed system</span></article>
+    <article class="stat-card"><span>2010+ specialist</span><b>+1.4%</b><span>Better than the default</span></article>
+    <article class="stat-card"><span>Champion size</span><b>12.6 MB</b><span>Against a 763 MB forest</span></article>
+    <article class="stat-card"><span>Serve limit</span><b>100 MB</b><span>Larger models stay in MLflow</span></article>
+  </section>
+
+  <section class="stack">
+    <article class="panel">
+      <p class="eyebrow">Same 19,525 test rows · MAE in PKR</p>
+      <h2>The served system is the one that wins</h2>
+      <div class="bars">
+        <div class="bar-row"><span>Served system</span><div class="track"><span style="width:57%"></span></div><b>360,636</b></div>
+        <div class="bar-row"><span>Global A+B</span><div class="track"><span style="width:58%"></span></div><b>370,313</b></div>
+        <div class="bar-row"><span>Dataset A only</span><div class="track"><span style="width:65%"></span></div><b>413,223</b></div>
+        <div class="bar-row"><span>Dataset B only</span><div class="track"><span style="width:100%"></span></div><b>636,365</b></div>
+      </div>
+      <p class="note">Shorter is better. The served system routes 2010+ cars to their specialist.</p>
+    </article>
+
+    <article class="panel">
+      <p class="eyebrow">Global family · validation MAE</p>
+      <h2>Trees beat a straight line. Size decides who is served.</h2>
+      <div class="bars">
+        <div class="bar-row"><span>Median baseline</span><div class="track"><span style="width:100%"></span></div><b>2.30M</b></div>
+        <div class="bar-row"><span>Best ridge</span><div class="track"><span style="width:50%"></span></div><b>1.15M</b></div>
+        <div class="bar-row"><span>Random forest, 763 MB</span><div class="track"><span style="width:14%"></span></div><b>324,644</b></div>
+        <div class="bar-row"><span>LightGBM, 12.6 MB</span><div class="track"><span style="width:14.5%"></span></div><b>333,743</b></div>
+      </div>
+      <p class="note">The forest is a little more accurate and too large for a small host. LightGBM is the champion.</p>
+    </article>
+
+    <article class="panel">
+      <p class="eyebrow">Routing on validation rows</p>
+      <h2>One specialist is on. The other is not.</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Specialist</th><th class="num">Its val MAE</th><th class="num">Default on the same rows</th><th class="num">Gain</th><th>Served</th></tr>
+          <tr class="is-champion"><td>2010 and newer</td><td class="num">376,902</td><td class="num">382,254</td><td class="num">+1.4%</td><td>Yes</td></tr>
+          <tr><td>Before 2010</td><td class="num">240,116</td><td class="num">237,237</td><td class="num">−1.2%</td><td>No</td></tr>
+        </table>
+      </div>
+    </article>
+
+    <article class="panel">
+      <p class="eyebrow">Fair comparison</p>
+      <h2>Every model on the same test rows</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Model</th><th class="num">All test</th><th class="num">A rows</th><th class="num">B rows</th><th class="num">Pre-2010</th><th class="num">2010+</th></tr>
+          <tr><td>Global A+B</td><td class="num">370,313</td><td class="num">389,722</td><td class="num">342,167</td><td class="num">257,490</td><td class="num">428,281</td></tr>
+          <tr><td>Dataset A only</td><td class="num">413,223</td><td class="num">387,479</td><td class="num">450,554</td><td class="num">271,935</td><td class="num">485,816</td></tr>
+          <tr><td>Dataset B only</td><td class="num">636,365</td><td class="num">855,102</td><td class="num">319,170</td><td class="num">274,047</td><td class="num">822,524</td></tr>
+          <tr><td>2010 and newer</td><td class="num">695,380</td><td class="num">643,021</td><td class="num">771,307</td><td class="num">1,243,740</td><td class="num">413,633</td></tr>
+          <tr><td>Before 2010</td><td class="num">1,601,675</td><td class="num">1,901,993</td><td class="num">1,166,177</td><td class="num">263,931</td><td class="num">2,289,008</td></tr>
+          <tr class="is-served"><td>Served system</td><td class="num">360,636</td><td class="num">376,881</td><td class="num">337,079</td><td class="num">257,490</td><td class="num">413,633</td></tr>
+        </table>
+      </div>
+    </article>
+
+    <article class="panel">
+      <p class="eyebrow">price_global_ab · all 12 runs · validation</p>
+      <h2>The run list</h2>
+      <div class="table-wrap">
+        <table>
+          <tr><th>Run</th><th class="num">Val MAE</th><th class="num">Val MdAPE</th><th>Note</th></tr>
+          <tr><td>baseline_median</td><td class="num">2,304,820</td><td class="num">48.7%</td><td></td></tr>
+          <tr><td>baseline_mean</td><td class="num">2,300,997</td><td class="num">48.2%</td><td></td></tr>
+          <tr><td>baseline_q40</td><td class="num">2,316,177</td><td class="num">49.8%</td><td></td></tr>
+          <tr><td>ridge_alpha_01</td><td class="num">1,145,734</td><td class="num">22.0%</td><td></td></tr>
+          <tr><td>ridge_alpha_1</td><td class="num">1,145,734</td><td class="num">22.0%</td><td></td></tr>
+          <tr><td>ridge_alpha_10</td><td class="num">1,145,733</td><td class="num">22.0%</td><td></td></tr>
+          <tr><td>rf_100_depth12</td><td class="num">399,073</td><td class="num">7.4%</td><td></td></tr>
+          <tr><td>rf_200_depth16</td><td class="num">340,613</td><td class="num">6.4%</td><td></td></tr>
+          <tr><td>rf_300_depth20</td><td class="num">324,644</td><td class="num">6.2%</td><td>763 MB, not served</td></tr>
+          <tr><td>lgbm_300</td><td class="num">381,185</td><td class="num">7.1%</td><td></td></tr>
+          <tr><td>lgbm_600_lr03</td><td class="num">352,052</td><td class="num">6.5%</td><td></td></tr>
+          <tr class="is-champion"><td>lgbm_900_lr02</td><td class="num">333,743</td><td class="num">6.3%</td><td>Champion, 12.6 MB</td></tr>
+        </table>
+      </div>
+    </article>
+  </section>
+
+  <footer class="foot">
+    <p>These figures are from the recorded A+B run.</p>
+    <p><a href="/pipeline">How the numbers were produced</a></p>
+  </footer>
+</main>
+<script src="/assets/site.js"></script>
+</body>
+</html>

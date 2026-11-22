@@ -274,6 +274,8 @@ so the residual method was kept.
 | `GET /metrics` | request count, average latency, errors |
 | `GET /docs` | auto-generated API docs |
 
+The same process serves the site: `/` estimate, `/experiments` the recorded comparison, `/system` the loaded models, `/pipeline` the system design, `/demo` the Milestone 1 checks. The design notes are in `design/SYSTEM_DESIGN.md` and `design/UI.md`.
+
 Optional inputs (`engine_cc`, `transmission`, `fuel`, `city`, `assembly`) narrow the range. If they are
 missing, typical values for that make/model are used, flagged in `assumed_fields`, and the range widens.
 
