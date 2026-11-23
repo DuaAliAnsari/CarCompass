@@ -11,7 +11,8 @@ COPY requirements-serve.txt .
 RUN pip install --no-cache-dir -r requirements-serve.txt
 
 COPY src/ src/
-COPY models/ models/
+# Only the served models (scripts/export_models.py), not everything in models/
+COPY deploy/models/ models/
 
 # Fail the image build if the served artifacts are missing (common when
 # models/ was empty because *.joblib was gitignored on the host).

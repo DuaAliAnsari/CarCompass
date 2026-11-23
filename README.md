@@ -292,14 +292,18 @@ Train the complete A+B model set first so the image contains the routed model ar
 and `models/manifest.json`:
 
 ```bash
-make train-multi
 make docker-build TAG=v1.0
-make docker-run TAG=v1.0   # http://localhost:8000
+make docker-run TAG=v1.0     # http://localhost:8000
+make docker-smoke TAG=v1.0   # build, start, check /health + /predict + /explain, stop
 ```
 
-`models/*.joblib` and the generated manifest are local artifacts and are not committed.
-Before building the image for deployment, make sure the required model artifacts are
-present in `models/` (see `RUNBOOK.md`).
+The image contains the code and the served models from `deploy/models/` (about 25 MB,
+committed). `models/` holds every trained family and is mostly git-ignored; after
+retraining, `make export-models` copies the served ones into `deploy/models/` and
+checks they load. The serving libraries in `requirements-serve.txt` are pinned to the
+versions the models were trained with. CI builds the image on every push and runs the
+same smoke test; on a `v*` tag it publishes `ghcr.io/duaaliansari/carcompass:<tag>`.
+Release, deployment and rollback steps: `RUNBOOK.md`.
 
 ## Project status
 
