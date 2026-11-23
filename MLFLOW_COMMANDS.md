@@ -19,6 +19,7 @@ unless marked _(not run)_. The numbers shown are what our local `mlflow.db` cont
 | **Extra runs (A only)** | `src/train.py` | `era_*` runs (pre-2010 vs 2010+), `era_vs_global_summary`, `lgbm_quantile_10_90` (quantile check); tag `model_scope` tells them apart |
 | **Five model families (A+B)** | `src/train_families.py` → experiments `carcompass/<family>` | 12 runs per family on one shared split: `price_global_ab`, `price_dataset_a`, `price_dataset_b`, `price_new_cars_2010plus`, `price_old_cars_pre2010` |
 | **Ablation** | `train_families.py` `assembly_ablation()` | Run `ablation_no_assembly_lgbm_900_lr02` (tag `ablation`) in `carcompass/price_global_ab`: same champion config without the Assembly input |
+| **Weight-space programming** | `src/train_wsp.py` → experiment `carcompass/wsp` | MLP base + era specialists + soup / task arithmetic / TIES-lite; report in `reports/wsp_comparison.md` |
 | **Champion selection** | lowest **validation** MAE among models ≤ 100 MB | Tag `champion=true` on the winning run; test metrics logged onto that run only |
 | **Model Registry** | `register()` in both training scripts | Model logged with `mlflow.sklearn.log_model`, registered, aliases set |
 | **Reproducibility** | every run | Param `data_hash`, tag `git_commit`, params of every model setting |
@@ -140,6 +141,7 @@ Serving a registered model directly with MLflow _(not run)_:
 | Train all 5 families (60 runs + ablation, registers, writes `models/manifest.json`) | `.venv\Scripts\python -m src.train_families` | `train-multi` | **1–2 h, high RAM** |
 | Continue after a crash | `.venv\Scripts\python -m src.train_families --resume` | none | |
 | Train without touching the registry | `... -m src.train_families --no-register --no-ablation` | none | |
+| Weight-space / beat attempt (LGBM soups + distilled MLP WSP → `reports/wsp_comparison.md`) | `.venv\Scripts\python -m src.train_wsp_beat` | `train-wsp` | ~10–15 min |
 | Prepare Dataset A only (+ log data version to MLflow) | `.venv\Scripts\python -m src.prepare_data --input data/raw/pakistan_used_cars.csv --min-model-count 5 --min-city-count 20 --check-low-mileage --log-mlflow --tracking-uri sqlite:///mlflow.db` | `prepare-real` | ~1 min |
 | Train Dataset A only (12 runs + era + quantile, registers `carcompass-price@production`) | `$env:MLFLOW_TRACKING_URI="sqlite:///mlflow.db"; .venv\Scripts\python -m src.train` | `train-real` | long (big RFs) |
 

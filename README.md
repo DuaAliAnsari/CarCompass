@@ -317,11 +317,11 @@ present in `models/` (see `RUNBOOK.md`).
 
 ```
 src/            prepare_data.py, prepare_multi.py, train.py, train_families.py,
-                model_router.py, model_utils.py, app.py
+                train_wsp.py, model_router.py, model_utils.py, app.py
 tests/          pytest files
 configs/        schema.yaml / schema_b.yaml (column mapping), train.yaml (experiments),
                 model_families.yaml (families), routing.yaml (routing rules)
-reports/        data quality reports, model_comparison.md
+reports/        data quality reports, model_comparison.md, wsp_comparison.md
 data/sample/    small synthetic sample only
 models/         trained artifacts (git-ignored)
 .github/        CI workflow, PR template

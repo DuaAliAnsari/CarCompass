@@ -4,7 +4,7 @@ TAG := dev
 RAW_A := data/raw/pakistan_used_cars.csv
 RAW_B := data/raw/usedCars.json
 
-.PHONY: setup prepare train prepare-real train-real prepare-multi train-multi run test lint format mlflow-ui docker-build docker-run all
+.PHONY: setup prepare train prepare-real train-real prepare-multi train-multi train-wsp run test lint format mlflow-ui docker-build docker-run all
 
 setup:
 	python3.11 -m venv .venv || python3 -m venv .venv
@@ -34,6 +34,11 @@ prepare-multi:
 
 train-multi: prepare-multi
 	$(PY) -m src.train_families
+
+# Weight-space programming / beat attempt vs LightGBM champion.
+# Writes reports/wsp_comparison.md and models/wsp_best.joblib.
+train-wsp:
+	$(PY) -m src.train_wsp_beat
 
 run:
 	$(PY) -m uvicorn src.app:app --reload --port 8000

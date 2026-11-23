@@ -98,10 +98,32 @@
         </table>
       </div>
     </article>
+
+    <article class="panel">
+      <p class="eyebrow">Weight-space programming v3 · beat attempt · MLflow <code>carcompass/wsp</code></p>
+      <h2>It beats the global LightGBM champion.</h2>
+      <div class="bars">
+        <div class="bar-row"><span>Best program (blend)</span><div class="track"><span style="width:97%"></span></div><b>361,474</b></div>
+        <div class="bar-row"><span>LGBM greedy soup</span><div class="track"><span style="width:99%"></span></div><b>365,297</b></div>
+        <div class="bar-row"><span>LightGBM global champion</span><div class="track"><span style="width:100%"></span></div><b>370,313</b></div>
+        <div class="bar-row"><span>WSP MLP soup alone</span><div class="track"><span style="width:100%"></span></div><b>402,585</b></div>
+      </div>
+      <div class="table-wrap" style="margin-top:18px">
+        <table>
+          <tr><th>Program</th><th class="num">Val MAE</th><th class="num">Test MAE</th><th>Note</th></tr>
+          <tr class="is-champion"><td>blend_3way</td><td class="num">325,025</td><td class="num">361,474</td><td>0.8·LGBM soup + 0.2·WSP</td></tr>
+          <tr><td>lgbm_soup_greedy</td><td class="num">328,755</td><td class="num">365,297</td><td>Greedy LGBM seed soup</td></tr>
+          <tr><td>lgbm_soup_uniform</td><td class="num">329,774</td><td class="num">365,486</td><td>Uniform LGBM soup</td></tr>
+          <tr><td>price_global_ab</td><td class="num">333,743</td><td class="num">370,313</td><td>Previous global champion</td></tr>
+          <tr><td>wsp_soup_greedy</td><td class="num">361,827</td><td class="num">402,585</td><td>Distilled MLP weight soup</td></tr>
+        </table>
+      </div>
+      <p class="note">v3: bagged LightGBM variants → prediction soup, plus a distilled MLP with WSP. Best blend beats the global champion by ~8.8k PKR on test. Full write-up: <code>reports/wsp_comparison.md</code>.</p>
+    </article>
   </section>
 
   <footer class="foot">
-    <p>These figures are from the recorded A+B run.</p>
+    <p>These figures are from the recorded A+B run, plus the WSP experiment.</p>
     <p><a href="/pipeline">How the numbers were produced</a></p>
   </footer>
 </main>
