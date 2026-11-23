@@ -184,7 +184,9 @@ async function loadOptions() {
   if (!health || health.status !== 200 || !health.data.model_loaded) {
     status.className = "status bad";
     status.textContent = health ? "API up, no model loaded" : "API not reachable";
-    $("form-error").textContent = "The form fills in once a model is loaded.";
+    $("form-error").textContent = health && health.data && !health.data.model_loaded
+      ? "Server is running, but models/ was empty on this host. Redeploy with the served .joblib files."
+      : "The form fills in once a model is loaded.";
     return;
   }
   status.className = "status ok";

@@ -13,6 +13,10 @@ RUN pip install --no-cache-dir -r requirements-serve.txt
 COPY src/ src/
 COPY models/ models/
 
+# Fail the image build if the served artifacts are missing (common when
+# models/ was empty because *.joblib was gitignored on the host).
+RUN python -c "from pathlib import Path; import sys; need=['models/manifest.json','models/price_global_ab.joblib','models/price_global_ab.json','models/price_new_cars_2010plus.joblib','models/price_new_cars_2010plus.json']; missing=[p for p in need if not Path(p).is_file()]; sys.exit('Docker build missing served models: ' + ', '.join(missing)) if missing else print('Served models present')"
+
 # Set at build time so /health and /metrics report the image tag: --build-arg APP_VERSION=v2.0
 ARG APP_VERSION=dev
 ENV APP_VERSION=${APP_VERSION}

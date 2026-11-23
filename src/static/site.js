@@ -40,6 +40,7 @@ fetch("/health")
     } else {
       el.className = "status bad";
       el.textContent = "No model loaded";
+      el.title = "API started, but models/manifest.json or *.joblib was missing on this host";
     }
   })
   .catch(() => {
