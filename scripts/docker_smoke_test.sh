@@ -45,7 +45,8 @@ status=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$URL/predict" \
   -H "Content-Type: application/json" -d '{"make":"Toyota"}')
 [ "$status" = "422" ] || fail "bad input gave $status, expected 422"
 
-curl -fs "$URL/" | grep -q "Milestone 1 checks" || fail "test page at / not served"
+curl -fs "$URL/" | grep -qi "CarCompass" || fail "home page at / not served"
+curl -fs "$URL/demo" | grep -qi "Milestone" || fail "demo page at /demo not served"
 curl -fs "$URL/metrics" | grep -q '"request_count"' || fail "/metrics not working"
 
-echo "PASS: $IMAGE serves a model; /health, /predict, /explain, /, /metrics OK"
+echo "PASS: $IMAGE serves a model; /health, /predict, /explain, /, /demo, /metrics OK"
