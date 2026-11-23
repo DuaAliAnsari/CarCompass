@@ -314,8 +314,12 @@ Release, deployment and rollback steps: `RUNBOOK.md`.
 - [x] **M1 serving:** FastAPI prediction/explanation endpoints and year-based model routing
 - [x] **M1 quality and reproducibility:** automated tests, linting, CI workflow,
       data/Git metadata in experiment tracking, and structured request logging
-- [ ] **M2:** complete deployment evidence, live URL/cURL examples, and operational
-      monitoring/runbook validation (see `RUNBOOK.md`)
+- [x] **M2 Docker + CI:** Dockerfile copies `deploy/models/`, healthcheck on `/health`,
+      CI lint / pytest / Docker smoke (model loaded + `/predict` + `/explain`)
+- [x] **M2 runbook:** redeploy and rollback steps in `RUNBOOK.md`
+- [ ] **M2 live host:** redeploy Render (or Railway) from current `main`, then write the
+      live URL and example cURL into the README and `RUNBOOK.md`
+- [ ] **M2 tag:** create and push `v2.0-milestone2` after the live URL is confirmed
 
 ## Repository layout
 

@@ -3,6 +3,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .ruff_cache/
+.coverage
+tmp_build_log.txt
 .env
 mlruns/
 mlartifacts/
