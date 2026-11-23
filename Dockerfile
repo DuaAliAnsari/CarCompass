@@ -11,7 +11,8 @@ COPY requirements-serve.txt .
 RUN pip install --no-cache-dir -r requirements-serve.txt
 
 COPY src/ src/
-COPY models/ models/
+# Only the served models (scripts/export_models.py), not everything in models/
+COPY deploy/models/ models/
 
 # Set at build time so /health and /metrics report the image tag: --build-arg APP_VERSION=v2.0
 ARG APP_VERSION=dev

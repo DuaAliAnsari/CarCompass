@@ -1,0 +1,5 @@
+# Model files are binary: never convert line endings in them.
+*.joblib binary
+*.pkl binary
+# Shell scripts run in Linux containers and CI: always LF.
+*.sh text eol=lf

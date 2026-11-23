@@ -1,0 +1,152 @@
+{
+  "version": "20261105-132153",
+  "data_hash": "2a4b7626af05",
+  "git_commit": "1ffc083ce104f1e86063d202506e4e714a84eda2",
+  "default": "price_global_ab",
+  "served": [
+    "price_global_ab",
+    "price_new_cars_2010plus"
+  ],
+  "routing": {
+    "default": "price_global_ab",
+    "default_candidates_val_mae_pkr": {
+      "price_global_ab": 333743.26806158695,
+      "price_dataset_a": 379526.9902491366,
+      "price_dataset_b": 560441.4494282072
+    },
+    "min_gain": 0.01,
+    "specialists": {
+      "price_new_cars_2010plus": {
+        "year_min": 2010,
+        "val_mae_pkr": 376902.2674265549,
+        "default_val_mae_pkr_same_rows": 382254.3389512473,
+        "val_gain": 0.014001336229109373,
+        "enabled": true
+      },
+      "price_old_cars_pre2010": {
+        "year_max": 2009,
+        "val_mae_pkr": 240116.38461308958,
+        "default_val_mae_pkr_same_rows": 237237.39765623456,
+        "val_gain": -0.012135468460275245,
+        "enabled": false
+      }
+    }
+  },
+  "families": {
+    "price_global_ab": {
+      "file": "price_global_ab.joblib",
+      "meta": "price_global_ab.json",
+      "role": "default_candidate",
+      "run_name": "lgbm_900_lr02",
+      "version": "price_global_ab@20261105-131138",
+      "val_mae_pkr": 333743.26806158695,
+      "test_mae_pkr": 370312.5623147926,
+      "registered_model": {
+        "name": "carcompass-price-global-ab",
+        "version": "2"
+      }
+    },
+    "price_dataset_a": {
+      "file": "price_dataset_a.joblib",
+      "meta": "price_dataset_a.json",
+      "role": "default_candidate",
+      "run_name": "lgbm_900_lr02",
+      "version": "price_dataset_a@20261105-131211",
+      "val_mae_pkr": 347816.7700501111,
+      "test_mae_pkr": 387478.95515030896,
+      "registered_model": {
+        "name": "carcompass-price-dataset-a",
+        "version": "2"
+      }
+    },
+    "price_dataset_b": {
+      "file": "price_dataset_b.joblib",
+      "meta": "price_dataset_b.json",
+      "role": "default_candidate",
+      "run_name": "lgbm_900_lr02",
+      "version": "price_dataset_b@20261105-131241",
+      "val_mae_pkr": 292035.9432765197,
+      "test_mae_pkr": 319170.3165831551,
+      "registered_model": {
+        "name": "carcompass-price-dataset-b",
+        "version": "2"
+      }
+    },
+    "price_new_cars_2010plus": {
+      "file": "price_new_cars_2010plus.joblib",
+      "meta": "price_new_cars_2010plus.json",
+      "role": "specialist",
+      "run_name": "lgbm_900_lr02",
+      "version": "price_new_cars_2010plus@20261105-131739",
+      "val_mae_pkr": 376902.2674265549,
+      "test_mae_pkr": 413632.57198411453,
+      "registered_model": {
+        "name": "carcompass-price-new-cars-2010plus",
+        "version": "1"
+      }
+    },
+    "price_old_cars_pre2010": {
+      "file": "price_old_cars_pre2010.joblib",
+      "meta": "price_old_cars_pre2010.json",
+      "role": "specialist",
+      "run_name": "lgbm_600_lr03",
+      "version": "price_old_cars_pre2010@20261105-132139",
+      "val_mae_pkr": 240116.38461308958,
+      "test_mae_pkr": 263931.42615325924,
+      "registered_model": {
+        "name": "carcompass-price-old-cars-pre2010",
+        "version": "1"
+      }
+    }
+  },
+  "test_comparison_mae_pkr": {
+    "price_global_ab": {
+      "all": 370312.5623147926,
+      "A": 389721.52080094843,
+      "B": 342167.25873015006,
+      "pre2010": 257490.43927306568,
+      "2010plus": 428280.63561278634
+    },
+    "price_dataset_a": {
+      "all": 413222.71645063517,
+      "A": 387478.95515030896,
+      "B": 450554.2392999976,
+      "pre2010": 271935.15349548956,
+      "2010plus": 485816.3495490806
+    },
+    "price_dataset_b": {
+      "all": 636365.122735184,
+      "A": 855102.1779641142,
+      "B": 319170.3165831551,
+      "pre2010": 274047.385413162,
+      "2010plus": 822524.1896628503
+    },
+    "price_new_cars_2010plus": {
+      "all": 695380.1917397315,
+      "A": 643021.0882552392,
+      "B": 771307.1336228779,
+      "pre2010": 1243740.052854557,
+      "2010plus": 413632.57198411453
+    },
+    "price_old_cars_pre2010": {
+      "all": 1601674.5504224915,
+      "A": 1901992.9083111915,
+      "B": 1166177.1299479248,
+      "pre2010": 263931.42615325924,
+      "2010plus": 2289007.7559219645
+    },
+    "served_system": {
+      "all": 360636.21277919156,
+      "A": 376881.4524786541,
+      "B": 337078.6785883283,
+      "pre2010": 257490.43927306568,
+      "2010plus": 413632.57198411453
+    }
+  },
+  "assembly_check": {
+    "run_name": "lgbm_900_lr02",
+    "val_mae_with_assembly": 333743.26806158695,
+    "val_mae_without_assembly": 334934.82866201695,
+    "assembly_helps": true
+  }
+}
