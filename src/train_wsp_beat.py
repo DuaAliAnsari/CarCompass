@@ -35,7 +35,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 from src.model_utils import CATEGORICAL, FEATURES, NUMERIC
-from src.train import _metrics, git_commit, resolve_tracking_uri
+from src.train import git_commit, resolve_tracking_uri
 from src.train_wsp import (
     CHAMPION_FILES,
     OUT_DIR,
@@ -259,7 +259,8 @@ def main():
     prev_json = OUT_DIR / "wsp_best.json"
     if prev_json.exists():
         try:
-            prev_best_test = float(json.loads(prev_json.read_text(encoding="utf-8"))["test_mae_pkr"])
+            prev = json.loads(prev_json.read_text(encoding="utf-8"))
+            prev_best_test = float(prev["test_mae_pkr"])
         except (json.JSONDecodeError, KeyError, TypeError, ValueError):
             prev_best_test = None
 
@@ -578,7 +579,10 @@ def main():
         "test_mae_pkr": best["test_mae_pkr"],
         "note": best.get("note", ""),
         "preprocessor": pre,
-        "mlp": best.get("artifact", {}).get("model") if isinstance(best.get("artifact"), dict) else None,
+        "mlp": (
+            best.get("artifact", {}).get("model")
+            if isinstance(best.get("artifact"), dict) else None
+        ),
         "champion_test_mae_pkr": lgbm_test_mae,
     }
     # Keep last greedy WSP model available even if blend won

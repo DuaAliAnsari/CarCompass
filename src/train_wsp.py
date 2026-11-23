@@ -399,7 +399,8 @@ def main():
     prev_json = OUT_DIR / "wsp_best.json"
     if prev_json.exists():
         try:
-            prev_best_test = float(json.loads(prev_json.read_text(encoding="utf-8"))["test_mae_pkr"])
+            prev = json.loads(prev_json.read_text(encoding="utf-8"))
+            prev_best_test = float(prev["test_mae_pkr"])
         except (json.JSONDecodeError, KeyError, TypeError, ValueError):
             prev_best_test = None
 
@@ -527,7 +528,11 @@ def main():
             f"wsp_ties_merge_k{keep:g}_a{alpha:g}",
             ties_merge(
                 weight_bank["mlp_base"],
-                [weight_bank["mlp_2010plus"], weight_bank["mlp_pre2010"], weight_bank["mlp_basin_7"]],
+                [
+                    weight_bank["mlp_2010plus"],
+                    weight_bank["mlp_pre2010"],
+                    weight_bank["mlp_basin_7"],
+                ],
                 keep=keep,
                 alpha=alpha,
             ),
@@ -538,7 +543,13 @@ def main():
     for drop, alpha in ((0.3, 0.5), (0.5, 0.75), (0.5, 1.0)):
         programs.append((
             f"wsp_dare_d{drop:g}_a{alpha:g}",
-            dare_lite(weight_bank["mlp_base"], weight_bank["mlp_2010plus"], drop=drop, alpha=alpha, seed=0),
+            dare_lite(
+                weight_bank["mlp_base"],
+                weight_bank["mlp_2010plus"],
+                drop=drop,
+                alpha=alpha,
+                seed=0,
+            ),
             f"DARE-lite drop={drop:g} α={alpha:g} on 2010",
         ))
 
