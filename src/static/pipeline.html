@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pipeline · CarCompass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head">
+    <p class="eyebrow">System design</p>
+    <h1>From two listing files to one price.</h1>
+    <p class="lede">Training is offline. A request only loads a saved model. The written version is in design/SYSTEM_DESIGN.md.</p>
+  </header>
+
+  <section class="stack">
+    <ol class="steps">
+      <li><span>01</span><b>Listings</b><p>Dataset A is a CSV. Dataset B is JSON. Both are downloaded, not committed.</p></li>
+      <li><span>02</span><b>Prepare</b><p>Map columns, drop bad prices and duplicates, scale B to A, write one split.</p></li>
+      <li><span>03</span><b>Train</b><p>Five families, twelve runs. MLflow records parameters, MAE, and the git commit.</p></li>
+      <li><span>04</span><b>Choose</b><p>Lowest validation MAE under 100 MB. The test set is not used to pick.</p></li>
+      <li><span>05</span><b>Serve</b><p>FastAPI loads the manifest and routes on the car's year.</p></li>
+      <li><span>06</span><b>Range</b><p>Calibration quantiles. Each assumed field widens that range by 10%.</p></li>
+      <li><span>07</span><b>Watch</b><p>/health and /metrics. Counts live in memory and reset on restart.</p></li>
+      <li><span>08</span><b>Ship</b><p>One Docker image. It predicts only when the joblib files were copied in.</p></li>
+    </ol>
+  </section>
+
+  <footer class="foot">
+    <p>Design notes live in design/SYSTEM_DESIGN.md and design/UI.md.</p>
+    <p><a href="/demo">Run the checks</a></p>
+  </footer>
+</main>
+<script src="/assets/site.js"></script>
+</body>
+</html>

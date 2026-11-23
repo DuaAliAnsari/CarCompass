@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Demo · CarCompass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head">
+    <p class="eyebrow">For the grading demo</p>
+    <h1>Milestone 1 checks</h1>
+    <p class="lede">These calls hit the live API: health, a real prediction, rejected input, an explanation, metrics, and the docs.</p>
+  </header>
+
+  <section class="stack">
+    <article class="panel">
+      <p class="eyebrow">GET /metrics</p>
+      <div class="metrics">
+        <div><span>Requests</span><b id="m-req">—</b></div>
+        <div><span>Average latency</span><b id="m-lat">—</b></div>
+        <div><span>Errors</span><b id="m-err">—</b></div>
+      </div>
+    </article>
+    <article class="panel">
+      <button class="btn" id="checks-btn" type="button">Run all checks →</button>
+      <ul class="checks" id="checks"></ul>
+      <p id="checks-summary"></p>
+    </article>
+    <article class="panel">
+      <p class="eyebrow">Last JSON</p>
+      <pre id="raw">Run the checks to see a response.</pre>
+      <p class="note"><a href="/docs">Open the API docs</a></p>
+    </article>
+  </section>
+
+  <footer class="foot">
+    <p>Counts reset when the process restarts.</p>
+    <p><a href="/">Back to the estimate</a></p>
+  </footer>
+</main>
+<script src="/assets/site.js"></script>
+<script src="/assets/demo.js"></script>
+</body>
+</html>

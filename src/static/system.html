@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Models · CarCompass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head">
+    <p class="eyebrow">What answers a request</p>
+    <h1>Two models. The year picks one.</h1>
+    <p class="lede">A car from 2010 onward goes to the specialist. Every other year stays on the global A+B model.</p>
+    <p style="margin-top:14px"><span id="health-pill" class="status">Checking…</span></p>
+  </header>
+
+  <section class="stack">
+    <div class="split">
+      <article class="panel">
+        <p class="eyebrow">2010 and later</p>
+        <h2>Specialist</h2>
+        <p>Trained only on cars from 2010 on. It beat the global model by 1.4% on those validation rows, so the router turns it on.</p>
+      </article>
+      <article class="panel">
+        <p class="eyebrow">1980 to 2009</p>
+        <h2>Global model</h2>
+        <p>Trained on Dataset A and Dataset B together. The pre-2010 specialist was 1.2% worse on its own rows, so it is not loaded for serving.</p>
+      </article>
+    </div>
+    <article class="panel">
+      <p class="eyebrow">Loaded now</p>
+      <h2>From this API</h2>
+      <div class="table-wrap">
+        <table id="live-models"><tr><td>Loading…</td></tr></table>
+      </div>
+      <p class="note">JSON for the same information stays at <a href="/models">/models</a>.</p>
+    </article>
+  </section>
+
+  <footer class="foot">
+    <p>Large random forests are logged in MLflow and are not in this table.</p>
+    <p><a href="/experiments">Why these two</a></p>
+  </footer>
+</main>
+<script src="/assets/site.js"></script>
+<script src="/assets/system.js"></script>
+</body>
+</html>

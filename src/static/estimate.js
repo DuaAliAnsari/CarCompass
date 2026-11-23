@@ -1,0 +1,233 @@
+const $ = (id) => document.getElementById(id);
+const EXAMPLES = [
+  { label: "Corolla 2016", make: "Toyota", model: "Corolla", year: 2016, mileage: 75000 },
+  { label: "Civic 2018", make: "Honda", model: "Civic", year: 2018, mileage: 45000 },
+  { label: "Mehran 2005", make: "Suzuki", model: "Mehran", year: 2005, mileage: 150000 },
+];
+const FIELD_LABEL = {
+  engine_cc: "Engine size",
+  transmission: "Transmission",
+  fuel: "Fuel",
+  city: "City",
+  assembly: "Assembly",
+};
+const CAR_SVG = `
+<svg viewBox="0 0 220 90" fill="none" aria-hidden="true">
+  <ellipse cx="110" cy="78" rx="78" ry="6" fill="#cfd2d8"/>
+  <path d="M24 58c10-4 24-20 40-24 12-3 26-6 40-6h34c14 0 26 4 36 12l18 14c4 3 6 6 12 6h18c6 0 10 4 10 8v8H18v-8c0-5 2-8 6-10z" fill="#f7f8fa" stroke="#1b1c21" stroke-width="1.6"/>
+  <path d="M76 34h56c4 7 3 14-1 19H72c-4-6-2-14 4-19z" fill="#eef1f4" stroke="#1b1c21" stroke-width="1.6"/>
+  <circle cx="70" cy="68" r="11" fill="#1b1c21"/><circle cx="70" cy="68" r="4.5" fill="#f4f4f6"/>
+  <circle cx="160" cy="68" r="11" fill="#1b1c21"/><circle cx="160" cy="68" r="4.5" fill="#f4f4f6"/>
+</svg>`;
+
+let optionsCache = null;
+const picked = { transmission: "", fuel: "", assembly: "" };
+
+async function call(method, path, body) {
+  const res = await fetch(path, {
+    method,
+    headers: body ? { "Content-Type": "application/json" } : {},
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  let data = null;
+  try { data = await res.json(); } catch (e) { data = null; }
+  return { status: res.status, data };
+}
+
+function fillSelect(el, values, blank) {
+  el.innerHTML = "";
+  if (blank) el.add(new Option(blank, ""));
+  (values || []).forEach((value) => el.add(new Option(value, value)));
+}
+
+function setPills(container, values, key) {
+  container.innerHTML = "";
+  const choices = ["", ...(values || [])];
+  choices.forEach((value) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "pill" + (value === "" ? " is-on" : "");
+    button.textContent = value || "Any";
+    button.addEventListener("click", () => {
+      picked[key] = value;
+      container.querySelectorAll(".pill").forEach((pill) => pill.classList.remove("is-on"));
+      button.classList.add("is-on");
+    });
+    container.appendChild(button);
+  });
+}
+
+function updateModels(preferred) {
+  const models = optionsCache.models_by_make[$("make").value] || [];
+  fillSelect($("model"), models);
+  if (preferred && models.includes(preferred)) $("model").value = preferred;
+  paintHeading();
+}
+
+function paintHeading() {
+  const make = $("make").value || "Your car";
+  const model = $("model").value || "";
+  $("result-title").textContent = make;
+  const year = $("year").value;
+  const mileage = Number($("mileage").value || 0).toLocaleString("en-US");
+  $("result-sub").textContent = [model, year, mileage ? mileage + " km" : ""].filter(Boolean).join(" · ");
+}
+
+function carFromForm() {
+  const car = {
+    make: $("make").value,
+    model: $("model").value,
+    year: Number($("year").value),
+    mileage: Number($("mileage").value),
+  };
+  if ($("engine_cc").value) car.engine_cc = Number($("engine_cc").value);
+  if ($("city").value) car.city = $("city").value;
+  for (const key of ["transmission", "fuel", "assembly"]) {
+    if (picked[key]) car[key] = picked[key];
+  }
+  return car;
+}
+
+function showRange(low, high, price) {
+  const pad = (high - low) * 0.15 || 1;
+  const min = low - pad;
+  const span = high + pad - min;
+  const pos = (value) => ((value - min) / span) * 100;
+  $("range").hidden = false;
+  $("range-band").style.left = pos(low) + "%";
+  $("range-band").style.right = (100 - pos(high)) + "%";
+  $("range-mark").style.left = "calc(" + pos(price) + "% - 1px)";
+  $("range-lo").textContent = pkr(low);
+  $("range-hi").textContent = pkr(high);
+}
+
+function showFactors(factors) {
+  if (!factors || !factors.length) {
+    $("factors").innerHTML = "";
+    return;
+  }
+  const top = Math.max(...factors.map((factor) => factor.importance), 1e-9);
+  $("factors").innerHTML = factors.map((factor) => {
+    const width = Math.max(4, (factor.importance / top) * 100);
+    const name = factor.feature.replace(/^cat__/, "").replace(/^num__/, "").replaceAll("_", " ");
+    return `<div class="factor"><span>${name}</span><div class="track"><span style="width:${width}%"></span></div><b>${factor.importance.toFixed(2)}</b></div>`;
+  }).join("");
+}
+
+async function showComparison(car, price) {
+  const newer = car.year <= new Date().getFullYear() - 3;
+  const other = {
+    ...car,
+    year: newer ? car.year + 3 : Math.max(1980, car.year - 4),
+    mileage: newer ? Math.max(5000, Math.round(car.mileage * 0.45)) : Math.min(1000000, Math.round(car.mileage * 1.6)),
+  };
+  const response = await call("POST", "/predict", other);
+  const line = $("compare-line");
+  if (response.status !== 200) {
+    line.textContent = "";
+    return;
+  }
+  const delta = response.data.estimated_price_pkr - price;
+  const direction = delta >= 0 ? "higher" : "lower";
+  line.textContent = `A ${other.year} ${car.model} with ${other.mileage.toLocaleString("en-US")} km is about ${pkr(Math.abs(delta))} ${direction}.`;
+}
+
+async function estimate(event) {
+  event.preventDefault();
+  const button = $("estimate-btn");
+  button.disabled = true;
+  $("form-error").textContent = "";
+  try {
+    const car = carFromForm();
+    const response = await call("POST", "/explain", car);
+    if (response.status !== 200) {
+      const detail = response.data && response.data.detail
+        ? JSON.stringify(response.data.detail)
+        : "The estimate did not come back.";
+      $("form-error").textContent = response.status === 503
+        ? "No model is loaded. Train one, or run the image that contains the model files."
+        : detail;
+      return;
+    }
+    const data = response.data;
+    $("result-price").textContent = pkr(data.estimated_price_pkr);
+    $("result-lakh").textContent = "about " + lakh(data.estimated_price_pkr);
+    $("result-model").textContent = plainModel(data.selected_model);
+    $("result-model").classList.add("ok");
+    showRange(data.range_low_pkr, data.range_high_pkr, data.estimated_price_pkr);
+    const assumed = (data.assumed_fields || []).map((field) => FIELD_LABEL[field] || field);
+    $("assumed").innerHTML = assumed.length
+      ? assumed.map((field) => `<span class="chip">${field} assumed</span>`).join("")
+      : `<span class="chip ok">Nothing assumed</span>`;
+    $("known").textContent = data.known_model ? "Known make and model" : "Uncommon make or model";
+    showFactors(data.top_factors);
+    $("factor-note").textContent = data.note || "";
+    await showComparison(car, data.estimated_price_pkr);
+  } catch (error) {
+    $("form-error").textContent = "The API could not be reached.";
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function applyExample(example) {
+  $("make").value = example.make;
+  updateModels(example.model);
+  $("year").value = example.year;
+  $("mileage").value = example.mileage;
+  paintHeading();
+}
+
+async function loadOptions() {
+  const health = await call("GET", "/health").catch(() => null);
+  const status = $("health-pill");
+  if (!health || health.status !== 200 || !health.data.model_loaded) {
+    status.className = "status bad";
+    status.textContent = health ? "API up, no model loaded" : "API not reachable";
+    $("form-error").textContent = health && health.data && !health.data.model_loaded
+      ? "Server is running, but models/ was empty on this host. Redeploy with the served .joblib files."
+      : "The form fills in once a model is loaded.";
+    return;
+  }
+  status.className = "status ok";
+  status.textContent = "Model ready · " + health.data.models_served.length + " loaded";
+
+  const response = await call("GET", "/options");
+  if (response.status !== 200) return;
+  optionsCache = response.data;
+  const makes = Object.keys(response.data.models_by_make);
+  fillSelect($("make"), makes);
+  $("make").value = makes.includes("Toyota") ? "Toyota" : makes[0];
+  updateModels("Corolla");
+  fillSelect($("city"), response.data.city || [], "Not given");
+  setPills($("transmission-pills"), response.data.transmission, "transmission");
+  setPills($("fuel-pills"), response.data.fuel, "fuel");
+  setPills($("assembly-pills"), response.data.assembly, "assembly");
+
+  const box = $("examples");
+  EXAMPLES.forEach((example) => {
+    const models = response.data.models_by_make[example.make] || [];
+    if (!models.includes(example.model)) return;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "rec";
+    button.innerHTML = `
+      <div class="rec-visual">${CAR_SVG}</div>
+      <div class="rec-body">
+        <span>${example.make}</span>
+        <b>${example.model}</b>
+        <em>${example.year} · ${example.mileage.toLocaleString("en-US")} km</em>
+      </div>`;
+    button.addEventListener("click", () => {
+      applyExample(example);
+      document.getElementById("estimate").scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+    box.appendChild(button);
+  });
+}
+
+$("make").addEventListener("change", () => updateModels());
+["model", "year", "mileage"].forEach((id) => $(id).addEventListener("input", paintHeading));
+$("car-form").addEventListener("submit", estimate);
+$("year").max = new Date().getFullYear() + 1;
+loadOptions();

@@ -8,8 +8,17 @@ mlruns/
 mlartifacts/
 data/raw/
 data/processed/
+# Keep experimental / large local artifacts out of git…
 models/*.joblib
 models/*.json
+# …but always ship the models the API serves on Render/Docker.
+!models/manifest.json
+!models/metadata.json
+!models/price_model.joblib
+!models/price_global_ab.joblib
+!models/price_global_ab.json
+!models/price_new_cars_2010plus.joblib
+!models/price_new_cars_2010plus.json
 .DS_Store
 .idea/
 .vscode/

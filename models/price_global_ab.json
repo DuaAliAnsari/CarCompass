@@ -1,0 +1,2475 @@
+{
+  "version": "price_global_ab@20261105-131138",
+  "family": "price_global_ab",
+  "family_rule": {
+    "sources": [
+      "A",
+      "B"
+    ],
+    "role": "default_candidate"
+  },
+  "run_id": "d7941784433c4eb38146883375f91895",
+  "model": "lightgbm",
+  "run_name": "lgbm_900_lr02",
+  "params": {
+    "n_estimators": 900,
+    "learning_rate": 0.02,
+    "num_leaves": 127
+  },
+  "metrics": {
+    "mae_pkr": 370312.5623147926,
+    "mdape": 0.0648174466874048,
+    "rows": 19525,
+    "interval_coverage": 0.7985147247119078
+  },
+  "val_metrics": {
+    "mae_pkr": 333743.26806158695,
+    "mdape": 0.06299198020714841,
+    "rows": 7865,
+    "interval_coverage": 0.7980928162746345
+  },
+  "rows": {
+    "fit": 62573,
+    "val": 7865,
+    "cal": 7823,
+    "test": 19525
+  },
+  "q10": -0.14759961841572355,
+  "q90": 0.14070519459200206,
+  "data_hash": "2a4b7626af05",
+  "git_commit": "1ffc083ce104f1e86063d202506e4e714a84eda2",
+  "registered_model": {
+    "name": "carcompass-price-global-ab",
+    "version": "2"
+  },
+  "model_mb": 12.61,
+  "importances": [
+    {
+      "feature": "year",
+      "importance": 0.6699
+    },
+    {
+      "feature": "engine_cc",
+      "importance": 0.4234
+    },
+    {
+      "feature": "transmission",
+      "importance": 0.0926
+    },
+    {
+      "feature": "make",
+      "importance": 0.0725
+    },
+    {
+      "feature": "model",
+      "importance": 0.0441
+    },
+    {
+      "feature": "fuel",
+      "importance": 0.0118
+    },
+    {
+      "feature": "city",
+      "importance": 0.0074
+    },
+    {
+      "feature": "assembly",
+      "importance": 0.0073
+    },
+    {
+      "feature": "mileage",
+      "importance": 0.0056
+    }
+  ],
+  "defaults": {
+    "global": {
+      "engine_cc": 1300.0,
+      "transmission": "Automatic",
+      "fuel": "Petrol",
+      "city": "Lahore",
+      "assembly": "Local"
+    },
+    "by_model": {
+      "Audi|A3": {
+        "engine_cc": 1200.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Audi|A4": {
+        "engine_cc": 1400.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Audi|A5": {
+        "engine_cc": 1400.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Audi|A6": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Audi|E-Tron": {
+        "engine_cc": 60.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Audi|Q3": {
+        "engine_cc": 1400.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Audi|Q7": {
+        "engine_cc": 3000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Baic|Bj40": {
+        "engine_cc": 2000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Bmw|1": {
+        "engine_cc": 1600.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Bmw|3": {
+        "engine_cc": 2000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Bmw|5": {
+        "engine_cc": 3000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Bmw|7": {
+        "engine_cc": 3000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Bmw|I4": {
+        "engine_cc": 84.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Local"
+      },
+      "Bmw|I5": {
+        "engine_cc": 81.2,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Local"
+      },
+      "Bmw|Ix": {
+        "engine_cc": 71.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Bmw|Ix3": {
+        "engine_cc": 73.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Bmw|X1": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Bmw|X5": {
+        "engine_cc": 3000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Byd|Atto": {
+        "engine_cc": 59.25,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Byd|Seal": {
+        "engine_cc": 82.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Cadillac|Escalade": {
+        "engine_cc": 6200.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Changan|A800": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Local"
+      },
+      "Changan|Alsvin": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Local"
+      },
+      "Changan|Gilgit": {
+        "engine_cc": 900.0,
+        "transmission": "Manual",
+        "fuel": "Cng",
+        "city": "Karachi",
+        "assembly": "Local"
+      },
+      "Changan|Kaghan": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Changan|Kalam": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Cng",
+        "city": "Multan",
+        "assembly": "Local"
+      },
+      "Changan|Karvaan": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Punjab",
+        "assembly": "Local"
+      },
+      "Changan|M9": {
+        "engine_cc": 1200.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Local"
+      },
+      "Changan|Oshan": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Chery|Qq": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Chery|Tiggo": {
+        "engine_cc": 1600.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Chevrolet|Aveo": {
+        "engine_cc": 1150.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Chevrolet|Exclusive": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Chevrolet|Joy": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Chevrolet|Matiz": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Chevrolet|Optra": {
+        "engine_cc": 1600.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Chevrolet|Spark": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Daehan|Shehzore": {
+        "engine_cc": 2600.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Daewoo|Cielo": {
+        "engine_cc": 1500.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Daewoo|Racer": {
+        "engine_cc": 1500.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Atrai": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Boon": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Cast": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Charade": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Charmant": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Cng",
+        "city": "Abbottabad",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Copen": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Cuore": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Daihatsu|Esse": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Hijet": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Mira": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Move": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Other": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Rocky": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Sonica": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Storia": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Taft": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Tanto": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Terios": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Daihatsu|Thor": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Deepal|L07": {
+        "engine_cc": 66.8,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Local"
+      },
+      "Dfsk|C37": {
+        "engine_cc": 1500.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Abbottabad",
+        "assembly": "Local"
+      },
+      "Dfsk|Glory": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Dodge|Ram": {
+        "engine_cc": 5700.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Faw|Carrier": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Faw|Sirius": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Faw|V2": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Faw|X-Pv": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Fiat|Uno": {
+        "engine_cc": 1250.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Ford|F": {
+        "engine_cc": 3500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Ford|Mustang": {
+        "engine_cc": 2521.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Ford|Ranger": {
+        "engine_cc": 3198.0,
+        "transmission": "Automatic",
+        "fuel": "Diesel",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Gmc|Sierra": {
+        "engine_cc": 5300.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Haval|H6": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Haval|Jolion": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Punjab",
+        "assembly": "Local"
+      },
+      "Honda|Accord": {
+        "engine_cc": 2000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Honda|Acty": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Honda|Airwave": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Honda|Br-V": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Honda|City": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Honda|Civic": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Honda|Cr-V": {
+        "engine_cc": 2400.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Honda|Cr-Z": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Honda|Cross": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Honda|Fit": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Honda|Freed": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Honda|Grace": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Honda|Hr-V": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Punjab",
+        "assembly": "Local"
+      },
+      "Honda|Insight": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Honda|Jade": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Honda|Life": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Honda|N Box": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Honda|N One": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Honda|N Wgn": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Honda|N-Van": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Honda|Other": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Honda|Spike": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Honda|Stream": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Honda|Thats": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Honda|Vamos": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Honda|Vezel": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Honda|Zest": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Hyundai|Elantra": {
+        "engine_cc": 2000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Hyundai|Excel": {
+        "engine_cc": 1500.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Hyundai|H-100": {
+        "engine_cc": 2600.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Hyundai|Other": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Hyundai|Santa": {
+        "engine_cc": 1600.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Hyundai|Santro": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Hyundai|Shehzore": {
+        "engine_cc": 2600.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Hyundai|Sonata": {
+        "engine_cc": 2500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Hyundai|Tucson": {
+        "engine_cc": 2000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Isuzu|D-Max": {
+        "engine_cc": 3000.0,
+        "transmission": "Automatic",
+        "fuel": "Diesel",
+        "city": "Karachi",
+        "assembly": "Local"
+      },
+      "Isuzu|Nkr": {
+        "engine_cc": 2800.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Jac|T6": {
+        "engine_cc": 2000.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Jac|T9": {
+        "engine_cc": 2000.0,
+        "transmission": "Automatic",
+        "fuel": "Diesel",
+        "city": "Un-Registered",
+        "assembly": "Local"
+      },
+      "Jac|X200": {
+        "engine_cc": 2800.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Rawalpindi",
+        "assembly": "Local"
+      },
+      "Jeep|Cherokee": {
+        "engine_cc": 2900.0,
+        "transmission": "Automatic",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Jeep|Cj": {
+        "engine_cc": 2450.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Jeep|Gladiator": {
+        "engine_cc": 3600.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Jeep|M": {
+        "engine_cc": 2000.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Jeep|Other": {
+        "engine_cc": 2000.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Jeep|Wrangler": {
+        "engine_cc": 3200.0,
+        "transmission": "Automatic",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Jetour|Dashing": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Local"
+      },
+      "Jw|Forland": {
+        "engine_cc": 1800.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Punjab",
+        "assembly": "Local"
+      },
+      "Kia|Carnival": {
+        "engine_cc": 3500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Kia|Classic": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Kia|Grand": {
+        "engine_cc": 3300.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Kia|Picanto": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Punjab",
+        "assembly": "Local"
+      },
+      "Kia|Pride": {
+        "engine_cc": 1100.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Kia|Sorento": {
+        "engine_cc": 2400.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Kia|Spectra": {
+        "engine_cc": 1500.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Kia|Sportage": {
+        "engine_cc": 2000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Kia|Stonic": {
+        "engine_cc": 1400.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Local"
+      },
+      "Land Rover|Defender": {
+        "engine_cc": 2500.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Land Rover|Discovery": {
+        "engine_cc": 3900.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Land Rover|Freelander": {
+        "engine_cc": 2000.0,
+        "transmission": "Automatic",
+        "fuel": "Diesel",
+        "city": "Rawalpindi",
+        "assembly": "Imported"
+      },
+      "Land Rover|Range Rover": {
+        "engine_cc": 3600.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Lexus|Ct200H": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Lexus|Lx": {
+        "engine_cc": 5700.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Lexus|Rx": {
+        "engine_cc": 3500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Lexus|Ux": {
+        "engine_cc": 55.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Master|Foton": {
+        "engine_cc": 2800.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mazda|323": {
+        "engine_cc": 1500.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mazda|626": {
+        "engine_cc": 1600.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mazda|Axela": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mazda|B2200": {
+        "engine_cc": 2200.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mazda|Carol": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mazda|Flair": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Mazda|Rx8": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mazda|Scrum": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mazda|Titan": {
+        "engine_cc": 3500.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mercedes Benz|A": {
+        "engine_cc": 1550.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mercedes Benz|C": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mercedes Benz|Cla": {
+        "engine_cc": 1600.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Mercedes Benz|Clk": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Mercedes Benz|Cls": {
+        "engine_cc": 4250.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mercedes Benz|E": {
+        "engine_cc": 2000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mercedes Benz|Eqc": {
+        "engine_cc": 80.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Mercedes Benz|Eqs": {
+        "engine_cc": 107.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Mercedes Benz|G": {
+        "engine_cc": 4000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Mercedes Benz|Other": {
+        "engine_cc": 2300.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mercedes Benz|S": {
+        "engine_cc": 3500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mercedes Benz|Slk": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mg|4": {
+        "engine_cc": 64.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Mg|Hs": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Local"
+      },
+      "Mg|Other": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Mg|Zs": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mini|Cooper": {
+        "engine_cc": 1400.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|Ek": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|Galant": {
+        "engine_cc": 1800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|I": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|L200": {
+        "engine_cc": 2500.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|L300": {
+        "engine_cc": 2500.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|Lancer": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|Minica": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|Minicab": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|Mirage": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|Pajero": {
+        "engine_cc": 2500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|Rvr": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Mitsubishi|Toppo": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Nissan|120": {
+        "engine_cc": 1200.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Rawalpindi",
+        "assembly": "Imported"
+      },
+      "Nissan|350Z": {
+        "engine_cc": 3500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Nissan|Ad": {
+        "engine_cc": 1300.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Nissan|Ariya": {
+        "engine_cc": 66.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Nissan|Blue": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Nissan|Bluebird": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Nissan|Caravan": {
+        "engine_cc": 2500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Abbottabad",
+        "assembly": "Imported"
+      },
+      "Nissan|Cefiro": {
+        "engine_cc": 2300.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Nissan|Clipper": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Nissan|Dayz": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Nissan|Juke": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Nissan|Kicks": {
+        "engine_cc": 1200.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Nissan|Kix": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Nissan|Leaf": {
+        "engine_cc": 400.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Nissan|March": {
+        "engine_cc": 1200.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Nissan|Moco": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Nissan|Navara": {
+        "engine_cc": 2750.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Nissan|Note": {
+        "engine_cc": 1200.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Nissan|Other": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Nissan|Otti": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Nissan|Path": {
+        "engine_cc": 2200.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Nissan|Patrol": {
+        "engine_cc": 4200.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Nissan|Pickup": {
+        "engine_cc": 2300.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Nissan|Pino": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Nissan|Roox": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Nissan|Safari": {
+        "engine_cc": 4200.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Nissan|Sakura": {
+        "engine_cc": 200.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Nissan|Serena": {
+        "engine_cc": 1200.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Nissan|Skyline": {
+        "engine_cc": 3500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Nissan|Sunny": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Nissan|Tiida": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Nissan|Wingroad": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Nissan|X": {
+        "engine_cc": 2400.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Peugeot|2008": {
+        "engine_cc": 1200.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Porsche|Cayenne": {
+        "engine_cc": 3000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Porsche|Panamera": {
+        "engine_cc": 3000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Porsche|Taycan": {
+        "engine_cc": 79.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Power|Mini": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Prince|K01": {
+        "engine_cc": 998.5,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Prince|K07": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Punjab",
+        "assembly": "Local"
+      },
+      "Prince|Pearl": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Punjab",
+        "assembly": "Local"
+      },
+      "Proton|Gen": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Proton|Saga": {
+        "engine_cc": 1299.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Proton|X70": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Seres|3": {
+        "engine_cc": 54.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Sogo|Pickup": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Ssangyong|Rexton": {
+        "engine_cc": 2700.0,
+        "transmission": "Automatic",
+        "fuel": "Diesel",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Ssangyong|Stavic": {
+        "engine_cc": 2700.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Subaru|Dias": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Subaru|Justy": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Subaru|Other": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Subaru|Pleo": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Subaru|R2": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Subaru|Sambar": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Subaru|Stella": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Suzuki|Alto": {
+        "engine_cc": 660.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Suzuki|Apv": {
+        "engine_cc": 1500.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Suzuki|Baleno": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Suzuki|Bolan": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Suzuki|Carry": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Local"
+      },
+      "Suzuki|Cervo": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Suzuki|Ciaz": {
+        "engine_cc": 1400.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Suzuki|Cultus": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Suzuki|Every": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Suzuki|Fx": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Suzuki|Hustler": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Suzuki|Jimny": {
+        "engine_cc": 660.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Suzuki|Kei": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Suzuki|Khyber": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Suzuki|Liana": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Suzuki|Margalla": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Suzuki|Mega": {
+        "engine_cc": 1500.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Suzuki|Mehran": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Suzuki|Mr": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Suzuki|Palette": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Suzuki|Potohar": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Suzuki|Ravi": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Rawalpindi",
+        "assembly": "Local"
+      },
+      "Suzuki|Sj410": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Local"
+      },
+      "Suzuki|Spacia": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Suzuki|Swift": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Suzuki|Vitara": {
+        "engine_cc": 1600.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Suzuki|Wagon R": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Suzuki|Xbee": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Tesla|Model": {
+        "engine_cc": 75.0,
+        "transmission": "Automatic",
+        "fuel": "Electric",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Toyota|4": {
+        "engine_cc": 2700.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|86": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Toyota|Allion": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Alphard": {
+        "engine_cc": 2500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Aqua": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Avanza": {
+        "engine_cc": 1500.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Toyota|Avensis": {
+        "engine_cc": 2015.5,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Aygo": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Belta": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|C-Hr": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Toyota|Cami": {
+        "engine_cc": 1300.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Camry": {
+        "engine_cc": 2400.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Coaster": {
+        "engine_cc": 4000.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Toyota|Corolla": {
+        "engine_cc": 1300.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Toyota|Corona": {
+        "engine_cc": 1600.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Cressida": {
+        "engine_cc": 2200.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Toyota|Crown": {
+        "engine_cc": 2500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Duet": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Sindh",
+        "assembly": "Imported"
+      },
+      "Toyota|Esquire": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Toyota|Estima": {
+        "engine_cc": 2400.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Toyota|Fj": {
+        "engine_cc": 4000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Fortuner": {
+        "engine_cc": 2700.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Toyota|Harrier": {
+        "engine_cc": 2500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Toyota|Hiace": {
+        "engine_cc": 2700.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Toyota|Hilux": {
+        "engine_cc": 2800.0,
+        "transmission": "Automatic",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Local"
+      },
+      "Toyota|Iq": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Toyota|Isis": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Ist": {
+        "engine_cc": 1300.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Land Cruiser": {
+        "engine_cc": 4600.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Lite": {
+        "engine_cc": 1800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Lucida": {
+        "engine_cc": 2300.0,
+        "transmission": "Automatic",
+        "fuel": "Diesel",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Mark": {
+        "engine_cc": 2500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Noah": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Toyota|Passo": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Pickup": {
+        "engine_cc": 2500.0,
+        "transmission": "Manual",
+        "fuel": "Diesel",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Pixis": {
+        "engine_cc": 660.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Platz": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Porte": {
+        "engine_cc": 1300.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Toyota|Prado": {
+        "engine_cc": 2700.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Premio": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Prius": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Probox": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Toyota|Raize": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Toyota|Raum": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Rav4": {
+        "engine_cc": 2000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Roomy": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Toyota|Rush": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Sienta": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Toyota|Starlet": {
+        "engine_cc": 1250.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Local"
+      },
+      "Toyota|Succeed": {
+        "engine_cc": 1500.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Toyota|Surf": {
+        "engine_cc": 3000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Tank": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      },
+      "Toyota|Town": {
+        "engine_cc": 1800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Tundra": {
+        "engine_cc": 5700.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Van": {
+        "engine_cc": 2250.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "D.G.Khan",
+        "assembly": "Imported"
+      },
+      "Toyota|Verossa": {
+        "engine_cc": 2000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Vitz": {
+        "engine_cc": 1000.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Imported"
+      },
+      "Toyota|Voxy": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Hybrid",
+        "city": "Un-Registered",
+        "assembly": "Imported"
+      },
+      "Toyota|Wish": {
+        "engine_cc": 1800.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Karachi",
+        "assembly": "Imported"
+      },
+      "Toyota|Yaris": {
+        "engine_cc": 1300.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Un-Registered",
+        "assembly": "Local"
+      },
+      "United|Alpha": {
+        "engine_cc": 1000.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Punjab",
+        "assembly": "Local"
+      },
+      "United|Bravo": {
+        "engine_cc": 800.0,
+        "transmission": "Manual",
+        "fuel": "Petrol",
+        "city": "Lahore",
+        "assembly": "Local"
+      },
+      "Volkswagen|Beetle": {
+        "engine_cc": 1600.0,
+        "transmission": "Automatic",
+        "fuel": "Petrol",
+        "city": "Islamabad",
+        "assembly": "Imported"
+      }
+    }
+  },
+  "all_runs": [
+    {
+      "run_name": "baseline_median",
+      "model": "baseline",
+      "run_id": "a9faef21e8df4fbf81b66549bc1f06f6",
+      "val_mae_pkr": 2304819.948633185,
+      "val_mdape": 0.48736786596493026,
+      "model_mb": null
+    },
+    {
+      "run_name": "baseline_mean",
+      "model": "baseline",
+      "run_id": "24c3035698ae4d16b693a75bb5e327c7",
+      "val_mae_pkr": 2300996.77206566,
+      "val_mdape": 0.48231613936570134,
+      "model_mb": null
+    },
+    {
+      "run_name": "baseline_q40",
+      "model": "baseline",
+      "run_id": "c384d5a33088474f84967b64def813e6",
+      "val_mae_pkr": 2316177.1682136045,
+      "val_mdape": 0.4977897777777779,
+      "model_mb": null
+    },
+    {
+      "run_name": "ridge_alpha_01",
+      "model": "ridge",
+      "run_id": "e227fa19941647fc8664eeef4de9caae",
+      "val_mae_pkr": 1145733.7741992085,
+      "val_mdape": 0.22041131897560184,
+      "model_mb": null
+    },
+    {
+      "run_name": "ridge_alpha_1",
+      "model": "ridge",
+      "run_id": "e9a6ad738deb4fa8adfae3f13bb8626e",
+      "val_mae_pkr": 1145733.7339572778,
+      "val_mdape": 0.2204113522382028,
+      "model_mb": null
+    },
+    {
+      "run_name": "ridge_alpha_10",
+      "model": "ridge",
+      "run_id": "854de2f09c8649b6bc8051355af758a4",
+      "val_mae_pkr": 1145733.331900559,
+      "val_mdape": 0.22041168395537647,
+      "model_mb": null
+    },
+    {
+      "run_name": "rf_100_depth12",
+      "model": "random_forest",
+      "run_id": "c91462ecb1a84fdcbd66a8c88c9a792c",
+      "val_mae_pkr": 399073.30171013286,
+      "val_mdape": 0.07408009182451412,
+      "model_mb": null
+    },
+    {
+      "run_name": "rf_200_depth16",
+      "model": "random_forest",
+      "run_id": "8c65960f6b9946e3a31fd1b825056789",
+      "val_mae_pkr": 340613.4905543723,
+      "val_mdape": 0.06406604694204025,
+      "model_mb": null
+    },
+    {
+      "run_name": "rf_300_depth20",
+      "model": "random_forest",
+      "run_id": "1fb02c35c3cb463997c0d70c2f8daa6c",
+      "val_mae_pkr": 324644.3110112687,
+      "val_mdape": 0.061603433438290965,
+      "model_mb": 763.077027
+    },
+    {
+      "run_name": "lgbm_300",
+      "model": "lightgbm",
+      "run_id": "738c46535360483aa10fbab8e550783d",
+      "val_mae_pkr": 381185.0729227687,
+      "val_mdape": 0.07054504040317183,
+      "model_mb": null
+    },
+    {
+      "run_name": "lgbm_600_lr03",
+      "model": "lightgbm",
+      "run_id": "750193a5587846238d73e0505160bb36",
+      "val_mae_pkr": 352052.12815695896,
+      "val_mdape": 0.0651242500887037,
+      "model_mb": null
+    },
+    {
+      "run_name": "lgbm_900_lr02",
+      "model": "lightgbm",
+      "run_id": "d7941784433c4eb38146883375f91895",
+      "val_mae_pkr": 333743.26806158695,
+      "val_mdape": 0.06299198020714841,
+      "model_mb": 12.606685
+    }
+  ]
+}

@@ -70,7 +70,16 @@ def test_home_page_is_served(client):
     res = client.get("/")
     assert res.status_code == 200
     assert "text/html" in res.headers["content-type"]
-    assert "Milestone 1 checks" in res.text
+    assert "A fair asking price" in res.text
+    assert client.get("/assets/styles.css").status_code == 200
+
+
+def test_frontend_pages_are_served(client):
+    for path in ("/experiments", "/system", "/pipeline", "/demo"):
+        res = client.get(path)
+        assert res.status_code == 200
+        assert "text/html" in res.headers["content-type"]
+    assert "Milestone 1 checks" in client.get("/demo").text
 
 
 def test_options_lists_known_values(client):
