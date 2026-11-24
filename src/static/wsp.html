@@ -18,11 +18,34 @@
     <p class="hero-status"><span id="wsp-status" class="status">Checking WSP…</span></p>
   </header>
 
-  <section class="stat-grid" aria-label="WSP experiment stats" id="wsp-stats">
-    <article class="stat-card"><span>Best program</span><b id="s-program">—</b><span id="s-note">Loading…</span></article>
-    <article class="stat-card"><span>WSP test MAE</span><b id="s-wsp-mae">—</b><span>PKR on held-out test</span></article>
-    <article class="stat-card"><span>Champion test MAE</span><b id="s-champ-mae">—</b><span>Global LightGBM</span></article>
-    <article class="stat-card"><span>Beat margin</span><b id="s-delta">—</b><span id="s-beat">vs price_global_ab</span></article>
+  <section class="dash-board" aria-label="WSP experiment stats" id="wsp-stats">
+    <article class="dash-tile" style="min-height:170px">
+      <div class="dash-tile-top"><b>Best program</b><span class="dash-chip warn">WSP</span></div>
+      <p class="dash-label">Selected blend</p>
+      <p class="dash-value dash-value-sm" id="s-program">—</p>
+      <p class="dash-sub" id="s-note">Loading…</p>
+    </article>
+    <article class="dash-tile" style="min-height:170px">
+      <div class="dash-tile-top"><b>WSP test MAE</b><span class="dash-chip">PKR</span></div>
+      <p class="dash-label">Held-out test</p>
+      <p class="dash-value dash-value-sm" id="s-wsp-mae">—</p>
+      <div class="dash-mini-bars tone-ok" aria-hidden="true">
+        <span style="height:55%"></span><span style="height:48%" class="is-on"></span>
+        <span style="height:62%"></span><span style="height:40%"></span>
+      </div>
+    </article>
+    <article class="dash-tile" style="min-height:170px">
+      <div class="dash-tile-top"><b>Champion MAE</b><span class="dash-chip">LGBM</span></div>
+      <p class="dash-label">Global LightGBM</p>
+      <p class="dash-value dash-value-sm" id="s-champ-mae">—</p>
+      <p class="dash-sub">price_global_ab</p>
+    </article>
+    <article class="dash-tile" style="min-height:170px">
+      <div class="dash-tile-top"><b>Beat margin</b><a class="dash-go" href="/guide">↗</a></div>
+      <p class="dash-label">vs champion</p>
+      <p class="dash-value dash-value-sm" id="s-delta">—</p>
+      <p class="dash-sub" id="s-beat">vs price_global_ab</p>
+    </article>
   </section>
 
   <section class="stack">
@@ -116,7 +139,7 @@
     <p><a href="/">Estimate</a> · <a href="/experiments">Experiments</a> · <a href="/docs">API docs</a></p>
   </footer>
 </main>
-<script src="/assets/site.js?v=wsp2"></script>
+<script src="/assets/site.js?v=wsp12"></script>
 <script src="/assets/wsp.js"></script>
 </body>
 </html>

@@ -2,7 +2,8 @@
 
 Each request is answered by the price model the router picks for the car's year
 (see src/model_router.py and models/manifest.json). The site in src/static/ is
-served at /, /experiments, /wsp, /system, /pipeline and /demo. API docs are at /docs.
+served at /, /guide, /experiments, /wsp, /milestones, /system, /pipeline and /demo.
+API docs are at /docs. /stats aliases /metrics (JSON for API clients; HTML dashboard in browsers).
 
 Run:  uvicorn src.app:app --reload
 """
@@ -97,27 +98,32 @@ def create_app(model_dir: str | None = None) -> FastAPI:
         stats = request.app.state.stats
         start = time.perf_counter()
         status = 500
+        path = request.url.path
+        # Keep /metrics and /stats identical snapshots; health is for probes.
+        count_traffic = path not in ("/metrics", "/stats", "/health")
         try:
             response = await call_next(request)
             status = response.status_code
         except Exception:
-            stats["errors"] += 1
+            if count_traffic:
+                stats["errors"] += 1
             raise
         finally:
             elapsed = time.perf_counter() - start
-            stats["requests"] += 1
-            stats["total_latency"] += elapsed
+            if count_traffic:
+                stats["requests"] += 1
+                stats["total_latency"] += elapsed
             router = request.app.state.router
             logger.info(json.dumps({
                 "event": "request",
                 "method": request.method,
-                "path": request.url.path,
+                "path": path,
                 "status": status,
                 "latency_ms": round(1000 * elapsed, 2),
                 "app_version": APP_VERSION,
                 "model_version": default_version(router),
             }))
-        if response.status_code >= 500:
+        if count_traffic and response.status_code >= 500:
             stats["errors"] += 1
         return response
 
@@ -158,8 +164,18 @@ def create_app(model_dir: str | None = None) -> FastAPI:
             "app_version": APP_VERSION,
         }
 
-    @app.get("/metrics")
-    def metrics():
+    def page(name: str) -> FileResponse:
+        return FileResponse(STATIC_DIR / name)
+
+    def prefers_html(request: Request) -> bool:
+        accept = request.headers.get("accept", "")
+        html_i = accept.find("text/html")
+        if html_i < 0:
+            return False
+        json_i = accept.find("application/json")
+        return json_i < 0 or html_i < json_i
+
+    def metrics_payload():
         stats = app.state.stats
         count = stats["requests"]
         return {
@@ -170,12 +186,41 @@ def create_app(model_dir: str | None = None) -> FastAPI:
             "model_version": default_version(app.state.router),
         }
 
-    def page(name: str) -> FileResponse:
-        return FileResponse(STATIC_DIR / name)
+    @app.get("/metrics")
+    @app.get("/stats")
+    def metrics(request: Request):
+        """Counters for monitoring. Browsers get a dashboard; API clients get JSON."""
+        if prefers_html(request):
+            return page("monitor.html")
+        return metrics_payload()
 
     @app.get("/", include_in_schema=False)
     def home():
         return page("index.html")
+
+    @app.get("/guide", include_in_schema=False)
+    def guide_page():
+        return page("guide.html")
+
+    @app.get("/guide/milestones", include_in_schema=False)
+    def guide_milestones():
+        return page("milestones.html")
+
+    @app.get("/guide/pipeline", include_in_schema=False)
+    def guide_pipeline():
+        return page("pipeline.html")
+
+    @app.get("/guide/wsp", include_in_schema=False)
+    def guide_wsp():
+        return page("wsp.html")
+
+    @app.get("/guide/checks", include_in_schema=False)
+    def guide_checks():
+        return page("demo.html")
+
+    @app.get("/guide/monitor", include_in_schema=False)
+    def guide_monitor():
+        return page("monitor.html")
 
     @app.get("/experiments", include_in_schema=False)
     def experiments_page():
@@ -184,6 +229,10 @@ def create_app(model_dir: str | None = None) -> FastAPI:
     @app.get("/wsp", include_in_schema=False)
     def wsp_page():
         return page("wsp.html")
+
+    @app.get("/milestones", include_in_schema=False)
+    def milestones_page():
+        return page("milestones.html")
 
     @app.get("/system", include_in_schema=False)
     def system_page():

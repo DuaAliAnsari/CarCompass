@@ -13,37 +13,57 @@
 <main class="wrap">
   <header class="page-head">
     <p class="eyebrow">For the grading demo</p>
-    <h1>Milestone 1 checks</h1>
-    <p class="lede">These calls hit the live API: health, a real prediction, rejected input, an explanation, metrics, and the docs.</p>
+    <h1>Milestone checks</h1>
+    <p class="lede">Live probes against this FastAPI process: health, predict, rejected input, explain, metrics, and docs.</p>
   </header>
 
-  <section class="stack">
-    <article class="panel">
-      <p class="eyebrow">GET /metrics</p>
-      <div class="metrics">
-        <div><span>Requests</span><b id="m-req">—</b></div>
-        <div><span>Average latency</span><b id="m-lat">—</b></div>
-        <div><span>Errors</span><b id="m-err">—</b></div>
+  <section class="dash-board dash-board-3" aria-label="Live metrics">
+    <article class="dash-tile" style="min-height:180px">
+      <div class="dash-tile-top"><b>Requests</b><span class="dash-chip">/stats</span></div>
+      <p class="dash-label">Counted so far</p>
+      <p class="dash-value" id="m-req">—</p>
+      <div class="dash-mini-bars tone-ok" aria-hidden="true">
+        <span style="height:30%"></span><span style="height:45%"></span><span style="height:40%"></span>
+        <span style="height:70%" class="is-on"></span><span style="height:85%" class="is-on"></span>
       </div>
     </article>
-    <article class="panel">
-      <button class="btn" id="checks-btn" type="button">Run all checks →</button>
-      <ul class="checks" id="checks"></ul>
-      <p id="checks-summary"></p>
+    <article class="dash-tile" style="min-height:180px">
+      <div class="dash-tile-top"><b>Avg latency</b><span class="dash-chip">ms</span></div>
+      <p class="dash-label">Running mean</p>
+      <p class="dash-value" id="m-lat">—</p>
+      <svg class="dash-spark" viewBox="0 0 240 56" aria-hidden="true">
+        <path fill="none" stroke="#0b0b0c" stroke-width="2.5" d="M0 40 L60 34 L120 28 L180 22 L240 18"/>
+      </svg>
     </article>
-    <article class="panel">
-      <p class="eyebrow">Last JSON</p>
-      <pre id="raw">Run the checks to see a response.</pre>
-      <p class="note"><a href="/docs">Open the API docs</a></p>
+    <article class="dash-tile" style="min-height:180px">
+      <div class="dash-tile-top"><b>Errors</b><span class="dash-chip">5xx</span></div>
+      <p class="dash-label">Server failures</p>
+      <p class="dash-value" id="m-err">—</p>
+      <p class="dash-sub">Should stay at zero in a healthy demo</p>
     </article>
   </section>
 
-  <footer class="foot">
-    <p>Counts reset when the process restarts.</p>
-    <p><a href="/">Back to the estimate</a></p>
-  </footer>
+  <section class="stack" style="margin-top:14px">
+    <article class="dash-tile" style="min-height:0">
+      <div class="dash-tile-top">
+        <b>Run the checklist</b>
+        <a class="dash-go" href="/docs">↗</a>
+      </div>
+      <p class="dash-sub" style="margin-top:8px">Hits /health, /predict, a 422, /explain, /metrics, and /docs.</p>
+      <div class="dash-actions">
+        <button class="btn" id="checks-btn" type="button">Run all checks →</button>
+        <a class="link-arrow" href="/guide/monitor" style="margin-top:0">Open monitoring</a>
+      </div>
+      <ul class="checks" id="checks"></ul>
+      <p id="checks-summary"></p>
+    </article>
+    <article class="dash-tile" style="min-height:0">
+      <div class="dash-tile-top"><b>Last JSON</b><span class="dash-chip">Response</span></div>
+      <pre id="raw" class="wsp-raw" style="margin-top:12px">Run the checks to see a response.</pre>
+    </article>
+  </section>
 </main>
-<script src="/assets/site.js?v=wsp2"></script>
+<script src="/assets/site.js?v=wsp12"></script>
 <script src="/assets/demo.js"></script>
 </body>
 </html>

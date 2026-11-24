@@ -1,13 +1,30 @@
 const NAV = [
   ["/", "Estimate"],
   ["/experiments", "Experiments"],
-  ["/wsp", "WSP lab"],
   ["/system", "Models"],
-  ["/pipeline", "Pipeline"],
-  ["/demo", "Demo"],
 ];
 
+const GUIDE_PATHS = new Set([
+  "/guide",
+  "/guide/milestones",
+  "/guide/pipeline",
+  "/guide/wsp",
+  "/guide/checks",
+  "/guide/monitor",
+  "/milestones",
+  "/stats",
+  "/metrics",
+]);
+
 const path = location.pathname.replace(/\/$/, "") || "/";
+const onGuide = GUIDE_PATHS.has(path) || path.startsWith("/guide/");
+const onProduct = path === "/" || path === "/experiments" || path === "/system";
+if (onGuide || path === "/wsp" || path === "/pipeline" || path === "/demo") {
+  document.body.classList.add("guide-shell");
+}
+if (onProduct) {
+  document.body.classList.add("product-shell");
+}
 
 const nav = document.createElement("header");
 nav.className = "site-nav";
@@ -29,6 +46,53 @@ document.body.classList.remove("with-rail");
 nav.querySelectorAll("[data-nav]").forEach((link) => {
   if (link.dataset.nav === path) link.classList.add("is-active");
 });
+
+if (onGuide || path === "/wsp" || path === "/pipeline" || path === "/demo") {
+  const sub = document.createElement("nav");
+  sub.className = "guide-subnav";
+  sub.setAttribute("aria-label", "Project guide");
+  const links = [
+    ["/guide", "Overview"],
+    ["/guide/milestones", "Milestones"],
+    ["/guide/pipeline", "Pipeline"],
+    ["/guide/monitor", "Monitoring"],
+    ["/guide/checks", "Checks"],
+    ["/guide/wsp", "WSP"],
+  ];
+  sub.innerHTML = links.map(([href, label]) => {
+    const active =
+      path === href ||
+      (href === "/guide/milestones" && path === "/milestones") ||
+      (href === "/guide/pipeline" && path === "/pipeline") ||
+      (href === "/guide/wsp" && path === "/wsp") ||
+      (href === "/guide/checks" && path === "/demo") ||
+      (href === "/guide/monitor" && (path === "/stats" || path === "/metrics"));
+    return `<a href="${href}" class="${active ? "is-active" : ""}">${label}</a>`;
+  }).join("");
+  nav.after(sub);
+}
+
+document.querySelectorAll("footer.foot").forEach((old) => old.remove());
+const foot = document.createElement("footer");
+foot.className = "foot site-foot";
+foot.innerHTML = `
+  <div class="foot-panel">
+    <div class="foot-copy">
+      <p class="foot-disclaimer">Estimates reflect historical asking prices. They are a guide, not a valuation.</p>
+      <p class="foot-meta-line">
+        <span>CarCompass</span>
+        <span class="foot-dot" aria-hidden="true"></span>
+        <span>MLOps · Fall 2026</span>
+      </p>
+    </div>
+    <a class="foot-more-btn foot-guide-btn" href="/guide">
+      Project guide
+      <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path d="M3 8h9M8 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </div>
+`;
+const main = document.querySelector("main.wrap") || document.body;
+main.appendChild(foot);
 
 fetch("/health")
   .then((res) => res.json())

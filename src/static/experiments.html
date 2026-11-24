@@ -17,117 +17,129 @@
     <p class="lede">Five families, twelve configurations each. Champions are the lowest validation MAE among models of at most 100 MB.</p>
   </header>
 
-  <section class="stat-grid" aria-label="Experiment headlines">
-    <article class="stat-card"><span>Served test MAE</span><b>360,636</b><span>PKR, routed system</span></article>
-    <article class="stat-card"><span>2010+ specialist</span><b>+1.4%</b><span>Better than the default</span></article>
-    <article class="stat-card"><span>Champion size</span><b>12.6 MB</b><span>Against a 763 MB forest</span></article>
-    <article class="stat-card"><span>Serve limit</span><b>100 MB</b><span>Larger models stay in MLflow</span></article>
+  <section class="dash-board" aria-label="Experiment headlines">
+    <article class="dash-tile" style="min-height:180px">
+      <div class="dash-tile-top"><b>Served MAE</b><span class="dash-chip ok">Test</span></div>
+      <p class="dash-label">Routed system · PKR</p>
+      <p class="dash-value">360k</p>
+      <p class="dash-sub">360,636 on 19,525 rows</p>
+      <svg class="dash-spark" viewBox="0 0 240 64" aria-hidden="true">
+        <path fill="none" stroke="#178a6a" stroke-width="2.5" d="M0 50 L48 44 L96 38 L144 30 L192 24 L240 18"/>
+      </svg>
+    </article>
+    <article class="dash-tile" style="min-height:180px">
+      <div class="dash-tile-top"><b>2010+ gain</b><span class="dash-chip ok">On</span></div>
+      <p class="dash-label">vs default on same rows</p>
+      <p class="dash-value">+1.4%</p>
+      <p class="dash-sub">Specialist is served</p>
+      <div class="dash-mini-bars tone-ok" aria-hidden="true">
+        <span style="height:40%"></span><span style="height:55%"></span>
+        <span style="height:70%" class="is-on"></span><span style="height:88%" class="is-on"></span>
+      </div>
+    </article>
+    <article class="dash-tile" style="min-height:180px">
+      <div class="dash-tile-top"><b>Champion size</b><span class="dash-chip">12.6 MB</span></div>
+      <p class="dash-label">vs 763 MB forest</p>
+      <p class="dash-value">12.6</p>
+      <p class="dash-sub">MB · within serve budget</p>
+      <div class="dash-progress" aria-hidden="true"><i style="width:13%" data-pct="13%"></i><span class="prog-end">100%</span></div>
+    </article>
+    <article class="dash-tile" style="min-height:180px">
+      <div class="dash-tile-top"><b>Serve limit</b><a class="dash-go" href="/system">↗</a></div>
+      <p class="dash-label">Hard cap</p>
+      <p class="dash-value">100</p>
+      <p class="dash-sub">MB · larger stays in MLflow only</p>
+    </article>
   </section>
 
-  <section class="stack">
-    <article class="panel">
-      <p class="eyebrow">Same 19,525 test rows · MAE in PKR</p>
-      <h2>The served system is the one that wins</h2>
-      <div class="bars">
-        <div class="bar-row"><span>Served system</span><div class="track"><span style="width:57%"></span></div><b>360,636</b></div>
-        <div class="bar-row"><span>Global A+B</span><div class="track"><span style="width:58%"></span></div><b>370,313</b></div>
-        <div class="bar-row"><span>Dataset A only</span><div class="track"><span style="width:65%"></span></div><b>413,223</b></div>
-        <div class="bar-row"><span>Dataset B only</span><div class="track"><span style="width:100%"></span></div><b>636,365</b></div>
+  <section class="dash-board dash-board-2" style="margin-top:14px">
+    <article class="prog-card">
+      <div class="prog-card-top">
+        <b>Served system vs alternatives</b>
+        <span class="dash-chip">MAE · shorter better</span>
       </div>
-      <p class="note">Shorter is better. The served system routes 2010+ cars to their specialist.</p>
+      <p class="dash-label">Test rows · relative to Dataset B only</p>
+      <p class="dash-value">57%<span class="dash-trend">served</span></p>
+      <p class="dash-sub">360,636 / 636,365 · routed beats global-only</p>
+      <div class="prog-track"><span class="prog-fill" style="width:57%" data-pct="57%"></span><span class="prog-end">100%</span></div>
+      <ul class="dash-list">
+        <li><span>Served system</span><b>360,636</b></li>
+        <li><span>Global A+B</span><b>370,313</b></li>
+        <li><span>Dataset A only</span><b>413,223</b></li>
+        <li><span>Dataset B only</span><b>636,365</b></li>
+      </ul>
+      <a class="prog-foot" href="/guide/monitor">Open live monitoring <span>→</span></a>
     </article>
 
-    <article class="panel">
-      <p class="eyebrow">Global family · validation MAE</p>
-      <h2>Trees beat a straight line. Size decides who is served.</h2>
-      <div class="bars">
-        <div class="bar-row"><span>Median baseline</span><div class="track"><span style="width:100%"></span></div><b>2.30M</b></div>
-        <div class="bar-row"><span>Best ridge</span><div class="track"><span style="width:50%"></span></div><b>1.15M</b></div>
-        <div class="bar-row"><span>Random forest, 763 MB</span><div class="track"><span style="width:14%"></span></div><b>324,644</b></div>
-        <div class="bar-row"><span>LightGBM, 12.6 MB</span><div class="track"><span style="width:14.5%"></span></div><b>333,743</b></div>
+    <article class="prog-card">
+      <div class="prog-card-top">
+        <b>Size budget used</b>
+        <span class="dash-chip ok">LightGBM</span>
       </div>
-      <p class="note">The forest is a little more accurate and too large for a small host. LightGBM is the champion.</p>
+      <p class="dash-label">Champion against 100 MB limit</p>
+      <p class="dash-value">12.6<span class="dash-trend">MB</span></p>
+      <p class="dash-sub">Forest at 763 MB is more accurate and not served</p>
+      <div class="prog-track"><span class="prog-fill" style="width:13%" data-pct="13%"></span><span class="prog-end">100%</span></div>
+      <ul class="dash-list">
+        <li><span>LightGBM champion</span><b>333,743 val</b></li>
+        <li><span>Random forest</span><b>324,644 val</b></li>
+        <li><span>Best ridge</span><b>1.15M val</b></li>
+      </ul>
+      <a class="prog-foot" href="/system">See loaded models <span>→</span></a>
     </article>
+  </section>
 
-    <article class="panel">
-      <p class="eyebrow">Routing on validation rows</p>
-      <h2>One specialist is on. The other is not.</h2>
-      <div class="table-wrap">
+  <section class="stack" style="margin-top:14px">
+    <article class="dash-tile" style="min-height:0">
+      <div class="dash-tile-top"><b>Routing on validation</b><span class="dash-chip">One on</span></div>
+      <div class="table-wrap" style="margin-top:12px">
         <table>
-          <tr><th>Specialist</th><th class="num">Its val MAE</th><th class="num">Default on the same rows</th><th class="num">Gain</th><th>Served</th></tr>
+          <tr><th>Specialist</th><th class="num">Its val MAE</th><th class="num">Default</th><th class="num">Gain</th><th>Served</th></tr>
           <tr class="is-champion"><td>2010 and newer</td><td class="num">376,902</td><td class="num">382,254</td><td class="num">+1.4%</td><td>Yes</td></tr>
           <tr><td>Before 2010</td><td class="num">240,116</td><td class="num">237,237</td><td class="num">−1.2%</td><td>No</td></tr>
         </table>
       </div>
     </article>
 
-    <article class="panel">
-      <p class="eyebrow">Fair comparison</p>
-      <h2>Every model on the same test rows</h2>
-      <div class="table-wrap">
+    <article class="dash-tile" style="min-height:0">
+      <div class="dash-tile-top"><b>Fair comparison</b><span class="dash-chip">Same test rows</span></div>
+      <div class="table-wrap" style="margin-top:12px">
         <table>
-          <tr><th>Model</th><th class="num">All test</th><th class="num">A rows</th><th class="num">B rows</th><th class="num">Pre-2010</th><th class="num">2010+</th></tr>
+          <tr><th>Model</th><th class="num">All test</th><th class="num">A</th><th class="num">B</th><th class="num">Pre-2010</th><th class="num">2010+</th></tr>
           <tr><td>Global A+B</td><td class="num">370,313</td><td class="num">389,722</td><td class="num">342,167</td><td class="num">257,490</td><td class="num">428,281</td></tr>
           <tr><td>Dataset A only</td><td class="num">413,223</td><td class="num">387,479</td><td class="num">450,554</td><td class="num">271,935</td><td class="num">485,816</td></tr>
           <tr><td>Dataset B only</td><td class="num">636,365</td><td class="num">855,102</td><td class="num">319,170</td><td class="num">274,047</td><td class="num">822,524</td></tr>
-          <tr><td>2010 and newer</td><td class="num">695,380</td><td class="num">643,021</td><td class="num">771,307</td><td class="num">1,243,740</td><td class="num">413,633</td></tr>
-          <tr><td>Before 2010</td><td class="num">1,601,675</td><td class="num">1,901,993</td><td class="num">1,166,177</td><td class="num">263,931</td><td class="num">2,289,008</td></tr>
           <tr class="is-served"><td>Served system</td><td class="num">360,636</td><td class="num">376,881</td><td class="num">337,079</td><td class="num">257,490</td><td class="num">413,633</td></tr>
         </table>
       </div>
     </article>
 
-    <article class="panel">
-      <p class="eyebrow">price_global_ab · all 12 runs · validation</p>
-      <h2>The run list</h2>
-      <div class="table-wrap">
+    <article class="dash-tile" style="min-height:0">
+      <div class="dash-tile-top"><b>Global family · 12 runs</b><span class="dash-chip">Validation</span></div>
+      <div class="table-wrap" style="margin-top:12px">
         <table>
           <tr><th>Run</th><th class="num">Val MAE</th><th class="num">Val MdAPE</th><th>Note</th></tr>
           <tr><td>baseline_median</td><td class="num">2,304,820</td><td class="num">48.7%</td><td></td></tr>
-          <tr><td>baseline_mean</td><td class="num">2,300,997</td><td class="num">48.2%</td><td></td></tr>
-          <tr><td>baseline_q40</td><td class="num">2,316,177</td><td class="num">49.8%</td><td></td></tr>
-          <tr><td>ridge_alpha_01</td><td class="num">1,145,734</td><td class="num">22.0%</td><td></td></tr>
           <tr><td>ridge_alpha_1</td><td class="num">1,145,734</td><td class="num">22.0%</td><td></td></tr>
-          <tr><td>ridge_alpha_10</td><td class="num">1,145,733</td><td class="num">22.0%</td><td></td></tr>
-          <tr><td>rf_100_depth12</td><td class="num">399,073</td><td class="num">7.4%</td><td></td></tr>
-          <tr><td>rf_200_depth16</td><td class="num">340,613</td><td class="num">6.4%</td><td></td></tr>
           <tr><td>rf_300_depth20</td><td class="num">324,644</td><td class="num">6.2%</td><td>763 MB, not served</td></tr>
-          <tr><td>lgbm_300</td><td class="num">381,185</td><td class="num">7.1%</td><td></td></tr>
-          <tr><td>lgbm_600_lr03</td><td class="num">352,052</td><td class="num">6.5%</td><td></td></tr>
           <tr class="is-champion"><td>lgbm_900_lr02</td><td class="num">333,743</td><td class="num">6.3%</td><td>Champion, 12.6 MB</td></tr>
         </table>
       </div>
     </article>
 
-    <article class="panel">
-      <p class="eyebrow">Weight-space programming v3 · beat attempt · MLflow <code>carcompass/wsp</code></p>
-      <h2>It beats the global LightGBM champion.</h2>
-      <div class="bars">
-        <div class="bar-row"><span>Best program (blend)</span><div class="track"><span style="width:97%"></span></div><b>361,474</b></div>
-        <div class="bar-row"><span>LGBM greedy soup</span><div class="track"><span style="width:99%"></span></div><b>365,297</b></div>
-        <div class="bar-row"><span>LightGBM global champion</span><div class="track"><span style="width:100%"></span></div><b>370,313</b></div>
-        <div class="bar-row"><span>WSP MLP soup alone</span><div class="track"><span style="width:100%"></span></div><b>402,585</b></div>
+    <article class="prog-card">
+      <div class="prog-card-top">
+        <b>WSP beat vs global champion</b>
+        <span class="dash-chip warn">Focus</span>
       </div>
-      <div class="table-wrap" style="margin-top:18px">
-        <table>
-          <tr><th>Program</th><th class="num">Val MAE</th><th class="num">Test MAE</th><th>Note</th></tr>
-          <tr class="is-champion"><td>blend_3way</td><td class="num">325,025</td><td class="num">361,474</td><td>0.8·LGBM soup + 0.2·WSP</td></tr>
-          <tr><td>lgbm_soup_greedy</td><td class="num">328,755</td><td class="num">365,297</td><td>Greedy LGBM seed soup</td></tr>
-          <tr><td>lgbm_soup_uniform</td><td class="num">329,774</td><td class="num">365,486</td><td>Uniform LGBM soup</td></tr>
-          <tr><td>price_global_ab</td><td class="num">333,743</td><td class="num">370,313</td><td>Previous global champion</td></tr>
-          <tr><td>wsp_soup_greedy</td><td class="num">361,827</td><td class="num">402,585</td><td>Distilled MLP weight soup</td></tr>
-        </table>
-      </div>
-      <p class="note">v3: bagged LightGBM variants → prediction soup, plus a distilled MLP with WSP. Best blend beats the global champion by ~8.8k PKR on test. Full write-up: <code>reports/wsp_comparison.md</code>.</p>
-      <a class="btn" href="/wsp" style="margin-top:18px">Open WSP lab →</a>
+      <p class="dash-label">Test MAE · blend_3way</p>
+      <p class="dash-value">361k<span class="dash-trend">−2.4%</span></p>
+      <p class="dash-sub">361,474 vs 370,313 LightGBM global</p>
+      <div class="prog-track"><span class="prog-fill" style="width:97%" data-pct="97%"></span><span class="prog-end">100%</span></div>
+      <a class="prog-foot" href="/guide/wsp">Open WSP lab <span>→</span></a>
     </article>
   </section>
-
-  <footer class="foot">
-    <p>These figures are from the recorded A+B run, plus the WSP experiment.</p>
-    <p><a href="/pipeline">How the numbers were produced</a></p>
-  </footer>
 </main>
-<script src="/assets/site.js?v=wsp2"></script>
+<script src="/assets/site.js?v=wsp12"></script>
 </body>
 </html>

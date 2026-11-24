@@ -12,29 +12,90 @@
 <body>
 <main class="wrap">
   <header class="page-head">
-    <p class="eyebrow">System design</p>
+    <p class="eyebrow">Data preparation &amp; system design</p>
     <h1>From two listing files to one price.</h1>
-    <p class="lede">Training is offline. A request only loads a saved model. The written version is in design/SYSTEM_DESIGN.md.</p>
+    <p class="lede">Training is offline. A request only loads a saved model. Prepare → train → MLflow → FastAPI.</p>
   </header>
 
-  <section class="stack">
-    <ol class="steps">
-      <li><span>01</span><b>Listings</b><p>Dataset A is a CSV. Dataset B is JSON. Both are downloaded, not committed.</p></li>
-      <li><span>02</span><b>Prepare</b><p>Map columns, drop bad prices and duplicates, scale B to A, write one split.</p></li>
-      <li><span>03</span><b>Train</b><p>Five families, twelve runs. MLflow records parameters, MAE, and the git commit.</p></li>
-      <li><span>04</span><b>Choose</b><p>Lowest validation MAE under 100 MB. The test set is not used to pick.</p></li>
-      <li><span>05</span><b>Serve</b><p>FastAPI loads the manifest and routes on the car's year.</p></li>
-      <li><span>06</span><b>Range</b><p>Calibration quantiles. Each assumed field widens that range by 10%.</p></li>
-      <li><span>07</span><b>Watch</b><p>/health and /metrics. Counts live in memory and reset on restart.</p></li>
-      <li><span>08</span><b>Ship</b><p>One Docker image. It predicts only when the joblib files were copied in.</p></li>
-    </ol>
+  <section class="dash-board" aria-label="Pipeline headlines">
+    <article class="dash-tile">
+      <div class="dash-tile-top"><b>Listings</b><span class="dash-chip ok">Clean</span></div>
+      <p class="dash-label">After prepare</p>
+      <p class="dash-value">97,786</p>
+      <p class="dash-sub">A + B, deduped</p>
+      <div class="dash-mini-bars tone-ok" aria-hidden="true">
+        <span style="height:35%"></span><span style="height:48%"></span><span style="height:62%"></span>
+        <span style="height:78%" class="is-on"></span><span style="height:92%" class="is-on"></span>
+      </div>
+    </article>
+    <article class="dash-tile">
+      <div class="dash-tile-top"><b>Experiments</b><a class="dash-go" href="/experiments">↗</a></div>
+      <p class="dash-label">Families × configs</p>
+      <p class="dash-value">5 × 12</p>
+      <p class="dash-sub">Tracked in MLflow</p>
+      <div class="dash-progress" aria-hidden="true"><i style="width:100%" data-pct="60"></i><span class="prog-end">100%</span></div>
+    </article>
+    <article class="dash-tile">
+      <div class="dash-tile-top"><b>Served MAE</b><span class="dash-chip">PKR</span></div>
+      <p class="dash-label">Routed test</p>
+      <p class="dash-value">360k</p>
+      <p class="dash-sub">360,636 on 19,525 rows</p>
+      <svg class="dash-spark" viewBox="0 0 240 72" aria-hidden="true">
+        <path fill="none" stroke="#0b0b0c" stroke-width="2.5" d="M0 60 L48 52 L96 44 L144 38 L192 30 L240 24"/>
+      </svg>
+    </article>
+    <article class="dash-tile">
+      <div class="dash-tile-top"><b>WSP beat</b><span class="dash-chip warn">Focus</span></div>
+      <p class="dash-label">vs champion</p>
+      <p class="dash-value">361k</p>
+      <p class="dash-sub">361,474 vs 370,313 global</p>
+      <ul class="dash-list">
+        <li><span>Program</span><b>blend_3way</b></li>
+        <li><span>Margin</span><b>−2.4%</b></li>
+      </ul>
+    </article>
   </section>
 
-  <footer class="foot">
-    <p>Design notes live in design/SYSTEM_DESIGN.md and design/UI.md.</p>
-    <p><a href="/demo">Run the checks</a></p>
-  </footer>
+  <section class="dash-board dash-board-2" style="margin-top:14px">
+    <article class="dash-tile" style="min-height:0">
+      <div class="dash-tile-top"><b>Prepare</b><span class="dash-chip ok">Separate step</span></div>
+      <ul class="req-list" style="margin-top:12px">
+        <li data-state="done"><b>Map columns</b><span>schema.yaml / schema_b.yaml</span></li>
+        <li data-state="done"><b>Validate</b><span>Missing values, ranges, Pandera</span></li>
+        <li data-state="done"><b>Dedup</b><span>Within + cross-source listing_group</span></li>
+        <li data-state="done"><b>Split</b><span>fit / val / cal / test · seed 42</span></li>
+      </ul>
+    </article>
+    <article class="dash-tile" style="min-height:0">
+      <div class="dash-tile-top"><b>Split shares</b><span class="dash-chip">Group-aware</span></div>
+      <ul class="dash-list" style="margin-top:18px">
+        <li><span>Fit</span><b>64%</b></li>
+        <li><span>Validation</span><b>8%</b></li>
+        <li><span>Calibration</span><b>8%</b></li>
+        <li><span>Test</span><b>20%</b></li>
+      </ul>
+      <div class="dash-progress" style="margin-top:18px" aria-hidden="true"><i style="width:64%" data-pct="64%"></i><span class="prog-end">100%</span></div>
+    </article>
+  </section>
+
+  <section class="stack" style="margin-top:14px">
+    <ol class="steps">
+      <li><span>01</span><b>Listings</b><p>Dataset A CSV · Dataset B JSON — downloaded, not committed.</p></li>
+      <li><span>02</span><b>Prepare</b><p>Map, validate, dedup, scale B to A, write one split.</p></li>
+      <li><span>03</span><b>Train</b><p>Five families, twelve runs. MLflow logs params + MAE.</p></li>
+      <li><span>04</span><b>Choose</b><p>Lowest val MAE under 100 MB. Test set only reports.</p></li>
+      <li><span>05</span><b>Serve</b><p>FastAPI loads manifest and routes on year.</p></li>
+      <li><span>06</span><b>Range</b><p>Calibration quantiles · assumed fields widen 10%.</p></li>
+      <li><span>07</span><b>Watch</b><p>/health + /stats dashboard.</p></li>
+      <li><span>08</span><b>Ship</b><p>One Docker image with joblibs copied in.</p></li>
+    </ol>
+    <div class="dash-actions">
+      <a class="btn" href="/guide/milestones">Milestones →</a>
+      <a class="link-arrow" href="/experiments" style="margin-top:0">Experiments</a>
+      <a class="link-arrow" href="/guide/monitor" style="margin-top:0">Monitoring</a>
+    </div>
+  </section>
 </main>
-<script src="/assets/site.js?v=wsp2"></script>
+<script src="/assets/site.js?v=wsp12"></script>
 </body>
 </html>

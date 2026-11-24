@@ -30,8 +30,7 @@
       <p class="lede">CarCompass estimates a used car’s price in PKR from make, model, year and mileage — with a range and the factors behind it.</p>
       <div class="hero-ctas">
         <a class="btn" href="#estimate">Get a price →</a>
-        <a class="btn ghost-btn" href="/wsp">Open WSP lab →</a>
-        <a class="link-arrow" href="/experiments">Explore experiments</a>
+        <a class="btn ghost-btn" href="/experiments">Experiments →</a>
       </div>
       <p class="hero-status"><span id="health-pill" class="status">Checking the API…</span></p>
     </div>
@@ -68,19 +67,30 @@
 
 <main class="wrap">
 
-  <section class="specs" aria-label="Key results">
-    <div class="spec">
-      <svg viewBox="0 0 24 24"><path d="M12 19a7 7 0 1 0 0-14 7 7 0 0 0 0 14z"/><path d="M12 12l4-3"/></svg>
-      <div><b>360,636 PKR</b><span>Served test MAE</span></div>
-    </div>
-    <div class="spec">
-      <svg viewBox="0 0 24 24"><path d="M4 12h16"/><path d="M8 8v8M16 8v8"/></svg>
-      <div><b>80%</b><span>Prices inside the range</span></div>
-    </div>
-    <div class="spec">
-      <svg viewBox="0 0 24 24"><path d="M13 3v8h8"/><path d="M5 13a8 8 0 0 0 14.2 4"/></svg>
-      <div><b>97,786</b><span>Cleaned listings (A + B)</span></div>
-    </div>
+  <section class="dash-board dash-board-3" aria-label="Key results">
+    <article class="dash-tile" style="min-height:170px">
+      <div class="dash-tile-top"><b>Served MAE</b><span class="dash-chip ok">Test</span></div>
+      <p class="dash-label">Routed system</p>
+      <p class="dash-value">360k</p>
+      <p class="dash-sub">360,636 PKR on held-out rows</p>
+    </article>
+    <article class="prog-card">
+      <div class="prog-card-top"><b>Range coverage</b><span class="dash-chip">80%</span></div>
+      <p class="dash-label">Prices inside the band</p>
+      <p class="dash-value">80%<span class="dash-trend">target</span></p>
+      <div class="prog-track"><span class="prog-fill" style="width:80%" data-pct="80%"></span><span class="prog-end">100%</span></div>
+      <p class="dash-sub" style="margin-top:10px">Calibration quantiles · assumed fields widen the range</p>
+    </article>
+    <article class="dash-tile" style="min-height:170px">
+      <div class="dash-tile-top"><b>Listings</b><span class="dash-chip">A + B</span></div>
+      <p class="dash-label">After prepare</p>
+      <p class="dash-value">97.8k</p>
+      <p class="dash-sub">97,786 cleaned rows</p>
+      <div class="dash-mini-bars tone-ok" aria-hidden="true">
+        <span style="height:40%"></span><span style="height:55%"></span>
+        <span style="height:72%" class="is-on"></span><span style="height:90%" class="is-on"></span>
+      </div>
+    </article>
   </section>
 
   <section class="band">
@@ -103,8 +113,8 @@
         </li>
       </ul>
       <div class="hero-ctas" style="margin-top:22px; flex-direction:row; flex-wrap:wrap; gap:12px; align-items:center">
-        <a class="btn" href="/wsp">Open WSP lab →</a>
-        <a class="link-arrow" href="/experiments" style="margin-top:0">All experiments</a>
+        <a class="btn" href="/experiments">Experiments →</a>
+        <a class="link-arrow" href="/system" style="margin-top:0">Models</a>
       </div>
     </div>
 
@@ -285,12 +295,8 @@
   </section>
   <div class="recs" id="examples"></div>
 
-  <footer class="foot">
-    <p>Estimates reflect historical asking prices. They are a guide, not a valuation.</p>
-    <p><a href="/docs">API docs</a> · <a href="/demo">Milestone checks</a> · <a href="/pipeline">Pipeline</a></p>
-  </footer>
 </main>
-<script src="/assets/site.js?v=wsp2"></script>
+<script src="/assets/site.js?v=wsp12"></script>
 <script src="/assets/hero.js"></script>
 <script src="/assets/estimate.js"></script>
 </body>

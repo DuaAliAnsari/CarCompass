@@ -45,11 +45,14 @@ def test_explain_returns_top_factors(client):
 
 
 def test_metrics_counts_requests(client):
-    client.get("/health")
+    headers = {"Accept": "application/json"}
+    client.get("/health")  # probes are not counted
+    before = client.get("/metrics", headers=headers).json()["request_count"]
     client.post("/predict", json=CAR)
-    body = client.get("/metrics").json()
-    assert body["request_count"] >= 2
+    body = client.get("/metrics", headers=headers).json()
+    assert body["request_count"] == before + 1
     assert body["avg_latency_ms"] >= 0
+    assert client.get("/stats", headers=headers).json()["request_count"] == body["request_count"]
 
 
 def test_predict_returns_503_without_model(tmp_path):
@@ -75,12 +78,32 @@ def test_home_page_is_served(client):
 
 
 def test_frontend_pages_are_served(client):
-    for path in ("/experiments", "/wsp", "/system", "/pipeline", "/demo"):
+    for path in (
+        "/experiments", "/wsp", "/milestones", "/system", "/pipeline", "/demo",
+        "/guide", "/guide/monitor", "/guide/milestones",
+    ):
         res = client.get(path)
         assert res.status_code == 200
         assert "text/html" in res.headers["content-type"]
-    assert "Milestone 1 checks" in client.get("/demo").text
+    assert "Milestone checks" in client.get("/demo").text
     assert "WSP" in client.get("/wsp").text
+    assert "Milestones" in client.get("/milestones").text
+    assert "Project guide" in client.get("/guide").text or "Case study" in client.get("/guide").text
+
+
+def test_stats_aliases_metrics(client):
+    headers = {"Accept": "application/json"}
+    metrics = client.get("/metrics", headers=headers).json()
+    stats = client.get("/stats", headers=headers).json()
+    assert "request_count" in metrics and stats["request_count"] == metrics["request_count"]
+
+
+def test_stats_html_dashboard_for_browsers(client):
+    res = client.get("/stats", headers={"Accept": "text/html"})
+    assert res.status_code == 200
+    assert "text/html" in res.headers["content-type"]
+    assert "Monitoring" in res.text
+    assert client.get("/metrics", headers={"Accept": "text/html"}).status_code == 200
 
 
 def test_options_lists_known_values(client):
