@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WSP experiment · CarCompass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head">
+    <p class="eyebrow">Weight-space programming · live experiment</p>
+    <h1>Predict with the WSP beat blend.</h1>
+    <p class="lede">This page always uses the WSP experiment predictor. Compare it to the production routed LightGBM system on the same car, and see how live latency and request metrics move.</p>
+    <p class="hero-status"><span id="wsp-status" class="status">Checking WSP…</span></p>
+  </header>
+
+  <section class="stat-grid" aria-label="WSP experiment stats" id="wsp-stats">
+    <article class="stat-card"><span>Best program</span><b id="s-program">—</b><span id="s-note">Loading…</span></article>
+    <article class="stat-card"><span>WSP test MAE</span><b id="s-wsp-mae">—</b><span>PKR on held-out test</span></article>
+    <article class="stat-card"><span>Champion test MAE</span><b id="s-champ-mae">—</b><span>Global LightGBM</span></article>
+    <article class="stat-card"><span>Beat margin</span><b id="s-delta">—</b><span id="s-beat">vs price_global_ab</span></article>
+  </section>
+
+  <section class="stack">
+    <article class="panel">
+      <p class="eyebrow">Offline programs · validation chooses, test reports</p>
+      <h2>How the experiment ranked</h2>
+      <div class="bars" id="wsp-bars">
+        <div class="bar-row"><span>blend_3way (best)</span><div class="track"><span style="width:97%"></span></div><b>361,474</b></div>
+        <div class="bar-row"><span>LGBM greedy soup</span><div class="track"><span style="width:99%"></span></div><b>365,297</b></div>
+        <div class="bar-row"><span>LightGBM global</span><div class="track"><span style="width:100%"></span></div><b>370,313</b></div>
+        <div class="bar-row"><span>WSP MLP alone</span><div class="track"><span style="width:100%"></span></div><b>402,585</b></div>
+      </div>
+      <div class="table-wrap" style="margin-top:18px">
+        <table>
+          <tr><th>Program</th><th class="num">Val MAE</th><th class="num">Test MAE</th><th>Role</th></tr>
+          <tr class="is-champion"><td>blend_3way</td><td class="num">325,025</td><td class="num">361,474</td><td>Served experiment (0.8·LGBM + 0.2·WSP)</td></tr>
+          <tr><td>lgbm_soup_greedy</td><td class="num">328,755</td><td class="num">365,297</td><td>Tree soup partner</td></tr>
+          <tr><td>price_global_ab</td><td class="num">333,743</td><td class="num">370,313</td><td>Production global champion</td></tr>
+          <tr><td>wsp_soup_greedy</td><td class="num">361,827</td><td class="num">402,585</td><td>MLP weight soup alone</td></tr>
+          <tr><td>Served routed system</td><td class="num">—</td><td class="num">360,636</td><td>Default + 2010+ specialist</td></tr>
+        </table>
+      </div>
+      <p class="note">Full table: <code>reports/wsp_comparison.md</code>. Live API blend may approximate the tree side with <code>price_global_ab</code> until the next <code>make train-wsp</code> persists the greedy soup.</p>
+    </article>
+
+    <article class="panel">
+      <p class="eyebrow">Live API metrics</p>
+      <h2>How the service is behaving</h2>
+      <div class="metrics" id="live-metrics">
+        <div><span>Requests</span><b id="m-req">—</b></div>
+        <div><span>Average latency</span><b id="m-lat">—</b></div>
+        <div><span>Errors</span><b id="m-err">—</b></div>
+        <div><span>Last WSP call</span><b id="m-wsp-lat">—</b></div>
+        <div><span>Last routed call</span><b id="m-routed-lat">—</b></div>
+        <div><span>Price delta</span><b id="m-price-delta">—</b></div>
+      </div>
+      <p class="note" id="metrics-note">Run a comparison below to fill latency and delta.</p>
+    </article>
+  </section>
+
+  <section class="section-head">
+    <p class="eyebrow">Predict · WSP only + comparison</p>
+    <h2>Price the same car both ways.</h2>
+  </section>
+
+  <section class="estimate-grid wsp-grid">
+    <article class="config">
+      <p class="eyebrow">Car details</p>
+      <form id="wsp-form">
+        <div class="fields">
+          <label>Make <select id="make" required><option>Loading…</option></select></label>
+          <label>Model <select id="model" required><option>Loading…</option></select></label>
+          <label>Year <input id="year" type="number" min="1980" value="2016" required></label>
+          <label>Mileage (km) <input id="mileage" type="number" min="0" max="1000000" value="75000" required></label>
+          <label>Engine (cc) <input id="engine_cc" type="number" min="50" max="8000" placeholder="Optional"></label>
+          <label>City <select id="city"></select></label>
+        </div>
+        <div class="actions">
+          <button class="btn" id="wsp-btn" type="submit">Run WSP + compare →</button>
+          <a class="link-arrow" href="/experiments">All experiments</a>
+        </div>
+        <p class="error" id="form-error"></p>
+      </form>
+    </article>
+
+    <article class="config">
+      <p class="eyebrow">Side-by-side result</p>
+      <div class="compare-grid" id="compare-grid">
+        <div class="compare-card is-wsp">
+          <span class="chip">WSP experiment</span>
+          <p class="compare-price" id="wsp-price">—</p>
+          <span id="wsp-lakh">Waiting for a run</span>
+          <p class="note" id="wsp-range"></p>
+          <p class="note" id="wsp-meta"></p>
+        </div>
+        <div class="compare-card">
+          <span class="chip">Routed champion</span>
+          <p class="compare-price" id="routed-price">—</p>
+          <span id="routed-lakh">Waiting for a run</span>
+          <p class="note" id="routed-range"></p>
+          <p class="note" id="routed-meta"></p>
+        </div>
+      </div>
+      <p class="note" id="compare-summary"></p>
+      <pre id="raw-json" class="wsp-raw">JSON responses appear here after a run.</pre>
+    </article>
+  </section>
+
+  <footer class="foot">
+    <p>WSP is an experiment switch. Production default remains the routed LightGBM system.</p>
+    <p><a href="/">Estimate</a> · <a href="/experiments">Experiments</a> · <a href="/docs">API docs</a></p>
+  </footer>
+</main>
+<script src="/assets/site.js?v=wsp2"></script>
+<script src="/assets/wsp.js"></script>
+</body>
+</html>

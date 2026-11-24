@@ -30,6 +30,7 @@
       <p class="lede">CarCompass estimates a used car’s price in PKR from make, model, year and mileage — with a range and the factors behind it.</p>
       <div class="hero-ctas">
         <a class="btn" href="#estimate">Get a price →</a>
+        <a class="btn ghost-btn" href="/wsp">Open WSP lab →</a>
         <a class="link-arrow" href="/experiments">Explore experiments</a>
       </div>
       <p class="hero-status"><span id="health-pill" class="status">Checking the API…</span></p>
@@ -101,7 +102,10 @@
           <div><b>Routed system</b><span>Test MAE 360,636 PKR on 19,525 rows.</span></div>
         </li>
       </ul>
-      <a class="btn" href="/experiments" style="margin-top:22px">Explore experiments →</a>
+      <div class="hero-ctas" style="margin-top:22px; flex-direction:row; flex-wrap:wrap; gap:12px; align-items:center">
+        <a class="btn" href="/wsp">Open WSP lab →</a>
+        <a class="link-arrow" href="/experiments" style="margin-top:0">All experiments</a>
+      </div>
     </div>
 
     <div class="band-photo" style="background-image:url('/assets/img/hero-2.png')" aria-hidden="true">
@@ -257,9 +261,18 @@
             <div class="pills" id="assembly-pills"></div>
           </div>
         </div>
+        <div class="opt predictor-opt">
+          <p class="eyebrow">Predictor</p>
+          <div class="pills" id="predictor-pills">
+            <button type="button" class="pill is-on" data-predictor="routed">Routed champion</button>
+            <button type="button" class="pill" data-predictor="wsp" id="wsp-pill" disabled title="WSP experiment not loaded">WSP experiment</button>
+          </div>
+          <p class="note" id="predictor-note">Production route: LightGBM default + 2010+ specialist.</p>
+          <a class="btn" href="/wsp" style="margin-top:12px">Open WSP lab →</a>
+        </div>
         <div class="actions">
           <button class="btn" id="estimate-btn" type="submit">Estimate price →</button>
-          <a class="link-arrow" href="/experiments">See experiments</a>
+          <a class="link-arrow" href="/wsp">WSP stats &amp; compare</a>
         </div>
         <p class="error" id="form-error"></p>
       </form>
@@ -277,7 +290,7 @@
     <p><a href="/docs">API docs</a> · <a href="/demo">Milestone checks</a> · <a href="/pipeline">Pipeline</a></p>
   </footer>
 </main>
-<script src="/assets/site.js"></script>
+<script src="/assets/site.js?v=wsp2"></script>
 <script src="/assets/hero.js"></script>
 <script src="/assets/estimate.js"></script>
 </body>

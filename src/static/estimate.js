@@ -35,6 +35,7 @@ const FIELD_LABEL = {
 
 let optionsCache = null;
 const picked = { transmission: "", fuel: "", assembly: "" };
+let predictor = "routed";
 
 async function call(method, path, body) {
   const res = await fetch(path, {
@@ -140,6 +141,7 @@ function carFromForm() {
     model: $("model").value,
     year: Number($("year").value),
     mileage: Number($("mileage").value),
+    predictor,
   };
   if ($("engine_cc").value) car.engine_cc = Number($("engine_cc").value);
   if ($("city").value) car.city = $("city").value;
@@ -147,6 +149,18 @@ function carFromForm() {
     if (picked[key]) car[key] = picked[key];
   }
   return car;
+}
+
+function setPredictor(next) {
+  predictor = next;
+  document.querySelectorAll("#predictor-pills .pill").forEach((pill) => {
+    pill.classList.toggle("is-on", pill.getAttribute("data-predictor") === next);
+  });
+  const note = $("predictor-note");
+  if (!note) return;
+  note.textContent = next === "wsp"
+    ? "Experiment: WSP beat blend (try it against the routed champion)."
+    : "Production route: LightGBM default + 2010+ specialist.";
 }
 
 function showRange(low, high, price) {
@@ -215,7 +229,9 @@ async function estimate(event) {
     markResultReady();
     $("result-price").textContent = pkr(data.estimated_price_pkr);
     $("result-lakh").textContent = "about " + lakh(data.estimated_price_pkr);
-    $("result-model").textContent = plainModel(data.selected_model);
+    $("result-model").textContent = data.selected_model === "wsp_experiment"
+      ? "WSP experiment"
+      : plainModel(data.selected_model);
     $("result-model").classList.add("ok");
     showRange(data.range_low_pkr, data.range_high_pkr, data.estimated_price_pkr);
     const assumed = (data.assumed_fields || []).map((field) => FIELD_LABEL[field] || field);
@@ -255,6 +271,18 @@ async function loadOptions() {
   }
   status.className = "status ok";
   status.textContent = "Model ready · " + health.data.models_served.length + " loaded";
+
+  const wspPill = $("wsp-pill");
+  if (wspPill && health.data.wsp_loaded) {
+    wspPill.disabled = false;
+    wspPill.title = health.data.wsp && health.data.wsp.beat_champion
+      ? "WSP beat the global LightGBM on test MAE"
+      : "Try the WSP experiment predictor";
+    wspPill.addEventListener("click", () => setPredictor("wsp"));
+  }
+  document.querySelectorAll("#predictor-pills .pill[data-predictor='routed']").forEach((pill) => {
+    pill.addEventListener("click", () => setPredictor("routed"));
+  });
 
   const response = await call("GET", "/options");
   if (response.status !== 200) return;

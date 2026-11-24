@@ -1,0 +1,16 @@
+{
+  "program": "blend_3way",
+  "val_mae_pkr": 325025.2459632095,
+  "test_mae_pkr": 361473.60371867416,
+  "note": "0.80·lgbm_greedy + 0.00·lgbm_uniform + 0.20·WSP",
+  "champion_test_mae_pkr": 370312.5623147926,
+  "beat_champion": true,
+  "blend_weights": {
+    "lgbm": 0.8,
+    "wsp": 0.2
+  },
+  "q10": -0.18,
+  "q90": 0.18,
+  "serve": true,
+  "served_note": "API experiment predictor: 0.8·price_global_ab + 0.20·WSP MLP (offline beat used an LGBM greedy soup; next train_wsp_beat run persists that soup)."
+}

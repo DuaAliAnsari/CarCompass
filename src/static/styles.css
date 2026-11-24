@@ -93,6 +93,13 @@ button { cursor: pointer; }
   border-radius: 0;
   text-decoration: none;
 }
+.btn.ghost-btn {
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  border: 1px solid rgba(11, 11, 12, 0.14);
+  box-shadow: 0 8px 24px rgba(11, 11, 12, 0.08);
+}
+.btn.ghost-btn:hover { opacity: 1; background: #fff; }
 .btn.ghost::after,
 .btn .arrow { content: none; }
 .link-arrow {
@@ -744,6 +751,9 @@ input, select {
   padding: 12px;
 }
 .opt .eyebrow { margin-bottom: 8px; font-size: 10px; }
+.predictor-opt { margin-top: 14px; }
+.predictor-opt .note { margin-top: 8px; }
+#predictor-pills .pill:disabled { opacity: 0.45; cursor: not-allowed; }
 .pills { display: flex; flex-wrap: wrap; gap: 6px; }
 .pill {
   border: 1px solid var(--line);
@@ -779,7 +789,7 @@ input, select {
 }
 .rec:hover { border-color: rgba(27, 28, 33, 0.18); }
 .rec-visual {
-  height: 132px;
+  height: 180px;
   background: #ececef;
   overflow: hidden;
 }
@@ -788,7 +798,7 @@ input, select {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+  object-position: 50% 48%;
   transition: transform 280ms ease;
 }
 .rec:hover .rec-visual img { transform: scale(1.03); }
@@ -895,6 +905,33 @@ tr.is-champion td { font-weight: 700; }
 .pass { color: var(--ok); font-weight: 700; }
 .fail { color: var(--bad); font-weight: 700; }
 .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+#live-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.compare-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+}
+.compare-card.is-wsp {
+  border-color: var(--ink);
+}
+.compare-price {
+  margin: 12px 0 4px;
+  font-size: clamp(24px, 3vw, 32px);
+  letter-spacing: -0.04em;
+  font-weight: 650;
+}
+.wsp-raw {
+  margin-top: 14px;
+  max-height: 280px;
+  overflow: auto;
+  font-size: 12px;
+}
 .metrics div {
   background: #fff;
   border-radius: 16px;
@@ -958,7 +995,8 @@ pre {
   .hero-overlay { padding-top: 24px; padding-bottom: 18px; }
   .glass-float { grid-template-columns: 1fr; }
   .glass-frame { display: none; }
-  .specs, .stat-grid, .steps, .recs, .option-row, .fields, .split, .metrics {
+  .specs, .stat-grid, .steps, .recs, .option-row, .fields, .split, .metrics,
+  #live-metrics, .compare-grid {
     grid-template-columns: 1fr;
   }
   .config-top { flex-direction: column; }

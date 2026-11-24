@@ -1,6 +1,7 @@
 const NAV = [
   ["/", "Estimate"],
   ["/experiments", "Experiments"],
+  ["/wsp", "WSP lab"],
   ["/system", "Models"],
   ["/pipeline", "Pipeline"],
   ["/demo", "Demo"],

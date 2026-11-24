@@ -75,11 +75,12 @@ def test_home_page_is_served(client):
 
 
 def test_frontend_pages_are_served(client):
-    for path in ("/experiments", "/system", "/pipeline", "/demo"):
+    for path in ("/experiments", "/wsp", "/system", "/pipeline", "/demo"):
         res = client.get(path)
         assert res.status_code == 200
         assert "text/html" in res.headers["content-type"]
     assert "Milestone 1 checks" in client.get("/demo").text
+    assert "WSP" in client.get("/wsp").text
 
 
 def test_options_lists_known_values(client):

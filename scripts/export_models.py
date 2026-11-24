@@ -20,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.model_router import MANIFEST_FILE, ModelRouter  # noqa: E402
 from src.model_utils import predict_price  # noqa: E402
+from src.wsp_serve import WSP_JOBLIB, WSP_META, WspExperiment  # noqa: E402
 
 TEST_CAR = {"make": "Toyota", "model": "Corolla", "year": 2016, "mileage": 75000}
 
@@ -30,10 +31,15 @@ def export(src: Path, dest: Path) -> dict:
     for name in manifest["served"]:
         entry = manifest["families"][name]
         files += [entry["file"], entry["meta"]]
+    wsp_files = [WSP_JOBLIB, WSP_META]
+    for name in wsp_files:
+        if (src / name).exists():
+            files.append(name)
 
     dest.mkdir(parents=True, exist_ok=True)
+    keep = set(files) | {".gitkeep"}
     for old in dest.iterdir():
-        if old.is_file() and old.name not in files and old.name != ".gitkeep":
+        if old.is_file() and old.name not in keep:
             old.unlink()  # a model that is no longer served
     for name in files:
         shutil.copy(src / name, dest / name)
@@ -43,8 +49,12 @@ def export(src: Path, dest: Path) -> dict:
         name, art = router.choose(year)
         price = predict_price(art, {**TEST_CAR, "year": year})["estimated_price_pkr"]
         print(f"check: {year} Toyota Corolla -> {name}: PKR {price:,}")
+    wsp = WspExperiment.load(dest)
+    if wsp:
+        price = wsp.predict(TEST_CAR, router.models[router.default_name].meta["defaults"])
+        print(f"check: WSP experiment -> PKR {price['estimated_price_pkr']:,} ({wsp.meta.get('program')})")
     size = sum((dest / f).stat().st_size for f in files) / 1e6
-    print(f"Exported {', '.join(manifest['served'])} ({size:.1f} MB) to {dest}")
+    print(f"Exported {', '.join(manifest['served'])} (+ WSP if present) ({size:.1f} MB) to {dest}")
     return manifest
 
 

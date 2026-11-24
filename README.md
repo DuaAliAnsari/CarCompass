@@ -267,12 +267,14 @@ so the residual method was kept.
 
 | Endpoint | Purpose |
 |---|---|
-| `POST /predict` | price, range, assumed fields, model version, `selected_model` |
+| `POST /predict` | price, range, assumed fields, model version, `selected_model` (optional `predictor`: `routed` or `wsp`) |
 | `POST /explain` | same plus the model's top factors |
-| `GET /models` | the models being served, their years, versions and test MAE |
-| `GET /health` | liveness check, models served |
+| `GET /models` | the models being served, their years, versions and test MAE (+ WSP experiment summary) |
+| `GET /health` | liveness check, models served, `wsp_loaded` |
 | `GET /metrics` | request count, average latency, errors |
 | `GET /docs` | auto-generated API docs |
+
+The estimate form can switch to the **WSP experiment** predictor (`predictor=wsp`): a blend that beat the global LightGBM champion on the held-out test set (~361k vs ~370k MAE). Production default remains the routed LightGBM system.
 
 The same process serves the site: `/` estimate, `/experiments` the recorded comparison, `/system` the loaded models, `/pipeline` the system design, `/demo` the Milestone 1 checks. The design notes are in `design/SYSTEM_DESIGN.md` and `design/UI.md`.
 

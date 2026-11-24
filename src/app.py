@@ -2,7 +2,7 @@
 
 Each request is answered by the price model the router picks for the car's year
 (see src/model_router.py and models/manifest.json). The site in src/static/ is
-served at /, /experiments, /system, /pipeline and /demo. API docs are at /docs.
+served at /, /experiments, /wsp, /system, /pipeline and /demo. API docs are at /docs.
 
 Run:  uvicorn src.app:app --reload
 """
@@ -13,7 +13,7 @@ import logging
 import os
 import time
 from pathlib import Path
-from typing import Optional
+from typing import Literal, Optional
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse
@@ -22,6 +22,7 @@ from pydantic import BaseModel, Field
 
 from src.model_router import ModelRouter
 from src.model_utils import CATEGORICAL, max_year, predict_price
+from src.wsp_serve import WspExperiment
 
 STATIC_DIR = Path(__file__).parent / "static"
 
@@ -47,6 +48,10 @@ class PredictRequest(BaseModel):
     city: Optional[str] = None
     assembly: Optional[str] = Field(default=None, examples=["Local"],
                                     description="Local or Imported")
+    predictor: Literal["routed", "wsp"] = Field(
+        default="routed",
+        description="routed = production LightGBM router; wsp = WSP beat experiment",
+    )
 
 
 def default_version(router) -> str | None:
@@ -79,10 +84,13 @@ def create_app(model_dir: str | None = None) -> FastAPI:
                   description="Used-car price estimation for Pakistan.")
     app.state.stats = {"requests": 0, "errors": 0, "total_latency": 0.0}
     app.state.router = None
+    app.state.wsp = None
+    model_root = model_dir or DEFAULT_MODEL_DIR
     try:
-        app.state.router = ModelRouter.load(model_dir or DEFAULT_MODEL_DIR)
+        app.state.router = ModelRouter.load(model_root)
     except FileNotFoundError:
         pass  # the service still starts; /predict answers 503 until a model exists
+    app.state.wsp = WspExperiment.load(model_root)
 
     @app.middleware("http")
     async def track_requests(request: Request, call_next):
@@ -119,19 +127,34 @@ def create_app(model_dir: str | None = None) -> FastAPI:
         return app.state.router
 
     def estimate(req: PredictRequest):
+        payload = req.model_dump()
+        predictor = payload.pop("predictor", "routed")
+        if predictor == "wsp":
+            wsp = app.state.wsp
+            if wsp is None:
+                raise HTTPException(
+                    status_code=503,
+                    detail="WSP experiment model not loaded. Run `make train-wsp`.",
+                )
+            defaults = get_router().models[get_router().default_name].meta["defaults"]
+            result = wsp.predict(payload, defaults)
+            return result, None
         name, art = get_router().choose(req.year)
-        result = predict_price(art, req.model_dump())
+        result = predict_price(art, payload)
         result["selected_model"] = name
         return result, art
 
     @app.get("/health")
     def health():
         router = app.state.router
+        wsp = app.state.wsp
         return {
             "status": "ok",
             "model_loaded": router is not None,
             "model_version": default_version(router),
             "models_served": sorted(router.models) if router else [],
+            "wsp_loaded": wsp is not None,
+            "wsp": wsp.describe() if wsp else None,
             "app_version": APP_VERSION,
         }
 
@@ -158,6 +181,10 @@ def create_app(model_dir: str | None = None) -> FastAPI:
     def experiments_page():
         return page("experiments.html")
 
+    @app.get("/wsp", include_in_schema=False)
+    def wsp_page():
+        return page("wsp.html")
+
     @app.get("/system", include_in_schema=False)
     def system_page():
         return page("system.html")
@@ -174,7 +201,9 @@ def create_app(model_dir: str | None = None) -> FastAPI:
 
     @app.get("/models")
     def models():
-        return get_router().describe()
+        body = get_router().describe()
+        body["wsp_experiment"] = app.state.wsp.describe() if app.state.wsp else None
+        return body
 
     @app.get("/options")
     def options():
@@ -188,6 +217,15 @@ def create_app(model_dir: str | None = None) -> FastAPI:
     @app.post("/explain")
     def explain(req: PredictRequest):
         result, art = estimate(req)
+        if art is None:
+            exp = result.get("experiment") or {}
+            result["top_factors"] = []
+            result["note"] = (
+                "WSP experiment predictor "
+                f"({exp.get('program', 'wsp')}: {exp.get('note', 'blend')}). "
+                "Factors are not attributed the same way as the LightGBM champion."
+            )
+            return result
         result["top_factors"] = art.meta["importances"][:5]
         result["note"] = "Factors are the model's overall feature importance, not per-car."
         return result
