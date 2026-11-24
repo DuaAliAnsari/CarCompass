@@ -1,8 +1,29 @@
 const $ = (id) => document.getElementById(id);
 const EXAMPLES = [
-  { label: "Corolla 2016", make: "Toyota", model: "Corolla", year: 2016, mileage: 75000 },
-  { label: "Civic 2018", make: "Honda", model: "Civic", year: 2018, mileage: 45000 },
-  { label: "Mehran 2005", make: "Suzuki", model: "Mehran", year: 2005, mileage: 150000 },
+  {
+    label: "Corolla 2016",
+    make: "Toyota",
+    model: "Corolla",
+    year: 2016,
+    mileage: 75000,
+    image: "/assets/img/examples/toyota-corolla.jpg",
+  },
+  {
+    label: "Civic 2018",
+    make: "Honda",
+    model: "Civic",
+    year: 2018,
+    mileage: 45000,
+    image: "/assets/img/examples/honda-civic.jpg",
+  },
+  {
+    label: "Mehran 2005",
+    make: "Suzuki",
+    model: "Mehran",
+    year: 2005,
+    mileage: 150000,
+    image: "/assets/img/examples/suzuki-mehran.jpg",
+  },
 ];
 const FIELD_LABEL = {
   engine_cc: "Engine size",
@@ -11,17 +32,10 @@ const FIELD_LABEL = {
   city: "City",
   assembly: "Assembly",
 };
-const CAR_SVG = `
-<svg viewBox="0 0 220 90" fill="none" aria-hidden="true">
-  <ellipse cx="110" cy="78" rx="78" ry="6" fill="#cfd2d8"/>
-  <path d="M24 58c10-4 24-20 40-24 12-3 26-6 40-6h34c14 0 26 4 36 12l18 14c4 3 6 6 12 6h18c6 0 10 4 10 8v8H18v-8c0-5 2-8 6-10z" fill="#f7f8fa" stroke="#1b1c21" stroke-width="1.6"/>
-  <path d="M76 34h56c4 7 3 14-1 19H72c-4-6-2-14 4-19z" fill="#eef1f4" stroke="#1b1c21" stroke-width="1.6"/>
-  <circle cx="70" cy="68" r="11" fill="#1b1c21"/><circle cx="70" cy="68" r="4.5" fill="#f4f4f6"/>
-  <circle cx="160" cy="68" r="11" fill="#1b1c21"/><circle cx="160" cy="68" r="4.5" fill="#f4f4f6"/>
-</svg>`;
 
 let optionsCache = null;
 const picked = { transmission: "", fuel: "", assembly: "" };
+let predictor = "routed";
 
 async function call(method, path, body) {
   const res = await fetch(path, {
@@ -71,6 +85,54 @@ function paintHeading() {
   const year = $("year").value;
   const mileage = Number($("mileage").value || 0).toLocaleString("en-US");
   $("result-sub").textContent = [model, year, mileage ? mileage + " km" : ""].filter(Boolean).join(" · ");
+  paintIdlePreview();
+}
+
+function paintIdlePreview() {
+  const panel = $("result-panel");
+  if (!panel || panel.classList.contains("has-result")) return;
+  const year = Number($("year").value) || 2010;
+  const mileage = Number($("mileage").value) || 0;
+  const now = new Date().getFullYear();
+  const yearScore = Math.min(1, Math.max(0, (year - 1995) / Math.max(1, now - 1995)));
+  const mileScore = 1 - Math.min(1, Math.max(0, mileage / 250000));
+  const score = 0.65 * yearScore + 0.35 * mileScore;
+  const center = 18 + score * 64;
+  const width = 18 + score * 10;
+  const mark = $("idle-mark");
+  const band = $("idle-band");
+  const hint = $("idle-hint");
+  if (mark) mark.style.left = "calc(" + center + "% - 2px)";
+  if (band) {
+    band.style.left = Math.max(6, center - width / 2) + "%";
+    band.style.right = Math.max(6, 100 - (center + width / 2)) + "%";
+  }
+  if (hint) {
+    hint.textContent = score > 0.62
+      ? "Preview leans newer / lower km"
+      : score < 0.38
+        ? "Preview leans older / higher km"
+        : "Live preview · not a price yet";
+  }
+  const priceEl = $("result-price");
+  const lakhEl = $("result-lakh");
+  const priceWrap = priceEl && priceEl.parentElement;
+  if (priceWrap) priceWrap.classList.add("is-waiting");
+  if (priceEl) priceEl.textContent = "····";
+  if (lakhEl) lakhEl.textContent = "Waiting for Estimate price";
+}
+
+function setIdleStep(step) {
+  document.querySelectorAll("[data-idle-step]").forEach((el) => {
+    el.classList.toggle("is-on", Number(el.getAttribute("data-idle-step")) === step);
+  });
+}
+
+function markResultReady() {
+  const panel = $("result-panel");
+  if (panel) panel.classList.add("has-result");
+  const priceWrap = $("result-price") && $("result-price").parentElement;
+  if (priceWrap) priceWrap.classList.remove("is-waiting");
 }
 
 function carFromForm() {
@@ -79,6 +141,7 @@ function carFromForm() {
     model: $("model").value,
     year: Number($("year").value),
     mileage: Number($("mileage").value),
+    predictor,
   };
   if ($("engine_cc").value) car.engine_cc = Number($("engine_cc").value);
   if ($("city").value) car.city = $("city").value;
@@ -86,6 +149,18 @@ function carFromForm() {
     if (picked[key]) car[key] = picked[key];
   }
   return car;
+}
+
+function setPredictor(next) {
+  predictor = next;
+  document.querySelectorAll("#predictor-pills .pill").forEach((pill) => {
+    pill.classList.toggle("is-on", pill.getAttribute("data-predictor") === next);
+  });
+  const note = $("predictor-note");
+  if (!note) return;
+  note.textContent = next === "wsp"
+    ? "Experiment: WSP beat blend (try it against the routed champion)."
+    : "Production route: LightGBM default + 2010+ specialist.";
 }
 
 function showRange(low, high, price) {
@@ -150,9 +225,13 @@ async function estimate(event) {
       return;
     }
     const data = response.data;
+    setIdleStep(2);
+    markResultReady();
     $("result-price").textContent = pkr(data.estimated_price_pkr);
     $("result-lakh").textContent = "about " + lakh(data.estimated_price_pkr);
-    $("result-model").textContent = plainModel(data.selected_model);
+    $("result-model").textContent = data.selected_model === "wsp_experiment"
+      ? "WSP experiment"
+      : plainModel(data.selected_model);
     $("result-model").classList.add("ok");
     showRange(data.range_low_pkr, data.range_high_pkr, data.estimated_price_pkr);
     const assumed = (data.assumed_fields || []).map((field) => FIELD_LABEL[field] || field);
@@ -160,6 +239,7 @@ async function estimate(event) {
       ? assumed.map((field) => `<span class="chip">${field} assumed</span>`).join("")
       : `<span class="chip ok">Nothing assumed</span>`;
     $("known").textContent = data.known_model ? "Known make and model" : "Uncommon make or model";
+    setIdleStep(3);
     showFactors(data.top_factors);
     $("factor-note").textContent = data.note || "";
     await showComparison(car, data.estimated_price_pkr);
@@ -192,6 +272,18 @@ async function loadOptions() {
   status.className = "status ok";
   status.textContent = "Model ready · " + health.data.models_served.length + " loaded";
 
+  const wspPill = $("wsp-pill");
+  if (wspPill && health.data.wsp_loaded) {
+    wspPill.disabled = false;
+    wspPill.title = health.data.wsp && health.data.wsp.beat_champion
+      ? "WSP beat the global LightGBM on test MAE"
+      : "Try the WSP experiment predictor";
+    wspPill.addEventListener("click", () => setPredictor("wsp"));
+  }
+  document.querySelectorAll("#predictor-pills .pill[data-predictor='routed']").forEach((pill) => {
+    pill.addEventListener("click", () => setPredictor("routed"));
+  });
+
   const response = await call("GET", "/options");
   if (response.status !== 200) return;
   optionsCache = response.data;
@@ -212,7 +304,9 @@ async function loadOptions() {
     button.type = "button";
     button.className = "rec";
     button.innerHTML = `
-      <div class="rec-visual">${CAR_SVG}</div>
+      <div class="rec-visual">
+        <img src="${example.image}" alt="${example.make} ${example.model}" loading="lazy" width="640" height="360">
+      </div>
       <div class="rec-body">
         <span>${example.make}</span>
         <b>${example.model}</b>
@@ -228,6 +322,10 @@ async function loadOptions() {
 
 $("make").addEventListener("change", () => updateModels());
 ["model", "year", "mileage"].forEach((id) => $(id).addEventListener("input", paintHeading));
+document.querySelectorAll("[data-idle-step]").forEach((el) => {
+  el.addEventListener("click", () => setIdleStep(Number(el.getAttribute("data-idle-step"))));
+});
 $("car-form").addEventListener("submit", estimate);
 $("year").max = new Date().getFullYear() + 1;
+paintIdlePreview();
 loadOptions();

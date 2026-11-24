@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Milestones · CarCompass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head">
+    <p class="eyebrow">MLOps — Course Project · BS Computer Science · Fall 2026</p>
+    <h1>What the course asks for. What we shipped.</h1>
+    <p class="lede">Milestone-by-milestone dashboard for the baseline loop (data → model → API → Docker → CI → deploy → monitor) plus our Project Focus. Live buttons hit this FastAPI process.</p>
+    <p class="hero-status"><span id="dash-health" class="status">Checking API…</span></p>
+  </header>
+
+  <section class="progress-strip" aria-label="Milestone progress">
+    <article class="progress-item is-done">
+      <span class="progress-tag">M0 · 10</span>
+      <b>Proposal</b>
+      <span>Tagged plan</span>
+    </article>
+    <article class="progress-item is-done">
+      <span class="progress-tag">M1 · 20</span>
+      <b>Model &amp; API</b>
+      <span>v1.0-milestone1</span>
+    </article>
+    <article class="progress-item is-open" id="m2-progress">
+      <span class="progress-tag">M2 · 20</span>
+      <b>Ship &amp; monitor</b>
+      <span>Docker + CI done · live URL open</span>
+    </article>
+    <article class="progress-item is-next">
+      <span class="progress-tag">Final · 35+15</span>
+      <b>Demo &amp; viva</b>
+      <span>Focus + Q&amp;A</span>
+    </article>
+  </section>
+
+  <section class="dash-board" aria-label="Live service">
+    <article class="dash-tile" style="min-height:160px">
+      <div class="dash-tile-top"><b>API</b><span class="dash-chip ok">/health</span></div>
+      <p class="dash-label">Status</p>
+      <p class="dash-value dash-value-sm" id="live-api">—</p>
+      <p class="dash-sub" id="live-api-sub">/health</p>
+    </article>
+    <article class="dash-tile" style="min-height:160px">
+      <div class="dash-tile-top"><b>Requests</b><a class="dash-go" href="/guide/monitor">↗</a></div>
+      <p class="dash-label">/stats</p>
+      <p class="dash-value" id="live-req">—</p>
+      <p class="dash-sub">Counted traffic</p>
+    </article>
+    <article class="dash-tile" style="min-height:160px">
+      <div class="dash-tile-top"><b>Avg latency</b><span class="dash-chip">ms</span></div>
+      <p class="dash-label">Mean</p>
+      <p class="dash-value" id="live-lat">—</p>
+      <p class="dash-sub">milliseconds</p>
+    </article>
+    <article class="dash-tile" style="min-height:160px">
+      <div class="dash-tile-top"><b>WSP lab</b><span class="dash-chip warn">Focus</span></div>
+      <p class="dash-label">Experiment</p>
+      <p class="dash-value dash-value-sm" id="live-wsp">—</p>
+      <p class="dash-sub">predictor artifact</p>
+    </article>
+  </section>
+
+  <nav class="jump-row" aria-label="Jump to sections">
+    <a href="#m0">M0</a>
+    <a href="#m1">M1</a>
+    <a href="#m2">M2</a>
+    <a href="#live-api-pad">Live API</a>
+    <a href="#tests-dash">Tests</a>
+    <a href="#focus">Focus</a>
+    <a href="#final">Final</a>
+  </nav>
+
+  <section class="stack">
+    <article class="panel" id="focus">
+      <p class="eyebrow">Project Focus</p>
+      <h2>Deep work on top of the baseline</h2>
+      <p>Honest multi-family comparison in MLflow, year-based routing, weight-space programming (WSP) as a beat experiment, and a product UI that makes monitoring and checks demonstrable — not a Prometheus stack.</p>
+      <div class="dash-actions">
+        <a class="btn" href="/wsp">Open WSP lab →</a>
+        <a class="link-arrow" href="/experiments" style="margin-top:0">MLflow stats page</a>
+        <a class="link-arrow" href="/guide/pipeline" style="margin-top:0">Data pipeline</a>
+        <a class="link-arrow" href="/system" style="margin-top:0">Loaded models</a>
+      </div>
+    </article>
+
+    <article class="panel milestone-card" id="m0" data-m="0">
+      <div class="milestone-head">
+        <p class="eyebrow">Milestone 0 · Proposal · 10 / 100</p>
+        <span class="chip ok">Done</span>
+      </div>
+      <h2>Team, problem, plan</h2>
+      <ul class="req-list">
+        <li data-state="done"><b>Team + problem + solution</b><span>Used-car asking-price estimates for Pakistan</span></li>
+        <li data-state="done"><b>Dataset details</b><span>PakWheels-style A + B (Kaggle); sample only in repo</span></li>
+        <li data-state="done"><b>M1 + M2 plan</b><span>Prepare → train → MLflow → FastAPI → Docker → Actions → Render</span></li>
+        <li data-state="done"><b>Tech stack + risks</b><span>Python 3.11, sklearn/LightGBM, MLflow, pytest, ruff</span></li>
+      </ul>
+    </article>
+
+    <article class="panel milestone-card" id="m1" data-m="1">
+      <div class="milestone-head">
+        <p class="eyebrow">Milestone 1 · Model &amp; API · 20 / 100</p>
+        <span class="chip ok">Done · v1.0-milestone1</span>
+      </div>
+      <h2>Data → train → track → serve</h2>
+      <div class="req-grid">
+        <div class="req-block">
+          <p class="eyebrow">① Data preparation</p>
+          <ul class="req-list">
+            <li data-state="done"><b>Separate prepare step</b><span><code>prepare_data.py</code>, <code>prepare_multi.py</code></span></li>
+            <li data-state="done"><b>Validation</b><span>Missing values, ranges, Pandera, quality report</span></li>
+            <li data-state="done"><b>Train / test split</b><span>Group-aware fit / val / cal / test on A∪B</span></li>
+            <li data-state="extra"><b>Beyond baseline</b><span>Cross-source dedup, Dataset B scale map</span></li>
+          </ul>
+          <a class="btn ghost-btn" href="/guide/pipeline">Open pipeline page →</a>
+        </div>
+        <div class="req-block">
+          <p class="eyebrow">② MLflow &amp; training</p>
+          <ul class="req-list">
+            <li data-state="done"><b>≥3 tracked runs</b><span>Five families × 12 configs each</span></li>
+            <li data-state="done"><b>Params + metric</b><span>Hyperparameters + MAE (PKR) in UI</span></li>
+            <li data-state="done"><b>Champion justified</b><span>Val MAE + size ≤100 MB → LightGBM</span></li>
+            <li data-state="extra"><b>Beyond baseline</b><span>Year routing + WSP beat experiment</span></li>
+          </ul>
+          <a class="btn ghost-btn" href="/experiments">Open experiment stats →</a>
+        </div>
+        <div class="req-block">
+          <p class="eyebrow">③ FastAPI &amp; tests</p>
+          <ul class="req-list">
+            <li data-state="done"><b>/predict + Pydantic</b><span>Validation + auto <code>/docs</code></span></li>
+            <li data-state="done"><b>/explain</b><span>Top factors (final demo ready)</span></li>
+            <li data-state="done"><b>pytest</b><span>Prepare, load, API, router, WSP</span></li>
+            <li data-state="done"><b>Docs</b><span>README quick-start + CONTRIBUTION</span></li>
+          </ul>
+          <button type="button" class="btn ghost-btn" data-api="predict">Try POST /predict →</button>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel milestone-card" id="m2" data-m="2">
+      <div class="milestone-head">
+        <p class="eyebrow">Milestone 2 · Container, CI/CD &amp; deploy · 20 / 100</p>
+        <span class="chip" id="m2-chip">In progress</span>
+      </div>
+      <h2>Package, prove, put it somewhere reachable</h2>
+      <div class="req-grid">
+        <div class="req-block">
+          <p class="eyebrow">④ Docker &amp; CI</p>
+          <ul class="req-list">
+            <li data-state="done"><b>Dockerfile</b><span>Deps, <code>deploy/models/</code>, port 8000, HEALTHCHECK</span></li>
+            <li data-state="done"><b>Lint job</b><span>GitHub Actions → ruff</span></li>
+            <li data-state="done"><b>Test job</b><span>Actions → pytest</span></li>
+            <li data-state="done"><b>Build on main</b><span>Docker build + smoke</span></li>
+            <li data-state="extra"><b>Extra</b><span>GHCR publish on <code>v*</code> tags</span></li>
+          </ul>
+        </div>
+        <div class="req-block">
+          <p class="eyebrow">⑤ Deploy &amp; monitoring</p>
+          <ul class="req-list">
+            <li data-state="open"><b>Live host</b><span>Render planned — URL still placeholder</span></li>
+            <li data-state="done"><b>/health</b><span>Model + WSP flags for graders</span></li>
+            <li data-state="done"><b>Request count + latency</b><span><code>/metrics</code> = <code>/stats</code></span></li>
+            <li data-state="done"><b>RUNBOOK</b><span>Redeploy + rollback by image tag</span></li>
+            <li data-state="open"><b>Tag v2.0-milestone2</b><span>After live URL confirmed</span></li>
+          </ul>
+          <div class="dash-actions" style="margin-top:0">
+            <button type="button" class="btn ghost-btn" data-api="stats">GET /stats →</button>
+            <button type="button" class="btn ghost-btn" data-api="predict">Bump count →</button>
+          </div>
+        </div>
+        <div class="req-block">
+          <p class="eyebrow">Choices (course allows these)</p>
+          <ul class="req-list">
+            <li data-state="done"><b>Host</b><span>Managed Render (not a raw VM)</span></li>
+            <li data-state="done"><b>Lint</b><span>ruff instead of flake8</span></li>
+            <li data-state="done"><b>Monitor</b><span>Counter endpoint, not Grafana</span></li>
+            <li data-state="done"><b>Project Focus section</b><span>In README; work started in M2</span></li>
+          </ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel" id="live-api-pad">
+      <p class="eyebrow">Live FastAPI checks</p>
+      <h2>Press a button. See JSON and latency.</h2>
+      <p class="panel-lead">Same endpoints graders hit in the video: health, docs, predict, explain, and stats rising after traffic.</p>
+      <div class="api-pad" id="api-pad">
+        <button type="button" class="btn ghost-btn" data-api="health">GET /health</button>
+        <button type="button" class="btn ghost-btn" data-api="metrics">GET /metrics</button>
+        <button type="button" class="btn ghost-btn" data-api="stats">GET /stats</button>
+        <button type="button" class="btn ghost-btn" data-api="models">GET /models</button>
+        <button type="button" class="btn ghost-btn" data-api="options">GET /options</button>
+        <button type="button" class="btn ghost-btn" data-api="predict">POST /predict</button>
+        <button type="button" class="btn ghost-btn" data-api="explain">POST /explain</button>
+        <button type="button" class="btn ghost-btn" data-api="wsp">POST /predict · WSP</button>
+        <button type="button" class="btn" data-api="suite" id="suite-btn">Run demo suite →</button>
+        <a class="btn ghost-btn" href="/docs" target="_blank" rel="noopener">Open /docs</a>
+      </div>
+      <div class="metrics" id="probe-metrics" style="margin-top:16px">
+        <div><span>Last status</span><b id="probe-status">—</b></div>
+        <div><span>Latency</span><b id="probe-ms">—</b></div>
+        <div><span>Endpoint</span><b id="probe-path" style="font-size:16px">—</b></div>
+      </div>
+      <pre id="probe-raw" class="wsp-raw">Pick an endpoint — response JSON lands here.</pre>
+      <p class="note">Course video may say <code>/stats</code>. We expose the same counters at <code>/metrics</code> and <code>/stats</code>. Health/metrics/stats do not inflate the request counter.</p>
+    </article>
+
+    <article class="panel" id="tests-dash">
+      <p class="eyebrow">Tests &amp; CI dashboard</p>
+      <h2>What we prove on every push</h2>
+      <div class="test-grid" id="test-grid">
+        <article class="test-card" data-state="done">
+          <span class="test-file">test_prepare_data.py</span>
+          <b>Data preparation</b>
+          <span>Parse price, drop bad rows, reproducible split, no group leak</span>
+        </article>
+        <article class="test-card" data-state="done">
+          <span class="test-file">test_prepare_combined.py · multi</span>
+          <b>A + B prepare</b>
+          <span>Column map, B scale, cross-source dedup, split shares</span>
+        </article>
+        <article class="test-card" data-state="done">
+          <span class="test-file">test_model_loading.py</span>
+          <b>Model load</b>
+          <span>Artifacts on disk, assume-fields widen range, sanity order</span>
+        </article>
+        <article class="test-card" data-state="done">
+          <span class="test-file">test_model_router.py</span>
+          <b>Year routing</b>
+          <span>2010 boundary, fallback, /models names the specialist</span>
+        </article>
+        <article class="test-card" data-state="done">
+          <span class="test-file">test_api.py</span>
+          <b>FastAPI surface</b>
+          <span>/health, /predict, /explain, /stats alias, pages, 422, 503</span>
+        </article>
+        <article class="test-card" data-state="done">
+          <span class="test-file">test_wsp*.py</span>
+          <b>WSP focus</b>
+          <span>Weight ops unit tests + serve flag / 503 without artifact</span>
+        </article>
+      </div>
+      <div class="req-grid" style="margin-top:18px">
+        <div class="req-block">
+          <p class="eyebrow">Local</p>
+          <ul class="req-list">
+            <li data-state="done"><b>make test</b><span>pytest across prepare, load, API</span></li>
+            <li data-state="done"><b>make lint</b><span>ruff check</span></li>
+          </ul>
+        </div>
+        <div class="req-block">
+          <p class="eyebrow">GitHub Actions</p>
+          <ul class="req-list">
+            <li data-state="done"><b>lint</b><span>ruff — green on push</span></li>
+            <li data-state="done"><b>test</b><span>pytest -v — green on push</span></li>
+            <li data-state="done"><b>build</b><span>docker build + smoke /health</span></li>
+            <li data-state="extra"><b>publish</b><span>GHCR on version tags</span></li>
+          </ul>
+        </div>
+        <div class="req-block">
+          <p class="eyebrow">Interactive pages</p>
+          <ul class="req-list">
+            <li data-state="done"><b>/demo</b><span>One-click Milestone 1 checklist</span></li>
+            <li data-state="done"><b>/pipeline</b><span>Prepare → serve story</span></li>
+            <li data-state="done"><b>/experiments</b><span>MLflow MAE bars + tables</span></li>
+            <li data-state="done"><b>/wsp</b><span>Focus lab vs champion</span></li>
+          </ul>
+          <a class="btn ghost-btn" href="/guide/checks">Run live checks →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="panel" id="final">
+      <p class="eyebrow">Final presentation · 35 + individual 15</p>
+      <h2>Still ahead — what the deck must show</h2>
+      <div class="req-grid">
+        <div class="req-block">
+          <ul class="req-list">
+            <li data-state="open"><b>10–12 min talk</b><span>Problem, pipeline, one MLflow shot, CI green on latest tag</span></li>
+            <li data-state="open"><b>Live demo</b><span>/predict and /explain on the deployed URL</span></li>
+            <li data-state="open"><b>Design trade-off</b><span>1–2 min: model size vs MAE, or Render vs VM</span></li>
+            <li data-state="open"><b>Project Focus deep-dive</b><span>Routing + WSP story beyond baseline</span></li>
+          </ul>
+        </div>
+        <div class="req-block">
+          <ul class="req-list">
+            <li data-state="done"><b>Baseline loop</b><span>Already demonstrable locally + in Docker</span></li>
+            <li data-state="done"><b>/explain ready</b><span>Use the button above in the viva</span></li>
+            <li data-state="open"><b>Focus polish</b><span>Finish through final week (course allows this)</span></li>
+            <li data-state="done"><b>AI_USAGE.md</b><span>Required; keep updated with tools used</span></li>
+          </ul>
+        </div>
+        <div class="req-block">
+          <p class="eyebrow">Core loop (course objectives)</p>
+          <ol class="steps dash-steps">
+            <li><span>01</span><b>Pipeline</b><p><code>make setup</code> → prepare/train → run</p></li>
+            <li><span>02</span><b>Regression</b><p>PKR price · MAE · held-out test</p></li>
+            <li><span>03</span><b>MLflow</b><p>Families + WSP runs</p></li>
+            <li><span>04</span><b>FastAPI</b><p>/predict · /explain · /docs</p></li>
+            <li><span>05</span><b>Docker</b><p>Build/run · healthy</p></li>
+            <li><span>06</span><b>CI</b><p>Lint · test · build</p></li>
+            <li><span>07</span><b>Deploy</b><p>Render URL pending</p></li>
+            <li><span>08</span><b>Monitor</b><p>/health + /stats</p></li>
+          </ol>
+        </div>
+      </div>
+    </article>
+  </section>
+</main>
+<script src="/assets/site.js?v=wsp12"></script>
+<script src="/assets/milestones.js?v=wsp12"></script>
+</body>
+</html>

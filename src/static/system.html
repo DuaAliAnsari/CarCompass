@@ -15,38 +15,62 @@
     <p class="eyebrow">What answers a request</p>
     <h1>Two models. The year picks one.</h1>
     <p class="lede">A car from 2010 onward goes to the specialist. Every other year stays on the global A+B model.</p>
-    <p style="margin-top:14px"><span id="health-pill" class="status">Checking…</span></p>
+    <p class="hero-status"><span id="health-pill" class="status">Checking…</span></p>
   </header>
 
-  <section class="stack">
-    <div class="split">
-      <article class="panel">
-        <p class="eyebrow">2010 and later</p>
-        <h2>Specialist</h2>
-        <p>Trained only on cars from 2010 on. It beat the global model by 1.4% on those validation rows, so the router turns it on.</p>
-      </article>
-      <article class="panel">
-        <p class="eyebrow">1980 to 2009</p>
-        <h2>Global model</h2>
-        <p>Trained on Dataset A and Dataset B together. The pre-2010 specialist was 1.2% worse on its own rows, so it is not loaded for serving.</p>
-      </article>
-    </div>
-    <article class="panel">
-      <p class="eyebrow">Loaded now</p>
-      <h2>From this API</h2>
-      <div class="table-wrap">
+  <section class="dash-board" aria-label="Routing">
+    <article class="dash-tile">
+      <div class="dash-tile-top"><b>Specialist</b><span class="dash-chip ok">2010+</span></div>
+      <p class="dash-label">Validation gain</p>
+      <p class="dash-value">+1.4%</p>
+      <p class="dash-sub">Better than default on newer cars · served</p>
+      <div class="dash-progress" aria-hidden="true"><i style="width:100%" data-pct="On"></i><span class="prog-end">100%</span></div>
+    </article>
+    <article class="dash-tile">
+      <div class="dash-tile-top"><b>Global A+B</b><span class="dash-chip">Default</span></div>
+      <p class="dash-label">Years before 2010</p>
+      <p class="dash-value">All</p>
+      <p class="dash-sub">Fallback when specialist is off or missing</p>
+      <div class="dash-mini-bars tone-ink" aria-hidden="true">
+        <span style="height:50%" class="is-on"></span><span style="height:62%" class="is-on"></span>
+        <span style="height:44%"></span><span style="height:70%" class="is-on"></span>
+      </div>
+    </article>
+    <article class="dash-tile">
+      <div class="dash-tile-top"><b>Pre-2010</b><span class="dash-chip">Off</span></div>
+      <p class="dash-label">Specialist decision</p>
+      <p class="dash-value">−1.2%</p>
+      <p class="dash-sub">Worse than default · not loaded</p>
+      <div class="dash-progress" aria-hidden="true"><i style="width:8%" data-pct="Off"></i><span class="prog-end">100%</span></div>
+    </article>
+    <article class="prog-card">
+      <div class="prog-card-top">
+        <b>Serve budget</b>
+        <span class="dash-chip">100 MB</span>
+      </div>
+      <p class="dash-label">Champion size used</p>
+      <p class="dash-value">12.6<span class="dash-trend">MB</span></p>
+      <p class="dash-sub">Within limit · forest stays in MLflow</p>
+      <div class="prog-track"><span class="prog-fill" style="width:13%" data-pct="13%"></span><span class="prog-end">100%</span></div>
+      <a class="prog-foot" href="/experiments">Why these two <span>→</span></a>
+    </article>
+  </section>
+
+  <section class="stack" style="margin-top:14px">
+    <article class="dash-tile" style="min-height:0">
+      <div class="dash-tile-top">
+        <b>Loaded now</b>
+        <a class="dash-go" href="/models" title="JSON /models">↗</a>
+      </div>
+      <p class="dash-sub" style="margin-top:6px">Live from this API process</p>
+      <div class="table-wrap" style="margin-top:12px">
         <table id="live-models"><tr><td>Loading…</td></tr></table>
       </div>
       <p class="note">JSON for the same information stays at <a href="/models">/models</a>.</p>
     </article>
   </section>
-
-  <footer class="foot">
-    <p>Large random forests are logged in MLflow and are not in this table.</p>
-    <p><a href="/experiments">Why these two</a></p>
-  </footer>
 </main>
-<script src="/assets/site.js"></script>
+<script src="/assets/site.js?v=wsp12"></script>
 <script src="/assets/system.js"></script>
 </body>
 </html>

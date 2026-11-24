@@ -3,6 +3,8 @@ __pycache__/
 *.pyc
 .pytest_cache/
 .ruff_cache/
+.coverage
+tmp_build_log.txt
 .env
 mlruns/
 mlartifacts/
@@ -19,6 +21,8 @@ models/*.json
 !models/price_global_ab.json
 !models/price_new_cars_2010plus.joblib
 !models/price_new_cars_2010plus.json
+!models/wsp_best.joblib
+!models/wsp_best.json
 .DS_Store
 .idea/
 .vscode/

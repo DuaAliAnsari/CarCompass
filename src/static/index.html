@@ -30,7 +30,7 @@
       <p class="lede">CarCompass estimates a used car’s price in PKR from make, model, year and mileage — with a range and the factors behind it.</p>
       <div class="hero-ctas">
         <a class="btn" href="#estimate">Get a price →</a>
-        <a class="link-arrow" href="/experiments">Explore experiments</a>
+        <a class="btn ghost-btn" href="/experiments">Experiments →</a>
       </div>
       <p class="hero-status"><span id="health-pill" class="status">Checking the API…</span></p>
     </div>
@@ -67,19 +67,30 @@
 
 <main class="wrap">
 
-  <section class="specs" aria-label="Key results">
-    <div class="spec">
-      <svg viewBox="0 0 24 24"><path d="M12 19a7 7 0 1 0 0-14 7 7 0 0 0 0 14z"/><path d="M12 12l4-3"/></svg>
-      <div><b>360,636 PKR</b><span>Served test MAE</span></div>
-    </div>
-    <div class="spec">
-      <svg viewBox="0 0 24 24"><path d="M4 12h16"/><path d="M8 8v8M16 8v8"/></svg>
-      <div><b>80%</b><span>Prices inside the range</span></div>
-    </div>
-    <div class="spec">
-      <svg viewBox="0 0 24 24"><path d="M13 3v8h8"/><path d="M5 13a8 8 0 0 0 14.2 4"/></svg>
-      <div><b>97,786</b><span>Cleaned listings (A + B)</span></div>
-    </div>
+  <section class="dash-board dash-board-3" aria-label="Key results">
+    <article class="dash-tile" style="min-height:170px">
+      <div class="dash-tile-top"><b>Served MAE</b><span class="dash-chip ok">Test</span></div>
+      <p class="dash-label">Routed system</p>
+      <p class="dash-value">360k</p>
+      <p class="dash-sub">360,636 PKR on held-out rows</p>
+    </article>
+    <article class="prog-card">
+      <div class="prog-card-top"><b>Range coverage</b><span class="dash-chip">80%</span></div>
+      <p class="dash-label">Prices inside the band</p>
+      <p class="dash-value">80%<span class="dash-trend">target</span></p>
+      <div class="prog-track"><span class="prog-fill" style="width:80%" data-pct="80%"></span><span class="prog-end">100%</span></div>
+      <p class="dash-sub" style="margin-top:10px">Calibration quantiles · assumed fields widen the range</p>
+    </article>
+    <article class="dash-tile" style="min-height:170px">
+      <div class="dash-tile-top"><b>Listings</b><span class="dash-chip">A + B</span></div>
+      <p class="dash-label">After prepare</p>
+      <p class="dash-value">97.8k</p>
+      <p class="dash-sub">97,786 cleaned rows</p>
+      <div class="dash-mini-bars tone-ok" aria-hidden="true">
+        <span style="height:40%"></span><span style="height:55%"></span>
+        <span style="height:72%" class="is-on"></span><span style="height:90%" class="is-on"></span>
+      </div>
+    </article>
   </section>
 
   <section class="band">
@@ -101,7 +112,10 @@
           <div><b>Routed system</b><span>Test MAE 360,636 PKR on 19,525 rows.</span></div>
         </li>
       </ul>
-      <a class="btn" href="/experiments" style="margin-top:22px">Explore experiments →</a>
+      <div class="hero-ctas" style="margin-top:22px; flex-direction:row; flex-wrap:wrap; gap:12px; align-items:center">
+        <a class="btn" href="/experiments">Experiments →</a>
+        <a class="link-arrow" href="/system" style="margin-top:0">Models</a>
+      </div>
     </div>
 
     <div class="band-photo" style="background-image:url('/assets/img/hero-2.png')" aria-hidden="true">
@@ -109,7 +123,44 @@
     </div>
 
     <div class="side-stack">
-      <div class="side-card map" aria-hidden="true"></div>
+      <div class="side-card map" aria-hidden="true">
+        <svg class="map-svg" viewBox="0 0 320 160" xmlns="http://www.w3.org/2000/svg" focusable="false">
+          <defs>
+            <pattern id="map-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+              <path d="M24 0H0V24" fill="none" stroke="#e0e0e3" stroke-width="1"/>
+            </pattern>
+            <linearGradient id="map-wash" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#f7f7f8"/>
+              <stop offset="100%" stop-color="#ececef"/>
+            </linearGradient>
+          </defs>
+          <rect width="320" height="160" fill="url(#map-wash)"/>
+          <rect width="320" height="160" fill="url(#map-grid)"/>
+          <!-- Geographic Pakistan silhouette -->
+          <path
+            class="map-land"
+            d="M201.2 19.9
+               L223.4 33.4 L211.9 53.6 L198.7 73.0 L188.8 95.8 L174.0 121.0
+               L147.6 128.6 L132.8 123.6 L96.6 117.7 L102.4 98.3 L114.7 84.0
+               L135.3 73.0 L155.9 60.4 L174.0 45.2 L187.2 33.4 L197.1 25.0 Z"
+            fill="#e4e4e7"
+            stroke="#0b0b0c"
+            stroke-width="1.5"
+            stroke-linejoin="round"
+          />
+          <!-- Soft corridor roads -->
+          <path d="M188.8 46 L199.5 64.6 L174 100 L139.4 120.2" fill="none" stroke="#cfcfd3" stroke-width="1.3"/>
+          <path d="M135.3 73 L174 100" fill="none" stroke="#cfcfd3" stroke-width="1.2"/>
+          <!-- Secondary cities -->
+          <circle cx="188.8" cy="46" r="2.4" fill="#0b0b0c" opacity="0.45"/>
+          <circle cx="199.5" cy="64.6" r="2.4" fill="#0b0b0c" opacity="0.45"/>
+          <!-- Primary pin (Karachi) -->
+          <circle cx="139.4" cy="120.2" r="14" fill="#0b0b0c" opacity="0.05"/>
+          <circle cx="139.4" cy="120.2" r="8" fill="#0b0b0c" opacity="0.1"/>
+          <circle cx="139.4" cy="120.2" r="4.2" fill="#0b0b0c"/>
+          <text x="16" y="148" class="map-label">Pakistan · local market</text>
+        </svg>
+      </div>
       <div class="side-card photo">Long trips start with a fair price.</div>
       <div class="side-row">
         <svg viewBox="0 0 24 24"><path d="M7 7h10v10H7z"/><path d="M9 12h6"/></svg>
@@ -132,7 +183,7 @@
   </section>
 
   <section class="estimate-grid">
-    <article class="config">
+    <article class="config result-panel" id="result-panel">
       <div class="config-top">
         <div>
           <h3 id="result-title">Your car</h3>
@@ -162,6 +213,37 @@
       <div class="factors" id="factors"></div>
       <p class="note" id="factor-note"></p>
       <p class="note" id="compare-line"></p>
+
+      <div class="result-idle" id="result-idle" aria-live="polite">
+        <div class="idle-meter" aria-hidden="true">
+          <div class="idle-track">
+            <span class="idle-band" id="idle-band"></span>
+            <i class="idle-mark" id="idle-mark"></i>
+          </div>
+          <div class="idle-meter-labels">
+            <span>Older / higher km</span>
+            <span id="idle-hint">Live preview · not a price yet</span>
+            <span>Newer / lower km</span>
+          </div>
+        </div>
+        <div class="idle-steps">
+          <button type="button" class="idle-step is-on" data-idle-step="1">
+            <b>1</b><span>Car details update this panel live</span>
+          </button>
+          <button type="button" class="idle-step" data-idle-step="2">
+            <b>2</b><span>Estimate unlocks the 80% range</span>
+          </button>
+          <button type="button" class="idle-step" data-idle-step="3">
+            <b>3</b><span>Top factors explain the number</span>
+          </button>
+        </div>
+        <div class="idle-ghosts" aria-hidden="true">
+          <div class="idle-ghost"><span></span><div class="track"><i style="width:72%"></i></div></div>
+          <div class="idle-ghost"><span></span><div class="track"><i style="width:54%"></i></div></div>
+          <div class="idle-ghost"><span></span><div class="track"><i style="width:38%"></i></div></div>
+        </div>
+        <p class="idle-cta">Tune the form on the right, then press <strong>Estimate price</strong>.</p>
+      </div>
     </article>
 
     <article class="config">
@@ -189,9 +271,18 @@
             <div class="pills" id="assembly-pills"></div>
           </div>
         </div>
+        <div class="opt predictor-opt">
+          <p class="eyebrow">Predictor</p>
+          <div class="pills" id="predictor-pills">
+            <button type="button" class="pill is-on" data-predictor="routed">Routed champion</button>
+            <button type="button" class="pill" data-predictor="wsp" id="wsp-pill" disabled title="WSP experiment not loaded">WSP experiment</button>
+          </div>
+          <p class="note" id="predictor-note">Production route: LightGBM default + 2010+ specialist.</p>
+          <a class="btn" href="/wsp" style="margin-top:12px">Open WSP lab →</a>
+        </div>
         <div class="actions">
           <button class="btn" id="estimate-btn" type="submit">Estimate price →</button>
-          <a class="link-arrow" href="/experiments">See experiments</a>
+          <a class="link-arrow" href="/wsp">WSP stats &amp; compare</a>
         </div>
         <p class="error" id="form-error"></p>
       </form>
@@ -204,12 +295,8 @@
   </section>
   <div class="recs" id="examples"></div>
 
-  <footer class="foot">
-    <p>Estimates reflect historical asking prices. They are a guide, not a valuation.</p>
-    <p><a href="/docs">API docs</a> · <a href="/demo">Milestone checks</a> · <a href="/pipeline">Pipeline</a></p>
-  </footer>
 </main>
-<script src="/assets/site.js"></script>
+<script src="/assets/site.js?v=wsp12"></script>
 <script src="/assets/hero.js"></script>
 <script src="/assets/estimate.js"></script>
 </body>

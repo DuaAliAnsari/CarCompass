@@ -31,9 +31,13 @@ recorded GitHub review, so they show "—".
 
 ## Milestone 2: member-to-task table
 
-| Task | Member | Branch / PR |
-|---|---|---|
-| _fill in_ | | |
+| Task | Member | Reviewer | Branch / PR |
+|---|---|---|---|
+| Served models for Docker (`deploy/models/`), `export-models`, Docker smoke test, CI build smoke, GHCR publish job, full RUNBOOK | Dua Ali Ansari | Sagar Lekhraj | `infra/docker-models` (merged via PR #10) |
+| Multi-page product site (Estimate / Experiments / Models / Pipeline / Demo), hero media | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
+| Fix deploy “API up, no model loaded”: allow-list / ship served `.joblib`, Docker missing-model check, clearer UI status | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
+| Weight-space programming experiment (soups / distill / beat attempt) + experiments page + report | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
+| Merge remaining M2 work to `main`, green CI (lint / test / build) | Sagar Lekhraj | — | PR #10 merged `332789b` |
 
 ## Working agreement
 
@@ -50,3 +54,11 @@ recorded GitHub review, so they show "—".
 **Sagar Lekhraj:** I built the multi-model setup: the shared A+B dataset with cross-source dedup, five model families, validation-based champion selection with a size limit, and the router behind `/predict`. I also approved the README rewrite (PR #7) and audited the cross-source duplicate removal. I learned why champions must be chosen on validation rows and not on the test set, and that a duplicate key must be checked against the other columns before rows are deleted.
 
 **Fatima Arif:** I built the data preparation and training code, then added Dataset B (PakWheels) with its own schema mapping and sample weight. I learned that dirty values such as `27.4 lacs` need explicit parsing and range checks before any model is worth comparing.
+
+### Milestone 2
+
+**Dua Ali Ansari:** I packaged the served champions for Docker (`deploy/models/`, `export-models`), added the image smoke test that CI runs on every push, and wrote the redeploy/rollback runbook. I learned that a “healthy” API that starts without models is worse than a failed image build.
+
+**Sagar Lekhraj:** I shipped the product site, fixed the empty-`models/` deploy failure, ran the weight-space programming beat attempt, and merged the remaining branches through PR #10. I learned that model soups need bagging or hyperparameter diversity, and that the UI “Loading…” state was really `model_loaded: false`.
+
+**Fatima Arif:** _Add 2–3 lines on M2 work (review, docs, or deploy help)._

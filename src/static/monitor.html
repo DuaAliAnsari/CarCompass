@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Monitoring · CarCompass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head">
+    <p class="eyebrow">Live monitoring · /stats · /metrics</p>
+    <h1>Request count and latency, as they happen.</h1>
+    <p class="lede">Browser view of the monitoring API. curl still gets JSON with <code>Accept: application/json</code>. Counts reset on restart.</p>
+    <p class="hero-status"><span id="mon-health" class="status">Checking…</span></p>
+  </header>
+
+  <section class="dash-board" aria-label="Live counters">
+    <article class="dash-tile dash-tile-a">
+      <div class="dash-tile-top">
+        <b>Requests</b>
+        <div class="seg" aria-hidden="true">
+          <button type="button" class="is-on">Live</button>
+          <button type="button" disabled>Session</button>
+        </div>
+      </div>
+      <p class="dash-label">Total traffic</p>
+      <p class="dash-value" id="d-req">—</p>
+      <p class="dash-sub" id="d-req-sub">Since process start</p>
+      <svg class="dash-spark" viewBox="0 0 240 72" aria-hidden="true">
+        <defs>
+          <linearGradient id="sparkA" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1a7f3c" stop-opacity="0.35"/>
+            <stop offset="100%" stop-color="#1a7f3c" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path id="sparkA-area" fill="url(#sparkA)" d="M0 72 L0 50 L240 50 L240 72 Z"/>
+        <path id="sparkA-line" fill="none" stroke="#1a7f3c" stroke-width="2.5" d="M0 50 L240 50"/>
+      </svg>
+    </article>
+
+    <article class="dash-tile dash-tile-b">
+      <div class="dash-tile-top">
+        <b>Avg latency</b>
+        <span class="dash-chip">ms</span>
+      </div>
+      <p class="dash-label">Mean response time</p>
+      <p class="dash-value" id="d-lat">—</p>
+      <p class="dash-sub" id="d-lat-sub">All counted requests</p>
+      <svg class="dash-spark" viewBox="0 0 240 72" aria-hidden="true">
+        <defs>
+          <linearGradient id="sparkB" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#0b0b0c" stop-opacity="0.2"/>
+            <stop offset="100%" stop-color="#0b0b0c" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path id="sparkB-area" fill="url(#sparkB)" d="M0 72 L0 40 L240 40 L240 72 Z"/>
+        <path id="sparkB-line" fill="none" stroke="#0b0b0c" stroke-width="2.5" d="M0 40 L240 40"/>
+      </svg>
+    </article>
+
+    <article class="dash-tile dash-tile-c">
+      <div class="dash-tile-top">
+        <b>Errors</b>
+        <span class="dash-chip" id="d-err-chip">5xx</span>
+      </div>
+      <p class="dash-label">Server failures</p>
+      <p class="dash-value" id="d-err">—</p>
+      <p class="dash-sub" id="d-err-sub">Counted on 5xx responses</p>
+      <div class="dash-dots" id="d-err-dots" aria-hidden="true"></div>
+    </article>
+
+    <article class="dash-tile dash-tile-d">
+      <div class="dash-tile-top">
+        <b>Service</b>
+        <a class="dash-go" href="/docs" title="API docs">↗</a>
+      </div>
+      <p class="dash-label">Model version</p>
+      <p class="dash-value dash-value-sm" id="d-model">—</p>
+      <p class="dash-sub" id="d-app">app —</p>
+      <div class="dash-actions" style="margin-top:14px">
+        <button type="button" class="btn ghost-btn" id="bump-btn">Send /predict →</button>
+      </div>
+    </article>
+
+    <article class="dash-tile dash-tile-wide">
+      <div>
+        <div class="dash-tile-top">
+          <b>Traffic health</b>
+          <span class="dash-chip ok">Process uptime</span>
+        </div>
+        <p class="dash-label">Success share of counted calls</p>
+        <p class="dash-value" id="d-ok-pct">—</p>
+        <p class="dash-sub" id="d-ok-sub">Errors excluded from the green bar</p>
+        <div class="dash-progress" aria-hidden="true"><i id="d-ok-bar" style="width:100%" data-pct="100%"></i><span class="prog-end">100%</span></div>
+        <ul class="dash-list">
+          <li><span>request_count</span><b id="j-req">—</b></li>
+          <li><span>avg_latency_ms</span><b id="j-lat">—</b></li>
+          <li><span>error_count</span><b id="j-err">—</b></li>
+        </ul>
+      </div>
+      <div>
+        <p class="dash-label">Raw JSON (same as API)</p>
+        <pre id="raw-json" class="wsp-raw" style="max-height:220px; margin-top:8px">Loading…</pre>
+        <p class="note" style="margin-top:10px">Grading curl: <code>curl -H "Accept: application/json" …/stats</code></p>
+      </div>
+    </article>
+  </section>
+</main>
+<script src="/assets/site.js?v=wsp12"></script>
+<script src="/assets/monitor.js?v=wsp12"></script>
+</body>
+</html>

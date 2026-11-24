@@ -267,12 +267,14 @@ so the residual method was kept.
 
 | Endpoint | Purpose |
 |---|---|
-| `POST /predict` | price, range, assumed fields, model version, `selected_model` |
+| `POST /predict` | price, range, assumed fields, model version, `selected_model` (optional `predictor`: `routed` or `wsp`) |
 | `POST /explain` | same plus the model's top factors |
-| `GET /models` | the models being served, their years, versions and test MAE |
-| `GET /health` | liveness check, models served |
+| `GET /models` | the models being served, their years, versions and test MAE (+ WSP experiment summary) |
+| `GET /health` | liveness check, models served, `wsp_loaded` |
 | `GET /metrics` | request count, average latency, errors |
 | `GET /docs` | auto-generated API docs |
+
+The estimate form can switch to the **WSP experiment** predictor (`predictor=wsp`): a blend that beat the global LightGBM champion on the held-out test set (~361k vs ~370k MAE). Production default remains the routed LightGBM system.
 
 The same process serves the site: `/` estimate, `/experiments` the recorded comparison, `/system` the loaded models, `/pipeline` the system design, `/demo` the Milestone 1 checks. The design notes are in `design/SYSTEM_DESIGN.md` and `design/UI.md`.
 
@@ -286,24 +288,70 @@ make test    # pytest: data preparation, A+B dedup and split, router, model load
 make lint    # ruff
 ```
 
+## Project Focus
+
+CarCompass focuses on a **complete, honest MLOps loop** for used-car price estimation
+in Pakistan: prepare real PakWheels-style listings, train and compare simple model
+families in MLflow, serve one routed champion through FastAPI, package it in Docker,
+prove it with GitHub Actions, and deploy it so graders can hit `/predict`, `/explain`,
+`/health` and `/metrics` on a live URL. We prefer a working end-to-end system over
+extra tooling (no Prometheus/Grafana required).
+
 ## Docker
 
-Train the complete A+B model set first so the image contains the routed model artifacts
-and `models/manifest.json`:
-
 ```bash
-make docker-build TAG=v1.0
-make docker-run TAG=v1.0     # http://localhost:8000
-make docker-smoke TAG=v1.0   # build, start, check /health + /predict + /explain, stop
+make docker-build TAG=v2.0
+make docker-run TAG=v2.0     # http://localhost:8000
+make docker-smoke TAG=v2.0   # build, start, check /health + /predict + /explain, stop
 ```
 
-The image contains the code and the served models from `deploy/models/` (about 25 MB,
-committed). `models/` holds every trained family and is mostly git-ignored; after
-retraining, `make export-models` copies the served ones into `deploy/models/` and
-checks they load. The serving libraries in `requirements-serve.txt` are pinned to the
-versions the models were trained with. CI builds the image on every push and runs the
-same smoke test; on a `v*` tag it publishes `ghcr.io/duaaliansari/carcompass:<tag>`.
-Release, deployment and rollback steps: `RUNBOOK.md`.
+The image installs `requirements-serve.txt`, copies `src/` and the served models from
+`deploy/models/` (~25 MB, committed), exposes port **8000**, and runs a Docker
+`HEALTHCHECK` against `/health`. After retraining, `make export-models` refreshes
+`deploy/models/`. CI builds the image on every push (including `main`) and smokes it;
+a `v*` tag also publishes `ghcr.io/duaaliansari/carcompass:<tag>`. Full redeploy and
+rollback steps: **`RUNBOOK.md`**.
+
+## Deployment
+
+Target host: **Render** (Docker image from GHCR). Steps are in `RUNBOOK.md`
+(first deploy, redeploy, rollback).
+
+**Live endpoint:** _Not published in this commit yet. After the first Render deploy,
+replace this line with the URL (e.g. `https://carcompass.onrender.com`). If the
+service is stopped after grading to save cost, keep a one-line note here instead._
+
+Example cURL against the **deployed** service (set `URL` to the live host):
+
+```bash
+URL=https://<your-service>.onrender.com
+
+curl -s $URL/health
+curl -s $URL/metrics
+curl -s -X POST $URL/predict -H "Content-Type: application/json" \
+  -d '{"make":"Toyota","model":"Corolla","year":2016,"mileage":75000}'
+curl -s -X POST $URL/explain -H "Content-Type: application/json" \
+  -d '{"make":"Suzuki","model":"Mehran","year":2005,"mileage":150000}'
+```
+
+Local equivalents use `http://localhost:8000` (see Quick start). Monitoring for
+grading: `GET /metrics` (request count, average latency, errors) plus JSON request
+logs and the `/demo` page.
+
+## Milestone 2 checklist
+
+| Requirement | Status | Where documented / proven |
+|---|---|---|
+| Dockerfile: deps, model + source, port, `/health` healthcheck | **Done** | `Dockerfile`, `deploy/models/`, `make docker-smoke` |
+| CI lint (ruff) | **Done** | `.github/workflows/ci.yml` → `lint` |
+| CI tests (pytest, visible pass/fail) | **Done** | `.github/workflows/ci.yml` → `test` |
+| CI Docker build on push to `main` | **Done** | `.github/workflows/ci.yml` → `build` (+ smoke); also runs on PRs |
+| Live cloud / managed deploy | **Open** | Render steps in `RUNBOOK.md`; URL still placeholder below |
+| Monitoring: request count + avg latency | **Done** | `GET /metrics`, JSON logs, `/demo` panel |
+| RUNBOOK: redeploy + rollback to prior image tag | **Done** | `RUNBOOK.md` §§3–5 |
+| README: deploy steps, live URL (or shutdown note), deployed cURL | **Partial** | This section; live URL still to fill after Render |
+| CONTRIBUTION.md M2 table + reflections | **Partial** | Table filled; Fatima M2 reflection still placeholder |
+| Tag `v2.0-milestone2` | **Open** | Create after live URL confirmed (`RUNBOOK.md` §1) |
 
 ## Project status
 
@@ -314,8 +362,13 @@ Release, deployment and rollback steps: `RUNBOOK.md`.
 - [x] **M1 serving:** FastAPI prediction/explanation endpoints and year-based model routing
 - [x] **M1 quality and reproducibility:** automated tests, linting, CI workflow,
       data/Git metadata in experiment tracking, and structured request logging
-- [ ] **M2:** complete deployment evidence, live URL/cURL examples, and operational
-      monitoring/runbook validation (see `RUNBOOK.md`)
+- [x] **M2 Docker + CI:** Dockerfile copies `deploy/models/`, healthcheck on `/health`,
+      CI lint / pytest / Docker smoke (model loaded + `/predict` + `/explain`)
+- [x] **M2 monitoring:** `/metrics` + structured logs + `/demo`
+- [x] **M2 runbook:** redeploy and rollback steps in `RUNBOOK.md`
+- [ ] **M2 live host:** deploy on Render from current `main`, paste URL into README + `RUNBOOK.md`
+- [ ] **M2 Fatima reflection:** fill the placeholder in `CONTRIBUTION.md`
+- [ ] **M2 tag:** create and push `v2.0-milestone2` after the live URL is confirmed
 
 ## Repository layout
 

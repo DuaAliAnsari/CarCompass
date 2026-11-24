@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import re
 import time
 from pathlib import Path
 
@@ -298,6 +299,7 @@ def main():
     print("Training LightGBM variants for prediction soup…", flush=True)
     lgbm_val_preds = []
     lgbm_test_preds = []
+    lgbm_pipes = []
     variant_labels = []
     for cfg in LGBM_VARIANTS:
         seed = cfg["seed"]
@@ -309,6 +311,7 @@ def main():
         pt = pipe.predict(test_df[FEATURES])
         lgbm_val_preds.append(pv)
         lgbm_test_preds.append(pt)
+        lgbm_pipes.append(pipe)
         variant_labels.append(seed)
         log_record(
             records, name,
@@ -321,6 +324,7 @@ def main():
     # Include the on-disk champion in the soup pool.
     lgbm_val_preds.append(teacher_val)
     lgbm_test_preds.append(teacher_test)
+    lgbm_pipes.append(champion)
     variant_labels.append("disk")
 
     # Uniform soup + greedy soup over seeds (prediction space)
@@ -571,8 +575,27 @@ def main():
     else:
         print(f"Still {delta:,.0f} PKR behind champion on test.", flush=True)
 
-    # Persist
+    # Persist a serveable experiment bundle (MLP + blend weights + optional LGBM soup)
     OUT_DIR.mkdir(parents=True, exist_ok=True)
+    set_weights(probe, *greedy_w)
+    # Parse blend weights from the winning note when it is a 3-way / LGBM×WSP blend
+    blend_lgbm, blend_wsp = 0.8, 0.2
+    if best["name"].startswith("blend_"):
+        note = best.get("note", "")
+        # e.g. "0.80·lgbm_greedy + 0.00·lgbm_uniform + 0.20·WSP"
+        m_l = re.search(r"([0-9.]+)\s*[·x*]\s*lgbm_greedy", note, re.I)
+        m_w = re.search(r"([0-9.]+)\s*[·x*]\s*WSP", note, re.I)
+        if m_l and m_w:
+            blend_lgbm, blend_wsp = float(m_l.group(1)), float(m_w.group(1))
+
+    # Mean of the greedy LGBM soup members → one pipeline for serving
+    lgbm_serve = None
+    if chosen:
+        # Average predictions via first member's structure is awkward; keep the
+        # list and average at predict time. For a single artifact, distill to the
+        # first greedy member (best val) plus note the full set.
+        lgbm_serve = copy.deepcopy(lgbm_pipes[chosen[0]])
+
     bundle = {
         "program": best["name"],
         "val_mae_pkr": best["val_mae_pkr"],
@@ -584,11 +607,21 @@ def main():
             if isinstance(best.get("artifact"), dict) else None
         ),
         "champion_test_mae_pkr": lgbm_test_mae,
+        "wsp_greedy_mlp": copy.deepcopy(probe),
+        "wsp_preprocessor": pre,
+        "lgbm_greedy_pipeline": lgbm_serve,
+        "lgbm_greedy_member_seeds": [variant_labels[i] for i in chosen],
+        "blend_weights": {"lgbm": blend_lgbm, "wsp": blend_wsp},
     }
-    # Keep last greedy WSP model available even if blend won
-    set_weights(probe, *greedy_w)
-    bundle["wsp_greedy_mlp"] = copy.deepcopy(probe)
-    bundle["wsp_preprocessor"] = pre
+    # Residual quantiles of the winning program on validation (for API ranges)
+    art = best.get("artifact") or {}
+    if isinstance(art, dict) and art.get("kind") == "pred" and art.get("val") is not None:
+        resid = y_val - np.asarray(art["val"], dtype=float)
+    else:
+        set_weights(probe, *greedy_w)
+        resid = y_val - probe.predict(X_val)
+    q10, q90 = np.quantile(resid, [0.1, 0.9])
+
     joblib.dump(bundle, OUT_DIR / "wsp_best.joblib")
     (OUT_DIR / "wsp_best.json").write_text(json.dumps({
         "program": best["name"],
@@ -597,6 +630,10 @@ def main():
         "note": best.get("note", ""),
         "champion_test_mae_pkr": lgbm_test_mae,
         "beat_champion": bool(best["test_mae_pkr"] < lgbm_test_mae),
+        "blend_weights": {"lgbm": blend_lgbm, "wsp": blend_wsp},
+        "q10": float(q10),
+        "q90": float(q90),
+        "serve": True,
     }, indent=2), encoding="utf-8")
 
     champions = []

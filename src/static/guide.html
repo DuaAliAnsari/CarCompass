@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project guide · CarCompass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<main class="wrap">
+  <header class="page-head">
+    <p class="eyebrow">Case study · MLOps Fall 2026</p>
+    <h1>How CarCompass was built end to end.</h1>
+    <p class="lede">Product estimate on the home page. This guide is the dashboard case study: milestones, pipeline, monitoring, checks, and Project Focus.</p>
+  </header>
+
+  <section class="dash-board" aria-label="Guide headlines">
+    <article class="dash-tile">
+      <div class="dash-tile-top">
+        <b>Course marks</b>
+        <span class="dash-chip ok">Baseline</span>
+      </div>
+      <p class="dash-label">Shipped toward</p>
+      <p class="dash-value">50<span class="dash-trend">↑ M0+M1</span></p>
+      <p class="dash-sub">M0 10 + M1 20 · M2 20 in progress</p>
+      <div class="dash-progress" aria-hidden="true"><i style="width:50%" data-pct="50%"></i><span class="prog-end">100%</span></div>
+    </article>
+    <article class="dash-tile">
+      <div class="dash-tile-top">
+        <b>Listings</b>
+        <span class="dash-chip">A + B</span>
+      </div>
+      <p class="dash-label">After prepare</p>
+      <p class="dash-value">97.8k</p>
+      <p class="dash-sub">Deduped · group-aware split</p>
+      <div class="dash-mini-bars tone-ok" aria-hidden="true">
+        <span style="height:28%"></span><span style="height:42%"></span><span style="height:55%"></span>
+        <span style="height:70%" class="is-on"></span><span style="height:88%" class="is-on"></span>
+      </div>
+    </article>
+    <article class="dash-tile">
+      <div class="dash-tile-top">
+        <b>Served MAE</b>
+        <a class="dash-go" href="/experiments">↗</a>
+      </div>
+      <p class="dash-label">Routed test PKR</p>
+      <p class="dash-value">360k</p>
+      <p class="dash-sub">Better than global-only 370k</p>
+      <svg class="dash-spark" viewBox="0 0 240 72" aria-hidden="true">
+        <defs>
+          <linearGradient id="gSpark" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1a7f3c" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#1a7f3c" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#gSpark)" d="M0 72 L0 58 L40 50 L80 46 L120 40 L160 34 L200 28 L240 22 L240 72 Z"/>
+        <path fill="none" stroke="#1a7f3c" stroke-width="2.5" d="M0 58 L40 50 L80 46 L120 40 L160 34 L200 28 L240 22"/>
+      </svg>
+    </article>
+    <article class="dash-tile">
+      <div class="dash-tile-top">
+        <b>Focus</b>
+        <span class="dash-chip warn">WSP</span>
+      </div>
+      <p class="dash-label">Beat experiment</p>
+      <p class="dash-value">−2.4%</p>
+      <p class="dash-sub">Test MAE vs LightGBM global</p>
+      <ul class="dash-list">
+        <li><span>Routing</span><b>On</b></li>
+        <li><span>WSP lab</span><b>Ready</b></li>
+      </ul>
+    </article>
+  </section>
+
+  <section class="guide-grid" aria-label="Guide sections">
+    <a class="guide-card" href="/guide/milestones">
+      <span class="guide-kicker">01</span>
+      <b>Milestones</b>
+      <span>Course requirements mapped to what we shipped.</span>
+      <span class="guide-go">→</span>
+    </a>
+    <a class="guide-card" href="/guide/pipeline">
+      <span class="guide-kicker">02</span>
+      <b>Pipeline</b>
+      <span>Prepare → train → MLflow → serve artifacts.</span>
+      <span class="guide-go">→</span>
+    </a>
+    <a class="guide-card" href="/guide/monitor">
+      <span class="guide-kicker">03</span>
+      <b>Monitoring</b>
+      <span>Live /stats dashboard — count and latency.</span>
+      <span class="guide-go">→</span>
+    </a>
+    <a class="guide-card" href="/guide/checks">
+      <span class="guide-kicker">04</span>
+      <b>Live checks</b>
+      <span>One-click health, predict, explain, docs.</span>
+      <span class="guide-go">→</span>
+    </a>
+    <a class="guide-card" href="/guide/wsp">
+      <span class="guide-kicker">05</span>
+      <b>WSP lab</b>
+      <span>Project Focus blend vs champion.</span>
+      <span class="guide-go">→</span>
+    </a>
+    <a class="guide-card" href="/experiments">
+      <span class="guide-kicker">06</span>
+      <b>Experiments</b>
+      <span>MLflow families and champion story.</span>
+      <span class="guide-go">→</span>
+    </a>
+    <a class="guide-card" href="/system">
+      <span class="guide-kicker">07</span>
+      <b>Models</b>
+      <span>What is loaded and how year routes.</span>
+      <span class="guide-go">→</span>
+    </a>
+    <a class="guide-card" href="/docs" target="_blank" rel="noopener">
+      <span class="guide-kicker">08</span>
+      <b>API docs</b>
+      <span>Auto-generated FastAPI schemas.</span>
+      <span class="guide-go">↗</span>
+    </a>
+  </section>
+</main>
+<script src="/assets/site.js?v=wsp12"></script>
+</body>
+</html>
