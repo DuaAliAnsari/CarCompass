@@ -52,7 +52,9 @@ def export(src: Path, dest: Path) -> dict:
     wsp = WspExperiment.load(dest)
     if wsp:
         price = wsp.predict(TEST_CAR, router.models[router.default_name].meta["defaults"])
-        print(f"check: WSP experiment -> PKR {price['estimated_price_pkr']:,} ({wsp.meta.get('program')})")
+        pkr = price["estimated_price_pkr"]
+        program = wsp.meta.get("program")
+        print(f"check: WSP experiment -> PKR {pkr:,} ({program})")
     size = sum((dest / f).stat().st_size for f in files) / 1e6
     print(f"Exported {', '.join(manifest['served'])} (+ WSP if present) ({size:.1f} MB) to {dest}")
     return manifest

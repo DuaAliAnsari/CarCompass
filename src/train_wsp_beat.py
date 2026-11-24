@@ -299,6 +299,7 @@ def main():
     print("Training LightGBM variants for prediction soup…", flush=True)
     lgbm_val_preds = []
     lgbm_test_preds = []
+    lgbm_pipes = []
     variant_labels = []
     for cfg in LGBM_VARIANTS:
         seed = cfg["seed"]
@@ -310,6 +311,7 @@ def main():
         pt = pipe.predict(test_df[FEATURES])
         lgbm_val_preds.append(pv)
         lgbm_test_preds.append(pt)
+        lgbm_pipes.append(pipe)
         variant_labels.append(seed)
         log_record(
             records, name,
@@ -322,6 +324,7 @@ def main():
     # Include the on-disk champion in the soup pool.
     lgbm_val_preds.append(teacher_val)
     lgbm_test_preds.append(teacher_test)
+    lgbm_pipes.append(champion)
     variant_labels.append("disk")
 
     # Uniform soup + greedy soup over seeds (prediction space)
@@ -591,7 +594,7 @@ def main():
         # Average predictions via first member's structure is awkward; keep the
         # list and average at predict time. For a single artifact, distill to the
         # first greedy member (best val) plus note the full set.
-        lgbm_serve = copy.deepcopy(pipes[chosen[0]])
+        lgbm_serve = copy.deepcopy(lgbm_pipes[chosen[0]])
 
     bundle = {
         "program": best["name"],
