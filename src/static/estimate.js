@@ -84,6 +84,54 @@ function paintHeading() {
   const year = $("year").value;
   const mileage = Number($("mileage").value || 0).toLocaleString("en-US");
   $("result-sub").textContent = [model, year, mileage ? mileage + " km" : ""].filter(Boolean).join(" · ");
+  paintIdlePreview();
+}
+
+function paintIdlePreview() {
+  const panel = $("result-panel");
+  if (!panel || panel.classList.contains("has-result")) return;
+  const year = Number($("year").value) || 2010;
+  const mileage = Number($("mileage").value) || 0;
+  const now = new Date().getFullYear();
+  const yearScore = Math.min(1, Math.max(0, (year - 1995) / Math.max(1, now - 1995)));
+  const mileScore = 1 - Math.min(1, Math.max(0, mileage / 250000));
+  const score = 0.65 * yearScore + 0.35 * mileScore;
+  const center = 18 + score * 64;
+  const width = 18 + score * 10;
+  const mark = $("idle-mark");
+  const band = $("idle-band");
+  const hint = $("idle-hint");
+  if (mark) mark.style.left = "calc(" + center + "% - 2px)";
+  if (band) {
+    band.style.left = Math.max(6, center - width / 2) + "%";
+    band.style.right = Math.max(6, 100 - (center + width / 2)) + "%";
+  }
+  if (hint) {
+    hint.textContent = score > 0.62
+      ? "Preview leans newer / lower km"
+      : score < 0.38
+        ? "Preview leans older / higher km"
+        : "Live preview · not a price yet";
+  }
+  const priceEl = $("result-price");
+  const lakhEl = $("result-lakh");
+  const priceWrap = priceEl && priceEl.parentElement;
+  if (priceWrap) priceWrap.classList.add("is-waiting");
+  if (priceEl) priceEl.textContent = "····";
+  if (lakhEl) lakhEl.textContent = "Waiting for Estimate price";
+}
+
+function setIdleStep(step) {
+  document.querySelectorAll("[data-idle-step]").forEach((el) => {
+    el.classList.toggle("is-on", Number(el.getAttribute("data-idle-step")) === step);
+  });
+}
+
+function markResultReady() {
+  const panel = $("result-panel");
+  if (panel) panel.classList.add("has-result");
+  const priceWrap = $("result-price") && $("result-price").parentElement;
+  if (priceWrap) priceWrap.classList.remove("is-waiting");
 }
 
 function carFromForm() {
@@ -163,6 +211,8 @@ async function estimate(event) {
       return;
     }
     const data = response.data;
+    setIdleStep(2);
+    markResultReady();
     $("result-price").textContent = pkr(data.estimated_price_pkr);
     $("result-lakh").textContent = "about " + lakh(data.estimated_price_pkr);
     $("result-model").textContent = plainModel(data.selected_model);
@@ -173,6 +223,7 @@ async function estimate(event) {
       ? assumed.map((field) => `<span class="chip">${field} assumed</span>`).join("")
       : `<span class="chip ok">Nothing assumed</span>`;
     $("known").textContent = data.known_model ? "Known make and model" : "Uncommon make or model";
+    setIdleStep(3);
     showFactors(data.top_factors);
     $("factor-note").textContent = data.note || "";
     await showComparison(car, data.estimated_price_pkr);
@@ -243,6 +294,10 @@ async function loadOptions() {
 
 $("make").addEventListener("change", () => updateModels());
 ["model", "year", "mileage"].forEach((id) => $(id).addEventListener("input", paintHeading));
+document.querySelectorAll("[data-idle-step]").forEach((el) => {
+  el.addEventListener("click", () => setIdleStep(Number(el.getAttribute("data-idle-step"))));
+});
 $("car-form").addEventListener("submit", estimate);
 $("year").max = new Date().getFullYear() + 1;
+paintIdlePreview();
 loadOptions();

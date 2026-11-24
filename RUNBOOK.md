@@ -132,5 +132,24 @@ To roll back only the **models** while keeping new code: revert the commit that 
 
 ## Live endpoint
 
-_Not deployed yet. Write the URL here after the first deployment, or a note that it was
-shut down after grading to save cost._
+**Status:** not live in the repo docs yet.
+
+1. Follow **§2 First deployment** (or §3 Redeploy) on Render using
+   `ghcr.io/duaaliansari/carcompass:<tag>` (publish that tag via §1 first).
+2. Paste the public URL here, for example:
+
+   `https://<your-service>.onrender.com`
+
+3. Mirror the same URL under **Deployment** in `README.md`.
+4. If the service is stopped after grading to save cost, replace the URL with:
+   _Live service shut down after grading to save cost._
+
+### Milestone 2 requirement map (this file)
+
+| Course ask | Covered here |
+|---|---|
+| Redeploy | §3 |
+| Roll back to a previous Docker image tag | §5 |
+| Monitoring (count + latency) | §6 (`/metrics` + logs) |
+| Live URL / shutdown note | this section |
+| Health / predict / explain / metrics checks | §4 |
