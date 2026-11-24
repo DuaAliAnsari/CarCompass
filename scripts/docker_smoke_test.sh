@@ -13,7 +13,8 @@ CAR='{"make":"Toyota","model":"Corolla","year":2016,"mileage":75000}'
 cleanup() { docker rm -f "$NAME" >/dev/null 2>&1 || true; }
 trap cleanup EXIT
 
-docker run -d --name "$NAME" -p "$PORT:8000" "$IMAGE" >/dev/null
+# Pass PORT into the container (same contract as Render). Map host:container that port.
+docker run -d --name "$NAME" -e "PORT=$PORT" -p "$PORT:$PORT" "$IMAGE" >/dev/null
 
 fail() {
   echo "FAIL: $1"

@@ -47,21 +47,42 @@ is running.
    CI builds the image again and publishes `ghcr.io/duaaliansari/carcompass:v2.0-milestone2`
    and `:latest`. Check it under the repository's **Packages** on GitHub.
 
-## 2. First deployment (Render)
+## 2. First deployment (Render) — preferred: build from Git
 
-1. The first time an image is published, open it on GitHub (repository → Packages →
-   carcompass → Package settings) and set visibility to **Public**, or give Render
-   registry credentials (a GitHub token with `read:packages`).
-2. Render → **New → Web Service → Existing image**.
-   Image URL: `ghcr.io/duaaliansari/carcompass:v1.0-milestone1` (a fixed tag, not
-   `latest`, so you always know what runs).
-3. Settings: port **8000**, health check path **`/health`**, instance type Free
-   (the API needs about 250 MB of memory).
-4. Deploy, then run the checks in section 4 against the new URL and write it under
-   **Live endpoint** below and in the README.
+Deploy **`main`** (post–PR #11, commit `77ad79b` or newer). That tip has the product
+site, `/guide`, `/stats` dashboard, WSP lab, and `deploy/models/` in the image.
+Do **not** point Render at the old `v1.0-milestone1` GHCR image if you want the
+current UI — that tag is Milestone 1 only.
 
-Railway works the same way: New project → Deploy a Docker image → same image URL,
-then set `PORT=8000` and the health check path `/health`.
+### Option A — Dockerfile from GitHub (recommended)
+
+1. Render → **New → Web Service** → connect **`DuaAliAnsari/CarCompass`**
+   (or the fork `Sagarlekhraj-19/CarCompass` if that is what Render is linked to).
+2. Settings:
+   - **Branch:** `main`
+   - **Language / Runtime:** **Docker**
+   - **Dockerfile path:** `./Dockerfile` (repo root)
+   - **Docker Command:** leave **empty** (use the image `CMD`; it binds
+     `0.0.0.0` and `$PORT`)
+   - **Health check path:** `/health`
+   - **Instance:** Free (needs ~250–512 MB RAM)
+3. Do **not** hardcode port `8000` in a custom start command. Render sets `PORT`
+   (often `10000`); the Dockerfile uses `${PORT:-8000}`.
+4. Deploy. First free-tier boot can take a few minutes (build + model load).
+5. Run the checks in section 4 and paste the URL under **Live endpoint** + README.
+
+Blueprint alternative: use the repo’s `render.yaml` (**New → Blueprint**).
+
+### Option B — pre-built GHCR image (after you publish a `v*` tag)
+
+1. Tag and push so CI `publish` runs (section 1), e.g. `v2.0-milestone2`.
+2. Make the package public (repo → Packages → carcompass) or give Render a
+   GitHub token with `read:packages`.
+3. Render → **New → Web Service → Existing image**
+   `ghcr.io/duaaliansari/carcompass:v2.0-milestone2` (pin a tag, not `latest`).
+4. Health check `/health`. Leave start command empty unless you pass `$PORT`.
+
+Railway: same as Option B (image URL) or build from the Dockerfile with `$PORT`.
 
 ## 3. Redeploy
 
@@ -127,15 +148,18 @@ To roll back only the **models** while keeping new code: revert the commit that 
 | `/health` says `model_loaded: false`, `/predict` gives 503 | `deploy/models/` was empty when the image was built | `make export-models`, commit, release a new tag |
 | Image builds but the API crashes on start with an unpickling error | library versions in the image differ from training | set the pins in `requirements-serve.txt` to the training versions |
 | Platform restarts the service, out of memory | too many or too big models served | keep champions under `max_model_mb` (`configs/model_families.yaml`) |
-| Render cannot pull the image | GHCR package is private | make it public or add registry credentials (section 2) |
+| Render cannot pull the image | GHCR package is private | make it public or add registry credentials (section 2B), or use Option A (Git + Dockerfile) |
+| Deploy fails: no open ports / port scan timeout | app not bound to `0.0.0.0:$PORT` | leave Docker Command empty; do not force `--port 8000` on Render |
+| Health check fails while logs look fine | path wrong or still loading models | set health check to `/health`; wait for free-tier cold start |
+| Old UI / no `/guide` or `/stats` page | image or branch is pre–PR #11 | deploy `main` (Option A) or a tag built after `77ad79b` |
 | A request gets `422` | invalid input (e.g. year 1850, missing mileage) | expected; see `/docs` for the input rules |
 
 ## Live endpoint
 
 **Status:** not live in the repo docs yet.
 
-1. Follow **§2 First deployment** (or §3 Redeploy) on Render using
-   `ghcr.io/duaaliansari/carcompass:<tag>` (publish that tag via §1 first).
+1. Follow **§2 Option A** (Git + Dockerfile on `main`) so the live host matches
+   the full current site. Use Option B only after publishing a new `v*` image.
 2. Paste the public URL here, for example:
 
    `https://<your-service>.onrender.com`

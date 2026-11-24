@@ -63,7 +63,7 @@ docker-build:
 	docker build --build-arg APP_VERSION=$(TAG) -t $(IMAGE):$(TAG) .
 
 docker-run:
-	docker run --rm -p 8000:8000 $(IMAGE):$(TAG)
+	docker run --rm -e PORT=8000 -p 8000:8000 $(IMAGE):$(TAG)
 
 # Build, start, check /health and /predict, stop. Same check as the CI build job.
 docker-smoke: docker-build
