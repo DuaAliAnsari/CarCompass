@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/styles.css?v=ui3">
 </head>
 <body>
 <section class="hero-stage" aria-label="CarCompass hero">
@@ -29,8 +29,8 @@
       <h1>A fair asking price, made simple.</h1>
       <p class="lede">CarCompass estimates a used car’s price in PKR from make, model, year and mileage — with a range and the factors behind it.</p>
       <div class="hero-ctas">
-        <a class="btn" href="#estimate">Get a price →</a>
-        <a class="btn ghost-btn" href="/experiments">Experiments →</a>
+        <a class="btn" href="#estimate">Get a price <span class="arr" aria-hidden="true">></span></a>
+        <a class="btn ghost-btn" href="/experiments">Experiments <span class="arr" aria-hidden="true">></span></a>
       </div>
       <p class="hero-status"><span id="health-pill" class="status">Checking the API…</span></p>
     </div>
@@ -44,7 +44,7 @@
         </div>
         <div class="glass-frame-meta">
           <span>Live preview</span>
-          <b>Corolla · on the road</b>
+          <b>Cruiser · on the land</b>
         </div>
       </div>
       <div class="glass-float">
@@ -113,7 +113,7 @@
         </li>
       </ul>
       <div class="hero-ctas" style="margin-top:22px; flex-direction:row; flex-wrap:wrap; gap:12px; align-items:center">
-        <a class="btn" href="/experiments">Experiments →</a>
+        <a class="btn" href="/experiments">Experiments <span class="arr" aria-hidden="true">></span></a>
         <a class="link-arrow" href="/system" style="margin-top:0">Models</a>
       </div>
     </div>
@@ -278,10 +278,10 @@
             <button type="button" class="pill" data-predictor="wsp" id="wsp-pill" disabled title="WSP experiment not loaded">WSP experiment</button>
           </div>
           <p class="note" id="predictor-note">Production route: LightGBM default + 2010+ specialist.</p>
-          <a class="btn" href="/wsp" style="margin-top:12px">Open WSP lab →</a>
+          <a class="btn" href="/wsp" style="margin-top:12px">Open WSP lab <span class="arr" aria-hidden="true">></span></a>
         </div>
         <div class="actions">
-          <button class="btn" id="estimate-btn" type="submit">Estimate price →</button>
+          <button class="btn" id="estimate-btn" type="submit">Estimate price <span class="arr" aria-hidden="true">></span></button>
           <a class="link-arrow" href="/wsp">WSP stats &amp; compare</a>
         </div>
         <p class="error" id="form-error"></p>
@@ -296,7 +296,7 @@
   <div class="recs" id="examples"></div>
 
 </main>
-<script src="/assets/site.js?v=wsp12"></script>
+<script src="/assets/site.js?v=ui5"></script>
 <script src="/assets/hero.js"></script>
 <script src="/assets/estimate.js"></script>
 </body>

@@ -33,10 +33,10 @@ nav.innerHTML = `
     ${NAV.map(([href, label]) =>
       `<a href="${href}" data-nav="${href}">${label}</a>`).join("")}
   </nav>
-  <a class="site-brand" href="/">CarCompass</a>
+  <a class="site-brand" href="/" aria-label="CarCompass">CarC<span class="brand-o" aria-hidden="true"><svg viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="8.25" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 5.2 14.35 12H9.65L12 5.2Z" fill="currentColor"/><path d="M12 18.8 9.65 12h4.7L12 18.8Z" fill="currentColor" opacity=".32"/><circle cx="12" cy="12" r="1.35" fill="currentColor"/></svg></span>mpass</a>
   <div class="nav-right">
     <span id="nav-health" class="status">Checking…</span>
-    <a class="btn" href="${path === "/" ? "#estimate" : "/"}">Get a price →</a>
+    <a class="btn" href="${path === "/" ? "#estimate" : "/"}">Get a price <span class="arr" aria-hidden="true">></span></a>
   </div>
 `;
 document.body.prepend(nav);
@@ -100,7 +100,7 @@ fetch("/health")
     const el = document.getElementById("nav-health");
     if (!el) return;
     if (data.model_loaded) {
-      el.className = "status ok";
+      el.className = "status ok is-live";
       el.textContent = "Model ready";
     } else {
       el.className = "status bad";
