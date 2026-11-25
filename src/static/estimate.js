@@ -269,7 +269,7 @@ async function loadOptions() {
       : "The form fills in once a model is loaded.";
     return;
   }
-  status.className = "status ok";
+  status.className = "status ok is-live";
   status.textContent = "Model ready · " + health.data.models_served.length + " loaded";
 
   const wspPill = $("wsp-pill");

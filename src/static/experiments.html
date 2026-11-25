@@ -7,14 +7,14 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/styles.css">
+<link rel="stylesheet" href="/assets/styles.css?v=ui3">
 </head>
 <body>
 <main class="wrap">
   <header class="page-head">
-    <p class="eyebrow">Validation chooses, the test set only reports</p>
-    <h1>What we trained, and what we kept.</h1>
-    <p class="lede">Five families, twelve configurations each. Champions are the lowest validation MAE among models of at most 100 MB.</p>
+    <p class="eyebrow">Validation chooses · the test set only reports</p>
+    <h1>What we trained,<br>and what we kept.</h1>
+    <p class="lede">Five families · twelve configurations each.<br>Champions win on validation MAE, capped at 100&nbsp;MB.</p>
   </header>
 
   <section class="dash-board" aria-label="Experiment headlines">
@@ -45,7 +45,7 @@
       <div class="dash-progress" aria-hidden="true"><i style="width:13%" data-pct="13%"></i><span class="prog-end">100%</span></div>
     </article>
     <article class="dash-tile" style="min-height:180px">
-      <div class="dash-tile-top"><b>Serve limit</b><a class="dash-go" href="/system">↗</a></div>
+      <div class="dash-tile-top"><b>Serve limit</b><a class="dash-go" href="/system" aria-label="Models">></a></div>
       <p class="dash-label">Hard cap</p>
       <p class="dash-value">100</p>
       <p class="dash-sub">MB · larger stays in MLflow only</p>
@@ -68,7 +68,7 @@
         <li><span>Dataset A only</span><b>413,223</b></li>
         <li><span>Dataset B only</span><b>636,365</b></li>
       </ul>
-      <a class="prog-foot" href="/guide/monitor">Open live monitoring <span>→</span></a>
+      <a class="prog-foot" href="/guide/monitor"><span>Open live monitoring</span><span class="arr" aria-hidden="true">></span></a>
     </article>
 
     <article class="prog-card">
@@ -85,7 +85,7 @@
         <li><span>Random forest</span><b>324,644 val</b></li>
         <li><span>Best ridge</span><b>1.15M val</b></li>
       </ul>
-      <a class="prog-foot" href="/system">See loaded models <span>→</span></a>
+      <a class="prog-foot" href="/system"><span>See loaded models</span><span class="arr" aria-hidden="true">></span></a>
     </article>
   </section>
 
@@ -136,10 +136,10 @@
       <p class="dash-value">361k<span class="dash-trend">−2.4%</span></p>
       <p class="dash-sub">361,474 vs 370,313 LightGBM global</p>
       <div class="prog-track"><span class="prog-fill" style="width:97%" data-pct="97%"></span><span class="prog-end">100%</span></div>
-      <a class="prog-foot" href="/guide/wsp">Open WSP lab <span>→</span></a>
+      <a class="prog-foot" href="/guide/wsp"><span>Open WSP lab</span><span class="arr" aria-hidden="true">></span></a>
     </article>
   </section>
 </main>
-<script src="/assets/site.js?v=wsp12"></script>
+<script src="/assets/site.js?v=ui5"></script>
 </body>
 </html>
