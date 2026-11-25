@@ -13,4 +13,4 @@ services:
     # Do not set dockerCommand — Dockerfile CMD already binds 0.0.0.0:$PORT.
     envVars:
       - key: APP_VERSION
-        value: render-main
+        value: v2.0-milestone2   # label shown by /health; keep equal to the release tag

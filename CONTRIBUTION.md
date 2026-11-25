@@ -38,6 +38,9 @@ recorded GitHub review, so they show "—".
 | Fix deploy “API up, no model loaded”: allow-list / ship served `.joblib`, Docker missing-model check, clearer UI status | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
 | Weight-space programming experiment (soups / distill / beat attempt) + experiments page + report | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
 | Merge remaining M2 work to `main`, green CI (lint / test / build) | Sagar Lekhraj | — | PR #10 merged `332789b` |
+| Render deploy fix: `PORT` handling in the Dockerfile, longer HEALTHCHECK start period, `render.yaml` blueprint, smoke test and Makefile pass `-e PORT`, Render steps in README/RUNBOOK | Sagar Lekhraj | Dua Ali Ansari | `fix/render-deploy-main` (PR #12) |
+| Live Render service, live URL and deployed cURL examples in README/RUNBOOK, `/stats` in docs, Project Focus section, RUNBOOK rollback and redeploy update | Dua Ali Ansari | _add reviewer after approval_ | `docs/m2-submission` (PR: _add number_) |
+| _Fatima Arif: add your M2 task(s) here (review, docs, tests or deploy help), with branch / PR_ | Fatima Arif | | |
 
 ## Working agreement
 
