@@ -1,7 +1,9 @@
 FROM python:3.11-slim
 
 WORKDIR /app
-ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PORT=8000
+# Do not bake PORT into the image. Render injects PORT (often 10000); local
+# docker-run should pass -e PORT=8000. Default below is only a local fallback.
+ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
 
 # LightGBM needs the OpenMP runtime
 RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 \
@@ -23,7 +25,8 @@ ARG APP_VERSION=dev
 ENV APP_VERSION=${APP_VERSION}
 
 EXPOSE 8000
-HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
-  CMD python -c "import os,urllib.request as u; u.urlopen('http://localhost:'+os.environ.get('PORT','8000')+'/health', timeout=4)"
+# Longer start-period: LightGBM joblibs can take a few seconds to load on a free host.
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 \
+  CMD python -c "import os,urllib.request as u; u.urlopen('http://127.0.0.1:'+os.environ.get('PORT','8000')+'/health', timeout=4)"
 
-CMD ["sh", "-c", "uvicorn src.app:app --host 0.0.0.0 --port ${PORT}"]
+CMD ["sh", "-c", "uvicorn src.app:app --host 0.0.0.0 --port ${PORT:-8000}"]

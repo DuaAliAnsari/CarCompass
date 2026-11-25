@@ -347,8 +347,12 @@ rollback steps: **`RUNBOOK.md`**.
 
 ## Deployment
 
-Target host: **Render** (Docker image from GHCR). Steps are in `RUNBOOK.md`
-(first deploy, redeploy, rollback).
+Target host: **Render**. Prefer **GitHub `main` + Dockerfile** so the live site
+includes guide, `/stats` dashboard, and WSP (`RUNBOOK.md` §2 Option A,
+`render.yaml`). Use a pinned GHCR tag only after you publish a `v*` release
+(Option B / rollback).
+
+**Deploy this tip for “everything”:** latest `main` (merge `77ad79b` and newer).
 
 **Live endpoint:** https://carcompass-51ei.onrender.com
 
