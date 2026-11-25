@@ -40,7 +40,7 @@ recorded GitHub review, so they show "—".
 | Merge remaining M2 work to `main`, green CI (lint / test / build) | Sagar Lekhraj | — | PR #10 merged `332789b` |
 | Render deploy fix: `PORT` handling in the Dockerfile, longer HEALTHCHECK start period, `render.yaml` blueprint, smoke test and Makefile pass `-e PORT`, Render steps in README/RUNBOOK | Sagar Lekhraj | Dua Ali Ansari | `fix/render-deploy-main` (PR #12) |
 | Live Render service, live URL and deployed cURL examples in README/RUNBOOK, `/stats` in docs, Project Focus section, RUNBOOK rollback and redeploy update | Dua Ali Ansari | _add reviewer after approval_ | `docs/m2-submission` (PR: _add number_) |
-| _Fatima Arif: add your M2 task(s) here (review, docs, tests or deploy help), with branch / PR_ | Fatima Arif | | |
+| Testing and validation of the M2 deliverable: `pytest` (50 passed) and `ruff` (clean) on the final `main`; smoke checks (health, page, options, predict, bad-input rejection, explain, stats counter) on the local app, the Docker container and the live Render URL (7/7 each); Docker healthcheck and rollback test (`v2.0-test` back to `dev`); post-merge check of PR #16 and CI | Fatima Arif | _add reviewer after approval_ | `docs/fatima-testing` (PR: _add number_) |
 
 ## Working agreement
 
@@ -64,4 +64,4 @@ recorded GitHub review, so they show "—".
 
 **Sagar Lekhraj:** I shipped the product site, fixed the empty-`models/` deploy failure, ran the weight-space programming beat attempt, and merged the remaining branches through PR #10. I learned that model soups need bagging or hyperparameter diversity, and that the UI “Loading…” state was really `model_loaded: false`.
 
-**Fatima Arif:** _Add 2–3 lines on M2 work (review, docs, or deploy help)._
+**Fatima Arif:** I tested the M2 deliverable in layers (pytest and ruff, then the app locally, in Docker and on the live Render URL) and got the same model version and prediction in all three, then rehearsed the rollback by switching a container back to the previous image. I learned that test scripts need the same linting as app code, and that `/health` must show a real version label to make a rollback verifiable (Render still reported `dev` when I tested).
