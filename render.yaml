@@ -1,0 +1,16 @@
+# Render Blueprint — deploy the latest main with the full site + models.
+# Dashboard: New → Blueprint → connect DuaAliAnsari/CarCompass (or your fork).
+# Or: New → Web Service → this repo → Language: Docker (leave Docker Command empty).
+services:
+  - type: web
+    name: carcompass
+    runtime: docker
+    plan: free
+    branch: main
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    # Do not set dockerCommand — Dockerfile CMD already binds 0.0.0.0:$PORT.
+    envVars:
+      - key: APP_VERSION
+        value: render-main
