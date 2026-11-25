@@ -34,7 +34,7 @@ async function refreshLive() {
   }
   const h = health.data;
   if (h.model_loaded) {
-    pill.className = "status ok";
+    pill.className = "status ok is-live";
     pill.textContent = "Model ready · " + (h.models_served || []).length + " served";
     $("live-api").textContent = "Up";
   } else {
@@ -42,11 +42,14 @@ async function refreshLive() {
     pill.textContent = "API up, no model";
     $("live-api").textContent = "No model";
   }
-  $("live-api-sub").textContent = h.app_version ? "app " + h.app_version : "/health";
+  $("live-api-sub").textContent = h.app_version
+    ? "app " + h.app_version + " · healthy"
+    : "Healthy process";
   $("live-wsp").textContent = h.wsp_loaded ? "Ready" : "Off";
   if (metrics && metrics.status === 200) {
     $("live-req").textContent = metrics.data.request_count;
-    $("live-lat").textContent = metrics.data.avg_latency_ms + " ms";
+    const ms = Number(metrics.data.avg_latency_ms);
+    $("live-lat").textContent = Number.isFinite(ms) ? String(Math.round(ms * 100) / 100) : "—";
   }
 }
 
