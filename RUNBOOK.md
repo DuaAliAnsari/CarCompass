@@ -49,7 +49,7 @@ is running.
 
 ## 2. First deployment (Render) — preferred: build from Git
 
-Deploy **`main`** (post–PR #11, commit `77ad79b` or newer). That tip has the product
+Deploy **`main`**. That tip has the product
 site, `/guide`, `/stats` dashboard, WSP lab, and `deploy/models/` in the image.
 Do **not** point Render at the old `v1.0-milestone1` GHCR image if you want the
 current UI — that tag is Milestone 1 only.
@@ -86,18 +86,24 @@ Railway: same as Option B (image URL) or build from the Dockerfile with `$PORT`.
 
 ## 3. Redeploy
 
-- **New version:** release it (section 1), then in Render → Settings → Image URL
-  change the tag to the new one (for example `...:v2.0-milestone2`) and click
+- **Built from Git (Option A):** merge to `main`; Render rebuilds and deploys
+  automatically if auto-deploy is on. Otherwise Render → **Manual Deploy → Deploy latest
+  commit**.
+- **From a GHCR image (Option B):** release the new tag (section 1), then in Render →
+  Settings → Image URL change the tag (for example `...:v2.0-milestone2`) and click
   **Save, rebuild and deploy**.
 - **Same version again** (e.g. after a crash): Render → **Manual Deploy → Deploy latest
   reference**.
+- **Label shown by `/health`:** set the environment variable `APP_VERSION` in Render →
+  Environment (for example `v2.0-milestone2`). With Option B the tag is already baked into
+  the image.
 
 Then run the checks in section 4.
 
 ## 4. Check a deployment
 
 ```bash
-URL=https://<your-service>.onrender.com
+URL=https://carcompass-51ei.onrender.com
 
 curl -s $URL/health
 # {"status":"ok","model_loaded":true,"model_version":"price_global_ab@...",
@@ -110,7 +116,7 @@ curl -s -X POST $URL/explain -H "Content-Type: application/json" \
   -d '{"make":"Suzuki","model":"Mehran","year":2005,"mileage":150000}'
 
 curl -s $URL/models     # which models are served and for which years
-curl -s $URL/metrics    # request count, average latency, errors
+curl -s $URL/stats      # request count, average latency, errors (alias: /metrics)
 ```
 
 Healthy means: `model_loaded` is `true`, `app_version` is the tag you deployed,
@@ -120,23 +126,29 @@ The test page at `$URL/` has a **Run all checks** button that does all of this.
 
 ## 5. Roll back
 
-If a deployment breaks (health check failing, errors in `/metrics`, wrong prices):
+If a deployment breaks (health check failing, errors in `/stats`, wrong prices):
 
 1. Find the last good tag: `git tag --sort=-creatordate` or the repository's Packages
    page (every release tag is kept there).
-2. Render → Settings → Image URL: set the tag back, e.g.
-   `ghcr.io/duaaliansari/carcompass:v1.0-milestone1`, and deploy.
-   (Render also has **Rollback** on every earlier deploy in the Events tab.)
+2. Render → Settings → Image URL: set the previous release tag that was really
+   published, e.g. `ghcr.io/duaaliansari/carcompass:v2.0-milestone2` when a later tag
+   breaks, and deploy. (If the service is built from Git, switch it to Option B first, or
+   use **Rollback** on an earlier deploy in the Events tab. Rolling back to a Docker image
+   tag needs the image to exist in GHCR.)
 3. Check `GET /health`: `app_version` must show the old tag. Run the rest of section 4.
 4. Fix the problem on a branch and release a new tag; never move or delete a tag
    that was deployed.
+
+A rollback needs an older image that exists. After the first release, publish a second
+tag once (for example `v2.0.1-milestone2` from a small change) so there is a tag to roll
+back to, and check that both appear under the repository's Packages on GitHub.
 
 To roll back only the **models** while keeping new code: revert the commit that changed
 `deploy/models/` (`git revert <commit>`), merge, and release a new tag.
 
 ## 6. Monitoring
 
-- `GET /metrics`: request count, error count, average latency, app and model version.
+- `GET /stats` (alias `/metrics`): request count, error count, average latency, app and model version.
 - Every request is logged as one JSON line (method, path, status, latency in ms, app and
   model version). On Render: Logs tab.
 - `GET /health` is polled by Docker's `HEALTHCHECK` and by the platform's health check.
@@ -151,22 +163,20 @@ To roll back only the **models** while keeping new code: revert the commit that 
 | Render cannot pull the image | GHCR package is private | make it public or add registry credentials (section 2B), or use Option A (Git + Dockerfile) |
 | Deploy fails: no open ports / port scan timeout | app not bound to `0.0.0.0:$PORT` | leave Docker Command empty; do not force `--port 8000` on Render |
 | Health check fails while logs look fine | path wrong or still loading models | set health check to `/health`; wait for free-tier cold start |
-| Old UI / no `/guide` or `/stats` page | image or branch is pre–PR #11 | deploy `main` (Option A) or a tag built after `77ad79b` |
+| Old UI / no `/guide` or `/stats` page | old image (for example `v1.0-milestone1`) or an old branch | deploy `main` (Option A) or a tag built from current `main` (Option B) |
 | A request gets `422` | invalid input (e.g. year 1850, missing mileage) | expected; see `/docs` for the input rules |
 
 ## Live endpoint
 
-**Status:** not live in the repo docs yet.
+**Status:** live at https://carcompass-51ei.onrender.com
 
-1. Follow **§2 Option A** (Git + Dockerfile on `main`) so the live host matches
-   the full current site. Use Option B only after publishing a new `v*` image.
-2. Paste the public URL here, for example:
+Render free tier: the service sleeps when idle. Wake it with `curl -s $URL/health` (the
+first call can take about a minute) before using or recording it. Counters in `/stats`
+reset to zero after every wake or redeploy. `/health` must show `model_loaded: true`.
 
-   `https://<your-service>.onrender.com`
-
-3. Mirror the same URL under **Deployment** in `README.md`.
-4. If the service is stopped after grading to save cost, replace the URL with:
-   _Live service shut down after grading to save cost._
+The same URL is in `README.md` under **Deployment**. If the service is stopped after
+grading to save cost, replace the URL with:
+_Live service shut down after grading to save cost._
 
 ### Milestone 2 requirement map (this file)
 
@@ -174,6 +184,6 @@ To roll back only the **models** while keeping new code: revert the commit that 
 |---|---|
 | Redeploy | §3 |
 | Roll back to a previous Docker image tag | §5 |
-| Monitoring (count + latency) | §6 (`/metrics` + logs) |
+| Monitoring (count + latency) | §6 (`/stats` + logs) |
 | Live URL / shutdown note | this section |
 | Health / predict / explain / metrics checks | §4 |
