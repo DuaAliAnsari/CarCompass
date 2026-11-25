@@ -34,12 +34,17 @@ recorded GitHub review, so they show "—".
 | Task | Member | Reviewer | Branch / PR |
 |---|---|---|---|
 | Served models for Docker (`deploy/models/`), `export-models`, Docker smoke test, CI build smoke, GHCR publish job, full RUNBOOK | Dua Ali Ansari | Sagar Lekhraj | `infra/docker-models` (merged via PR #10) |
-| Multi-page product site (Estimate / Experiments / Models / Pipeline / Demo), hero media | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
-| Fix deploy “API up, no model loaded”: allow-list / ship served `.joblib`, Docker missing-model check, clearer UI status | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
-| Weight-space programming experiment (soups / distill / beat attempt) + experiments page + report | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
-| Merge remaining M2 work to `main`, green CI (lint / test / build) | Sagar Lekhraj | — | PR #10 merged `332789b` |
-| Render deploy fix: `PORT` handling in the Dockerfile, longer HEALTHCHECK start period, `render.yaml` blueprint, smoke test and Makefile pass `-e PORT`, Render steps in README/RUNBOOK | Sagar Lekhraj | Dua Ali Ansari | `fix/render-deploy-main` (PR #12) |
-| Live Render service, live URL and deployed cURL examples in README/RUNBOOK, `/stats` in docs, Project Focus section, RUNBOOK rollback and redeploy update | Dua Ali Ansari | _add reviewer after approval_ | `docs/m2-submission` (PR: _add number_) |
+| Multi-page product site (Estimate / Experiments / Models / Pipeline / Demo), glass hero video, listing photos | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
+| Ship served `.joblib` into the image / allow-list; Docker missing-model check; clearer “no model loaded” UI | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
+| Weight-space programming (soups / distill / beat attempt), WSP report, experiments page, WSP lab + serve path | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
+| Merge remaining M2 work to `main`; fix ruff so CI stays green (lint / test / build) | Sagar Lekhraj | — | PR #10 (`332789b`), follow-up lint fixes |
+| Project guide hub (`/guide`), HTML `/stats` dashboard, milestones / pipeline / monitor / checks subpages | Sagar Lekhraj | — | `fix/m2-docs-status` (PR #11) |
+| Fill M2 contribution / checklist rows; document remaining deploy items | Sagar Lekhraj | — | `fix/m2-docs-status` (PR #11) |
+| Render deploy fix: honor host `PORT`, longer HEALTHCHECK start, `render.yaml`, smoke/`make` pass `-e PORT`, README/RUNBOOK Render path | Sagar Lekhraj | Dua Ali Ansari | `fix/render-deploy-main` (PR #12) |
+| Live Render service, live URL + deployed cURL, `/stats` docs, Project Focus text, RUNBOOK redeploy/rollback update | Dua Ali Ansari | Sagar Lekhraj | `docs/m2-docs` (PR #14) |
+| Resolve RUNBOOK/README conflicts on the docs branch before review | Sagar Lekhraj | — | `docs/m2-submission` merge fix |
+| Product UI polish: compass brand mark, live “Model ready” pulse, chevron CTAs, live-preview framing, predictor actions | Sagar Lekhraj | — | `fix/progress-bar-ui` (PR #15) |
+| Guide / milestones dashboard polish: SaaS feature cards, metric tiles, requirement boxes, soft system-design layout | Sagar Lekhraj | — | `fix/progress-bar-ui` (PR #16) |
 | _Fatima Arif: add your M2 task(s) here (review, docs, tests or deploy help), with branch / PR_ | Fatima Arif | | |
 
 ## Working agreement
@@ -54,7 +59,7 @@ recorded GitHub review, so they show "—".
 
 **Dua Ali Ansari:** I set up the repository, CI, Dockerfile and the FastAPI service with its tests, and ran the real Dataset A training with JSON request logs. I learned how much a reproducible pipeline depends on separating data preparation from training and on logging every run to MLflow.
 
-**Sagar Lekhraj:** I built the multi-model setup: the shared A+B dataset with cross-source dedup, five model families, validation-based champion selection with a size limit, and the router behind `/predict`. I also approved the README rewrite (PR #7) and audited the cross-source duplicate removal. I learned why champions must be chosen on validation rows and not on the test set, and that a duplicate key must be checked against the other columns before rows are deleted.
+**Sagar Lekhraj:** I built the multi-model path: shared A+B prepare with cross-source dedup, five families × configs in MLflow, validation champions with a ≤100 MB serve cap, year routing, `/models` / `/options`, and the Milestone-1 test page. I reviewed the README rewrite (PR #7), fixed submission docs (`fix/m1-submission`), and moved the `v1.0-milestone1` tag to the final commit. I learned that champions must be picked on validation (not test), and that a duplicate key is only safe after checking the other columns.
 
 **Fatima Arif:** I built the data preparation and training code, then added Dataset B (PakWheels) with its own schema mapping and sample weight. I learned that dirty values such as `27.4 lacs` need explicit parsing and range checks before any model is worth comparing.
 
@@ -62,6 +67,6 @@ recorded GitHub review, so they show "—".
 
 **Dua Ali Ansari:** I packaged the served champions for Docker (`deploy/models/`, `export-models`), added the image smoke test that CI runs on every push, and wrote the redeploy/rollback runbook. I learned that a “healthy” API that starts without models is worse than a failed image build.
 
-**Sagar Lekhraj:** I shipped the product site, fixed the empty-`models/` deploy failure, ran the weight-space programming beat attempt, and merged the remaining branches through PR #10. I learned that model soups need bagging or hyperparameter diversity, and that the UI “Loading…” state was really `model_loaded: false`.
+**Sagar Lekhraj:** I owned the product UI and Project Focus demo path: multi-page site, WSP soups/distill/beat lab, shipping models so Docker/Render actually load, the `/guide` + `/stats` dashboards, and the Render `PORT`/healthcheck blueprint (PRs #10–#12, #15–#16). I reviewed Dua’s live-URL docs (PR #14) and kept CI green through ruff fixes. I learned that “Loading…” was `model_loaded: false` from an empty image, soups need real diversity to beat LightGBM, and Render’s free tier sleeps until `/health` wakes it.
 
 **Fatima Arif:** _Add 2–3 lines on M2 work (review, docs, or deploy help)._
