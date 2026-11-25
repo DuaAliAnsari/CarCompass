@@ -271,7 +271,8 @@ so the residual method was kept.
 | `POST /explain` | same plus the model's top factors |
 | `GET /models` | the models being served, their years, versions and test MAE (+ WSP experiment summary) |
 | `GET /health` | liveness check, models served, `wsp_loaded` |
-| `GET /metrics` | request count, average latency, errors |
+| `GET /stats` | request count, average latency, errors (alias of `/metrics`) |
+| `GET /metrics` | same data as `/stats` |
 | `GET /docs` | auto-generated API docs |
 
 The estimate form can switch to the **WSP experiment** predictor (`predictor=wsp`): a blend that beat the global LightGBM champion on the held-out test set (~361k vs ~370k MAE). Production default remains the routed LightGBM system.
@@ -290,14 +291,46 @@ make lint    # ruff
 
 ## Project Focus
 
-CarCompass focuses on a **complete, honest MLOps loop** for used-car price estimation
-in Pakistan: prepare real PakWheels-style listings, train and compare simple model
-families in MLflow, serve one routed champion through FastAPI, package it in Docker,
-prove it with GitHub Actions, and deploy it so graders can hit `/predict`, `/explain`,
-`/health` and `/metrics` on a live URL. We prefer a working end-to-end system over
-extra tooling (no Prometheus/Grafana required).
+**Focus: model comparison and experimentation (MLflow), then canary deployment of a
+candidate model.**
+
+**Why it suits CarCompass.** Used-car pricing has no single obvious model: the data is
+noisy, two sources are merged, and newer cars behave differently from old ones. Choosing
+a model honestly (on validation rows, with a size limit) matters more here than extra
+infrastructure, and a wrong model is cheap to test on a small share of traffic before it
+replaces the stable one.
+
+**What is built (Milestone 2).**
+- Five model families with twelve runs each, logged in MLflow; champions are chosen on
+  validation MAE and the test set is used only for reporting (`reports/model_comparison.md`).
+- A routed system in production: LightGBM default plus a 2010+ specialist.
+- A weight-space programming (WSP) experiment: soups, distillation and a blend compared
+  against the champion (`reports/wsp_comparison.md`, pages `/experiments` and `/wsp`).
+  The home page reports the routed system's test MAE; `/wsp` reports the WSP blend against
+  its own champion baseline, so the two numbers differ on purpose.
+
+**What comes next (final submission).** A canary release of a candidate model next to the
+stable one: two image tags (stable and candidate), a small traffic share (for example 10%)
+sent to the candidate, and a comparison of `/stats` (latency, errors) and prediction error
+before promoting the candidate or rolling back with the RUNBOOK. Drift checks on incoming
+`year` and `mileage` are a stretch goal.
+
+**How it is demonstrated.** The experiments page and MLflow run table for the comparison,
+the live `/stats` counters for the deployed service, and the RUNBOOK rollback to a
+previous image tag.
 
 ## Docker
+
+Single command (build and run the API on http://localhost:8000):
+
+```bash
+docker build -t carcompass . && docker run -p 8000:8000 carcompass
+```
+
+Then open `http://localhost:8000/docs` and call `/health`, `/predict` and `/stats`.
+`docker ps` shows `(healthy)` in the STATUS column once the `/health` check passes.
+
+The same thing through the Makefile:
 
 ```bash
 make docker-build TAG=v2.0
@@ -317,26 +350,31 @@ rollback steps: **`RUNBOOK.md`**.
 Target host: **Render** (Docker image from GHCR). Steps are in `RUNBOOK.md`
 (first deploy, redeploy, rollback).
 
-**Live endpoint:** _Not published in this commit yet. After the first Render deploy,
-replace this line with the URL (e.g. `https://carcompass.onrender.com`). If the
-service is stopped after grading to save cost, keep a one-line note here instead._
+**Live endpoint:** https://carcompass-51ei.onrender.com
 
-Example cURL against the **deployed** service (set `URL` to the live host):
+_Render free tier: the service sleeps when idle, so the first request can take about a
+minute. Open `/health` once to wake it. Request counters in `/stats` start from zero after
+every wake or redeploy._
+
+Example cURL against the **deployed** service:
 
 ```bash
-URL=https://<your-service>.onrender.com
+URL=https://carcompass-51ei.onrender.com
 
 curl -s $URL/health
-curl -s $URL/metrics
+curl -s $URL/stats
 curl -s -X POST $URL/predict -H "Content-Type: application/json" \
   -d '{"make":"Toyota","model":"Corolla","year":2016,"mileage":75000}'
 curl -s -X POST $URL/explain -H "Content-Type: application/json" \
   -d '{"make":"Suzuki","model":"Mehran","year":2005,"mileage":150000}'
 ```
 
+On Windows PowerShell use `curl.exe` instead of `curl`.
+
 Local equivalents use `http://localhost:8000` (see Quick start). Monitoring for
-grading: `GET /metrics` (request count, average latency, errors) plus JSON request
-logs and the `/demo` page.
+grading: `GET /stats` (request count, average latency, errors) plus JSON request
+logs and the `/demo` page. `/health` also reports `app_version` (the image tag) and the
+loaded model version.
 
 ## Milestone 2 checklist
 
@@ -346,12 +384,12 @@ logs and the `/demo` page.
 | CI lint (ruff) | **Done** | `.github/workflows/ci.yml` → `lint` |
 | CI tests (pytest, visible pass/fail) | **Done** | `.github/workflows/ci.yml` → `test` |
 | CI Docker build on push to `main` | **Done** | `.github/workflows/ci.yml` → `build` (+ smoke); also runs on PRs |
-| Live cloud / managed deploy | **Open** | Render steps in `RUNBOOK.md`; URL still placeholder below |
-| Monitoring: request count + avg latency | **Done** | `GET /metrics`, JSON logs, `/demo` panel |
+| Live cloud / managed deploy | **Done** | Render, https://carcompass-51ei.onrender.com; steps in `RUNBOOK.md` |
+| Monitoring: request count + avg latency | **Done** | `GET /stats`, JSON logs, `/demo` panel |
 | RUNBOOK: redeploy + rollback to prior image tag | **Done** | `RUNBOOK.md` §§3–5 |
-| README: deploy steps, live URL (or shutdown note), deployed cURL | **Partial** | This section; live URL still to fill after Render |
+| README: deploy steps, live URL (or shutdown note), deployed cURL, Project Focus | **Done** | Deployment and Project Focus sections |
 | CONTRIBUTION.md M2 table + reflections | **Partial** | Table filled; Fatima M2 reflection still placeholder |
-| Tag `v2.0-milestone2` | **Open** | Create after live URL confirmed (`RUNBOOK.md` §1) |
+| Tag `v2.0-milestone2` | **Open** | Create after this PR is merged (`RUNBOOK.md` §1), then mark Done |
 
 ## Project status
 
@@ -364,9 +402,9 @@ logs and the `/demo` page.
       data/Git metadata in experiment tracking, and structured request logging
 - [x] **M2 Docker + CI:** Dockerfile copies `deploy/models/`, healthcheck on `/health`,
       CI lint / pytest / Docker smoke (model loaded + `/predict` + `/explain`)
-- [x] **M2 monitoring:** `/metrics` + structured logs + `/demo`
+- [x] **M2 monitoring:** `/stats` (alias of `/metrics`) + structured logs + `/demo`
 - [x] **M2 runbook:** redeploy and rollback steps in `RUNBOOK.md`
-- [ ] **M2 live host:** deploy on Render from current `main`, paste URL into README + `RUNBOOK.md`
+- [x] **M2 live host:** deployed on Render, https://carcompass-51ei.onrender.com
 - [ ] **M2 Fatima reflection:** fill the placeholder in `CONTRIBUTION.md`
 - [ ] **M2 tag:** create and push `v2.0-milestone2` after the live URL is confirmed
 
@@ -380,6 +418,9 @@ configs/        schema.yaml / schema_b.yaml (column mapping), train.yaml (experi
                 model_families.yaml (families), routing.yaml (routing rules)
 reports/        data quality reports, model_comparison.md, wsp_comparison.md
 data/sample/    small synthetic sample only
+deploy/models/  served models copied into the Docker image (committed)
+scripts/        Docker smoke test and helper scripts
+design/         system design notes
 models/         trained artifacts (git-ignored)
 .github/        CI workflow, PR template
 ```
