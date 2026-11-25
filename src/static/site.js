@@ -70,6 +70,7 @@ if (onGuide || path === "/wsp" || path === "/pipeline" || path === "/demo") {
     return `<a href="${href}" class="${active ? "is-active" : ""}">${label}</a>`;
   }).join("");
   nav.after(sub);
+  document.body.classList.add("has-guide-nav");
 }
 
 document.querySelectorAll("footer.foot").forEach((old) => old.remove());

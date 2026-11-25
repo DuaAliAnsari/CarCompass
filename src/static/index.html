@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/styles.css?v=ui3">
+<link rel="stylesheet" href="/assets/styles.css?v=ui7">
 </head>
 <body>
 <section class="hero-stage" aria-label="CarCompass hero">
@@ -278,11 +278,10 @@
             <button type="button" class="pill" data-predictor="wsp" id="wsp-pill" disabled title="WSP experiment not loaded">WSP experiment</button>
           </div>
           <p class="note" id="predictor-note">Production route: LightGBM default + 2010+ specialist.</p>
-          <a class="btn" href="/wsp" style="margin-top:12px">Open WSP lab <span class="arr" aria-hidden="true">></span></a>
-        </div>
-        <div class="actions">
-          <button class="btn" id="estimate-btn" type="submit">Estimate price <span class="arr" aria-hidden="true">></span></button>
-          <a class="link-arrow" href="/wsp">WSP stats &amp; compare</a>
+          <div class="actions">
+            <button class="btn" id="estimate-btn" type="submit">Estimate price <span class="arr" aria-hidden="true">></span></button>
+            <a class="btn ghost-btn" href="/wsp">Open WSP lab <span class="arr" aria-hidden="true">></span></a>
+          </div>
         </div>
         <p class="error" id="form-error"></p>
       </form>

@@ -7,64 +7,204 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/assets/styles.css?v=ui3">
+<link rel="stylesheet" href="/assets/styles.css?v=feat1">
 </head>
 <body>
 <main class="wrap">
-  <header class="page-head">
-    <p class="eyebrow">MLOps — Course Project · BS Computer Science · Fall 2026</p>
-    <h1>What the course asks for. What we shipped.</h1>
-    <p class="lede">Milestone-by-milestone dashboard for the baseline loop (data → model → API → Docker → CI → deploy → monitor) plus our Project Focus. Live buttons hit this FastAPI process.</p>
+  <header class="page-head page-head-guide">
+    <p class="eyebrow">MLOps · Course project · Fall 2026</p>
+    <h1>What the course asks for.<br><span class="head-soft">What we shipped.</span></h1>
+    <p class="lede">Milestone dashboard for the baseline loop — data, model, API, Docker, CI, deploy, monitor — plus Project Focus.<br>Live buttons hit this FastAPI process.</p>
     <p class="hero-status"><span id="dash-health" class="status">Checking API…</span></p>
   </header>
 
-  <section class="progress-strip" aria-label="Milestone progress">
-    <article class="progress-item is-done">
-      <span class="progress-tag">M0 · 10</span>
-      <b>Proposal</b>
-      <span>Tagged plan</span>
+  <section class="metric-row" aria-label="Milestone progress">
+    <article class="metric-card tone-ok">
+      <div class="metric-top">
+        <span class="metric-title">M0 · Proposal</span>
+        <span class="metric-badge ok">↑ 100%</span>
+      </div>
+      <div class="metric-body">
+        <div class="metric-main">
+          <p class="metric-value">10</p>
+          <p class="metric-delta ok">Tagged plan · done</p>
+        </div>
+        <svg class="metric-spark" viewBox="0 0 160 72" aria-hidden="true" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="m0g" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1a7f3c" stop-opacity="0.28"/>
+              <stop offset="100%" stop-color="#1a7f3c" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#m0g)" d="M0 72 L0 48 C28 44 40 36 58 30 C84 20 100 18 122 14 C140 11 150 10 160 8 L160 72 Z"/>
+          <path fill="none" stroke="#1a7f3c" stroke-width="2.4" d="M0 48 C28 44 40 36 58 30 C84 20 100 18 122 14 C140 11 150 10 160 8"/>
+          <circle cx="148" cy="9" r="3.5" fill="#1a7f3c"/>
+        </svg>
+      </div>
     </article>
-    <article class="progress-item is-done">
-      <span class="progress-tag">M1 · 20</span>
-      <b>Model &amp; API</b>
-      <span>v1.0-milestone1</span>
+    <article class="metric-card tone-ok">
+      <div class="metric-top">
+        <span class="metric-title">M1 · Model &amp; API</span>
+        <span class="metric-badge ok">↑ 100%</span>
+      </div>
+      <div class="metric-body">
+        <div class="metric-main">
+          <p class="metric-value">20</p>
+          <p class="metric-delta ok">v1.0-milestone1</p>
+        </div>
+        <svg class="metric-spark" viewBox="0 0 160 72" aria-hidden="true" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="m1g" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1a7f3c" stop-opacity="0.28"/>
+              <stop offset="100%" stop-color="#1a7f3c" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#m1g)" d="M0 72 L0 52 C24 46 48 40 72 28 C96 16 120 14 160 10 L160 72 Z"/>
+          <path fill="none" stroke="#1a7f3c" stroke-width="2.4" d="M0 52 C24 46 48 40 72 28 C96 16 120 14 160 10"/>
+          <circle cx="150" cy="11" r="3.5" fill="#1a7f3c"/>
+        </svg>
+      </div>
     </article>
-    <article class="progress-item is-open" id="m2-progress">
-      <span class="progress-tag">M2 · 20</span>
-      <b>Ship &amp; monitor</b>
-      <span>Docker + CI done · live URL open</span>
+    <article class="metric-card tone-warm" id="m2-progress">
+      <div class="metric-top">
+        <span class="metric-title">M2 · Ship &amp; monitor</span>
+        <span class="metric-badge warn">↑ 85%</span>
+      </div>
+      <div class="metric-body">
+        <div class="metric-main">
+          <p class="metric-value">20</p>
+          <p class="metric-delta warn">Docker + CI · live URL</p>
+        </div>
+        <svg class="metric-spark" viewBox="0 0 160 72" aria-hidden="true" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="m2g" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c47b1a" stop-opacity="0.28"/>
+              <stop offset="100%" stop-color="#c47b1a" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#m2g)" d="M0 72 L0 50 C30 46 50 38 74 32 C100 25 120 22 140 18 L160 16 L160 72 Z"/>
+          <path fill="none" stroke="#c47b1a" stroke-width="2.4" d="M0 50 C30 46 50 38 74 32 C100 25 120 22 140 18 L160 16"/>
+          <circle cx="132" cy="19" r="3.5" fill="#c47b1a"/>
+        </svg>
+      </div>
     </article>
-    <article class="progress-item is-next">
-      <span class="progress-tag">Final · 35+15</span>
-      <b>Demo &amp; viva</b>
-      <span>Focus + Q&amp;A</span>
+    <article class="metric-card tone-muted">
+      <div class="metric-top">
+        <span class="metric-title">Final · Demo &amp; viva</span>
+        <span class="metric-badge">15%</span>
+      </div>
+      <div class="metric-body">
+        <div class="metric-main">
+          <p class="metric-value">50</p>
+          <p class="metric-delta">Focus + Q&amp;A · ahead</p>
+        </div>
+        <svg class="metric-spark" viewBox="0 0 160 72" aria-hidden="true" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="mFg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#6b6b70" stop-opacity="0.22"/>
+              <stop offset="100%" stop-color="#6b6b70" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#mFg)" d="M0 72 L0 58 C40 54 70 50 90 46 C110 42 130 40 160 38 L160 72 Z"/>
+          <path fill="none" stroke="#9a9aa0" stroke-width="2.4" d="M0 58 C40 54 70 50 90 46 C110 42 130 40 160 38"/>
+          <circle cx="48" cy="53" r="3.5" fill="#9a9aa0"/>
+        </svg>
+      </div>
     </article>
   </section>
 
-  <section class="dash-board" aria-label="Live service">
-    <article class="dash-tile" style="min-height:160px">
-      <div class="dash-tile-top"><b>API</b><span class="dash-chip ok">/health</span></div>
-      <p class="dash-label">Status</p>
-      <p class="dash-value dash-value-sm" id="live-api">—</p>
-      <p class="dash-sub" id="live-api-sub">/health</p>
+  <section class="metric-row" aria-label="Live service">
+    <article class="metric-card tone-ok">
+      <div class="metric-top">
+        <span class="metric-title">API status</span>
+        <span class="metric-badge ok">/health</span>
+      </div>
+      <div class="metric-body">
+        <div class="metric-main">
+          <p class="metric-value metric-value-sm" id="live-api">—</p>
+          <p class="metric-delta" id="live-api-sub">Checking…</p>
+        </div>
+        <svg class="metric-spark" viewBox="0 0 160 72" aria-hidden="true" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="apiG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1a7f3c" stop-opacity="0.26"/>
+              <stop offset="100%" stop-color="#1a7f3c" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#apiG)" d="M0 72 L0 40 C20 36 40 28 60 24 C90 18 120 16 160 12 L160 72 Z"/>
+          <path fill="none" stroke="#1a7f3c" stroke-width="2.4" d="M0 40 C20 36 40 28 60 24 C90 18 120 16 160 12"/>
+          <circle cx="150" cy="13" r="3.5" fill="#1a7f3c"/>
+        </svg>
+      </div>
     </article>
-    <article class="dash-tile" style="min-height:160px">
-      <div class="dash-tile-top"><b>Requests</b><a class="dash-go" href="/guide/monitor">↗</a></div>
-      <p class="dash-label">/stats</p>
-      <p class="dash-value" id="live-req">—</p>
-      <p class="dash-sub">Counted traffic</p>
+    <article class="metric-card tone-ok">
+      <div class="metric-top">
+        <span class="metric-title">Requests</span>
+        <a class="metric-link" href="/guide/monitor">Past session <span aria-hidden="true">></span></a>
+      </div>
+      <div class="metric-body">
+        <div class="metric-main">
+          <p class="metric-value" id="live-req">—</p>
+          <p class="metric-delta ok">Counted /stats traffic</p>
+        </div>
+        <svg class="metric-spark" viewBox="0 0 160 72" aria-hidden="true" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="reqG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#1a7f3c" stop-opacity="0.26"/>
+              <stop offset="100%" stop-color="#1a7f3c" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#reqG)" d="M0 72 L0 50 C25 46 45 34 70 28 C100 20 125 16 160 10 L160 72 Z"/>
+          <path fill="none" stroke="#1a7f3c" stroke-width="2.4" d="M0 50 C25 46 45 34 70 28 C100 20 125 16 160 10"/>
+          <circle cx="118" cy="17" r="3.5" fill="#1a7f3c"/>
+        </svg>
+      </div>
     </article>
-    <article class="dash-tile" style="min-height:160px">
-      <div class="dash-tile-top"><b>Avg latency</b><span class="dash-chip">ms</span></div>
-      <p class="dash-label">Mean</p>
-      <p class="dash-value" id="live-lat">—</p>
-      <p class="dash-sub">milliseconds</p>
+    <article class="metric-card tone-ink">
+      <div class="metric-top">
+        <span class="metric-title">Avg latency</span>
+        <span class="metric-badge">ms</span>
+      </div>
+      <div class="metric-body">
+        <div class="metric-main">
+          <p class="metric-value metric-value-sm" id="live-lat">—</p>
+          <p class="metric-delta">Mean response time</p>
+        </div>
+        <svg class="metric-spark" viewBox="0 0 160 72" aria-hidden="true" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="latG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2c2c30" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="#2c2c30" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#latG)" d="M0 72 L0 36 C30 40 50 28 80 32 C110 36 130 22 160 26 L160 72 Z"/>
+          <path fill="none" stroke="#3a3a3f" stroke-width="2.4" d="M0 36 C30 40 50 28 80 32 C110 36 130 22 160 26"/>
+          <circle cx="140" cy="24" r="3.5" fill="#3a3a3f"/>
+        </svg>
+      </div>
     </article>
-    <article class="dash-tile" style="min-height:160px">
-      <div class="dash-tile-top"><b>WSP lab</b><span class="dash-chip warn">Focus</span></div>
-      <p class="dash-label">Experiment</p>
-      <p class="dash-value dash-value-sm" id="live-wsp">—</p>
-      <p class="dash-sub">predictor artifact</p>
+    <article class="metric-card tone-warm">
+      <div class="metric-top">
+        <span class="metric-title">WSP lab</span>
+        <span class="metric-badge warn">Focus</span>
+      </div>
+      <div class="metric-body">
+        <div class="metric-main">
+          <p class="metric-value metric-value-sm" id="live-wsp">—</p>
+          <p class="metric-delta warn">Predictor artifact</p>
+        </div>
+        <svg class="metric-spark" viewBox="0 0 160 72" aria-hidden="true" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="wspG" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c47b1a" stop-opacity="0.26"/>
+              <stop offset="100%" stop-color="#c47b1a" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path fill="url(#wspG)" d="M0 72 L0 46 C35 42 55 30 85 26 C115 22 135 18 160 14 L160 72 Z"/>
+          <path fill="none" stroke="#c47b1a" stroke-width="2.4" d="M0 46 C35 42 55 30 85 26 C115 22 135 18 160 14"/>
+          <circle cx="152" cy="15" r="3.5" fill="#c47b1a"/>
+        </svg>
+      </div>
     </article>
   </section>
 
@@ -84,10 +224,10 @@
       <h2>Deep work on top of the baseline</h2>
       <p>Honest multi-family comparison in MLflow, year-based routing, weight-space programming (WSP) as a beat experiment, and a product UI that makes monitoring and checks demonstrable — not a Prometheus stack.</p>
       <div class="dash-actions">
-        <a class="btn" href="/wsp">Open WSP lab →</a>
-        <a class="link-arrow" href="/experiments" style="margin-top:0">MLflow stats page</a>
-        <a class="link-arrow" href="/guide/pipeline" style="margin-top:0">Data pipeline</a>
-        <a class="link-arrow" href="/system" style="margin-top:0">Loaded models</a>
+        <a class="btn" href="/wsp">Open WSP lab <span class="arr" aria-hidden="true">></span></a>
+        <a class="btn ghost-btn" href="/experiments">MLflow stats <span class="arr" aria-hidden="true">></span></a>
+        <a class="btn ghost-btn" href="/guide/pipeline">Data pipeline <span class="arr" aria-hidden="true">></span></a>
+        <a class="btn ghost-btn" href="/system">Loaded models <span class="arr" aria-hidden="true">></span></a>
       </div>
     </article>
 
@@ -120,7 +260,7 @@
             <li data-state="done"><b>Train / test split</b><span>Group-aware fit / val / cal / test on A∪B</span></li>
             <li data-state="extra"><b>Beyond baseline</b><span>Cross-source dedup, Dataset B scale map</span></li>
           </ul>
-          <a class="btn ghost-btn" href="/guide/pipeline">Open pipeline page →</a>
+          <a class="btn ghost-btn" href="/guide/pipeline">Open pipeline page <span class="arr" aria-hidden="true">></span></a>
         </div>
         <div class="req-block">
           <p class="eyebrow">② MLflow &amp; training</p>
@@ -130,7 +270,7 @@
             <li data-state="done"><b>Champion justified</b><span>Val MAE + size ≤100 MB → LightGBM</span></li>
             <li data-state="extra"><b>Beyond baseline</b><span>Year routing + WSP beat experiment</span></li>
           </ul>
-          <a class="btn ghost-btn" href="/experiments">Open experiment stats →</a>
+          <a class="btn ghost-btn" href="/experiments">Open experiment stats <span class="arr" aria-hidden="true">></span></a>
         </div>
         <div class="req-block">
           <p class="eyebrow">③ FastAPI &amp; tests</p>
@@ -140,7 +280,7 @@
             <li data-state="done"><b>pytest</b><span>Prepare, load, API, router, WSP</span></li>
             <li data-state="done"><b>Docs</b><span>README quick-start + CONTRIBUTION</span></li>
           </ul>
-          <button type="button" class="btn ghost-btn" data-api="predict">Try POST /predict →</button>
+          <button type="button" class="btn ghost-btn" data-api="predict">Try POST /predict <span class="arr" aria-hidden="true">></span></button>
         </div>
       </div>
     </article>
@@ -148,7 +288,7 @@
     <article class="panel milestone-card" id="m2" data-m="2">
       <div class="milestone-head">
         <p class="eyebrow">Milestone 2 · Container, CI/CD &amp; deploy · 20 / 100</p>
-        <span class="chip" id="m2-chip">In progress</span>
+        <span class="chip warn" id="m2-chip">In progress</span>
       </div>
       <h2>Package, prove, put it somewhere reachable</h2>
       <div class="req-grid">
@@ -165,15 +305,15 @@
         <div class="req-block">
           <p class="eyebrow">⑤ Deploy &amp; monitoring</p>
           <ul class="req-list">
-            <li data-state="open"><b>Live host</b><span>Render planned — URL still placeholder</span></li>
+            <li data-state="done"><b>Live host</b><span>Render · carcompass-51ei.onrender.com</span></li>
             <li data-state="done"><b>/health</b><span>Model + WSP flags for graders</span></li>
             <li data-state="done"><b>Request count + latency</b><span><code>/metrics</code> = <code>/stats</code></span></li>
             <li data-state="done"><b>RUNBOOK</b><span>Redeploy + rollback by image tag</span></li>
-            <li data-state="open"><b>Tag v2.0-milestone2</b><span>After live URL confirmed</span></li>
+            <li data-state="open"><b>Tag v2.0-milestone2</b><span>After docs PR merges</span></li>
           </ul>
           <div class="dash-actions" style="margin-top:0">
-            <button type="button" class="btn ghost-btn" data-api="stats">GET /stats →</button>
-            <button type="button" class="btn ghost-btn" data-api="predict">Bump count →</button>
+            <button type="button" class="btn ghost-btn" data-api="stats">GET /stats <span class="arr" aria-hidden="true">></span></button>
+            <button type="button" class="btn ghost-btn" data-api="predict">Bump count <span class="arr" aria-hidden="true">></span></button>
           </div>
         </div>
         <div class="req-block">
@@ -201,13 +341,13 @@
         <button type="button" class="btn ghost-btn" data-api="predict">POST /predict</button>
         <button type="button" class="btn ghost-btn" data-api="explain">POST /explain</button>
         <button type="button" class="btn ghost-btn" data-api="wsp">POST /predict · WSP</button>
-        <button type="button" class="btn" data-api="suite" id="suite-btn">Run demo suite →</button>
+        <button type="button" class="btn" data-api="suite" id="suite-btn">Run demo suite <span class="arr" aria-hidden="true">></span></button>
         <a class="btn ghost-btn" href="/docs" target="_blank" rel="noopener">Open /docs</a>
       </div>
-      <div class="metrics" id="probe-metrics" style="margin-top:16px">
+      <div class="probe-metrics" id="probe-metrics">
         <div><span>Last status</span><b id="probe-status">—</b></div>
         <div><span>Latency</span><b id="probe-ms">—</b></div>
-        <div><span>Endpoint</span><b id="probe-path" style="font-size:16px">—</b></div>
+        <div><span>Endpoint</span><b id="probe-path">—</b></div>
       </div>
       <pre id="probe-raw" class="wsp-raw">Pick an endpoint — response JSON lands here.</pre>
       <p class="note">Course video may say <code>/stats</code>. We expose the same counters at <code>/metrics</code> and <code>/stats</code>. Health/metrics/stats do not inflate the request counter.</p>
@@ -273,7 +413,7 @@
             <li data-state="done"><b>/experiments</b><span>MLflow MAE bars + tables</span></li>
             <li data-state="done"><b>/wsp</b><span>Focus lab vs champion</span></li>
           </ul>
-          <a class="btn ghost-btn" href="/guide/checks">Run live checks →</a>
+          <a class="btn ghost-btn" href="/guide/checks">Run live checks <span class="arr" aria-hidden="true">></span></a>
         </div>
       </div>
     </article>
@@ -281,33 +421,35 @@
     <article class="panel" id="final">
       <p class="eyebrow">Final presentation · 35 + individual 15</p>
       <h2>Still ahead — what the deck must show</h2>
-      <div class="req-grid">
-        <div class="req-block">
-          <ul class="req-list">
-            <li data-state="open"><b>10–12 min talk</b><span>Problem, pipeline, one MLflow shot, CI green on latest tag</span></li>
-            <li data-state="open"><b>Live demo</b><span>/predict and /explain on the deployed URL</span></li>
-            <li data-state="open"><b>Design trade-off</b><span>1–2 min: model size vs MAE, or Render vs VM</span></li>
-            <li data-state="open"><b>Project Focus deep-dive</b><span>Routing + WSP story beyond baseline</span></li>
-          </ul>
+      <div class="final-layout">
+        <div class="req-grid final-reqs">
+          <div class="req-block">
+            <ul class="req-list">
+              <li data-state="open"><b>10–12 min talk</b><span>Problem, pipeline, one MLflow shot, CI green on latest tag</span></li>
+              <li data-state="open"><b>Live demo</b><span>/predict and /explain on the deployed URL</span></li>
+              <li data-state="open"><b>Design trade-off</b><span>1–2 min: model size vs MAE, or Render vs VM</span></li>
+              <li data-state="open"><b>Project Focus deep-dive</b><span>Routing + WSP story beyond baseline</span></li>
+            </ul>
+          </div>
+          <div class="req-block">
+            <ul class="req-list">
+              <li data-state="done"><b>Baseline loop</b><span>Already demonstrable locally + in Docker</span></li>
+              <li data-state="done"><b>/explain ready</b><span>Use the button above in the viva</span></li>
+              <li data-state="open"><b>Focus polish</b><span>Finish through final week (course allows this)</span></li>
+              <li data-state="done"><b>AI_USAGE.md</b><span>Required; keep updated with tools used</span></li>
+            </ul>
+          </div>
         </div>
-        <div class="req-block">
-          <ul class="req-list">
-            <li data-state="done"><b>Baseline loop</b><span>Already demonstrable locally + in Docker</span></li>
-            <li data-state="done"><b>/explain ready</b><span>Use the button above in the viva</span></li>
-            <li data-state="open"><b>Focus polish</b><span>Finish through final week (course allows this)</span></li>
-            <li data-state="done"><b>AI_USAGE.md</b><span>Required; keep updated with tools used</span></li>
-          </ul>
-        </div>
-        <div class="req-block">
+        <div class="final-loop">
           <p class="eyebrow">Core loop (course objectives)</p>
-          <ol class="steps dash-steps">
+          <ol class="dash-steps">
             <li><span>01</span><b>Pipeline</b><p><code>make setup</code> → prepare/train → run</p></li>
             <li><span>02</span><b>Regression</b><p>PKR price · MAE · held-out test</p></li>
             <li><span>03</span><b>MLflow</b><p>Families + WSP runs</p></li>
             <li><span>04</span><b>FastAPI</b><p>/predict · /explain · /docs</p></li>
             <li><span>05</span><b>Docker</b><p>Build/run · healthy</p></li>
             <li><span>06</span><b>CI</b><p>Lint · test · build</p></li>
-            <li><span>07</span><b>Deploy</b><p>Render URL pending</p></li>
+            <li><span>07</span><b>Deploy</b><p>Render live URL</p></li>
             <li><span>08</span><b>Monitor</b><p>/health + /stats</p></li>
           </ol>
         </div>
@@ -315,7 +457,7 @@
     </article>
   </section>
 </main>
-<script src="/assets/site.js?v=ui5"></script>
-<script src="/assets/milestones.js?v=wsp12"></script>
+<script src="/assets/site.js?v=guide4"></script>
+<script src="/assets/milestones.js?v=guide4"></script>
 </body>
 </html>
