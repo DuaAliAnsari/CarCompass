@@ -38,13 +38,14 @@ recorded GitHub review, so they show "—".
 | Ship served `.joblib` into the image / allow-list; Docker missing-model check; clearer “no model loaded” UI | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
 | Weight-space programming (soups / distill / beat attempt), WSP report, experiments page, WSP lab + serve path | Sagar Lekhraj | — | `feat/frontend-site` (PR #10) |
 | Merge remaining M2 work to `main`; fix ruff so CI stays green (lint / test / build) | Sagar Lekhraj | — | PR #10 (`332789b`), follow-up lint fixes |
-| Project guide hub (`/guide`), HTML `/stats` dashboard, milestones / pipeline / monitor / checks subpages | Sagar Lekhraj | — | `fix/m2-docs-status` (PR #11) |
+| Product IA: slim top nav (Estimate / Experiments / Models), hero “Get a price” + Experiments, footer → Project guide | Sagar Lekhraj | — | `fix/m2-docs-status` / `fix/progress-bar-ui` |
+| Project guide hub (`/guide`), HTML `/stats` dashboard, milestones / pipeline / monitor / checks / WSP subpages | Sagar Lekhraj | — | `fix/m2-docs-status` (PR #11) |
 | Fill M2 contribution / checklist rows; document remaining deploy items | Sagar Lekhraj | — | `fix/m2-docs-status` (PR #11) |
 | Render deploy fix: honor host `PORT`, longer HEALTHCHECK start, `render.yaml`, smoke/`make` pass `-e PORT`, README/RUNBOOK Render path | Sagar Lekhraj | Dua Ali Ansari | `fix/render-deploy-main` (PR #12) |
+| Resolve RUNBOOK/README merge conflicts on docs branch; review/approve live-URL + Project Focus docs | Sagar Lekhraj | — | `docs/m2-submission` fix; PR #14 approve |
 | Live Render service, live URL + deployed cURL, `/stats` docs, Project Focus text, RUNBOOK redeploy/rollback update | Dua Ali Ansari | Sagar Lekhraj | `docs/m2-docs` (PR #14) |
-| Resolve RUNBOOK/README conflicts on the docs branch before review | Sagar Lekhraj | — | `docs/m2-submission` merge fix |
-| Product UI polish: compass brand mark, live “Model ready” pulse, chevron CTAs, live-preview framing, predictor actions | Sagar Lekhraj | — | `fix/progress-bar-ui` (PR #15) |
-| Guide / milestones dashboard polish: SaaS feature cards, metric tiles, requirement boxes, soft system-design layout | Sagar Lekhraj | — | `fix/progress-bar-ui` (PR #16) |
+| Product UI polish: CarC + compass + mpass brand, live “Model ready” pulse, chevron CTAs, Cruiser live-preview crop, predictor actions | Sagar Lekhraj | — | `fix/progress-bar-ui` (PR #15) |
+| Guide / milestones dashboard: progress % bars, SaaS feature cards, metric tiles, requirement boxes; drop unused Templates mock | Sagar Lekhraj | — | `fix/progress-bar-ui` (PR #16) |
 | _Fatima Arif: add your M2 task(s) here (review, docs, tests or deploy help), with branch / PR_ | Fatima Arif | | |
 
 ## Working agreement
@@ -67,6 +68,6 @@ recorded GitHub review, so they show "—".
 
 **Dua Ali Ansari:** I packaged the served champions for Docker (`deploy/models/`, `export-models`), added the image smoke test that CI runs on every push, and wrote the redeploy/rollback runbook. I learned that a “healthy” API that starts without models is worse than a failed image build.
 
-**Sagar Lekhraj:** I owned the product UI and Project Focus demo path: multi-page site, WSP soups/distill/beat lab, shipping models so Docker/Render actually load, the `/guide` + `/stats` dashboards, and the Render `PORT`/healthcheck blueprint (PRs #10–#12, #15–#16). I reviewed Dua’s live-URL docs (PR #14) and kept CI green through ruff fixes. I learned that “Loading…” was `model_loaded: false` from an empty image, soups need real diversity to beat LightGBM, and Render’s free tier sleeps until `/health` wakes it.
+**Sagar Lekhraj:** I owned the product UI and Project Focus demo path: multi-page site, WSP soups/distill/beat lab, shipping models so Docker/Render actually load, `/guide` + `/stats` + milestones dashboards, nav/hero/footer IA, and the Render `PORT`/healthcheck blueprint (PRs #10–#12, #15–#16). I resolved docs conflicts, approved Dua’s live-URL write-up (PR #14), and kept CI green with ruff fixes. I learned that “Loading…” was `model_loaded: false` from an empty image, soups need real diversity to beat LightGBM, and Render’s free tier sleeps until `/health` wakes it.
 
 **Fatima Arif:** _Add 2–3 lines on M2 work (review, docs, or deploy help)._
