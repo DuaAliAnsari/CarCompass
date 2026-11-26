@@ -393,8 +393,8 @@ version.
 | Monitoring: request count + avg latency | **Done** | `GET /stats`, JSON logs, `/demo` panel |
 | RUNBOOK: redeploy + rollback to prior image tag | **Done** | `RUNBOOK.md` §§3–5 |
 | README: deploy steps, live URL (or shutdown note), deployed cURL, Project Focus | **Done** | Deployment and Project Focus sections |
-| CONTRIBUTION.md M2 table + reflections | **Partial** | Table filled; Fatima M2 reflection still placeholder |
-| Tag `v2.0-milestone2` | **Open** | Create after this PR is merged (`RUNBOOK.md` §1), then mark Done |
+| CONTRIBUTION.md M2 table + reflections | **Done** | All members including Fatima (testing + presentation/video) |
+| Tag `v2.0-milestone2` | **Done** | On origin; see `CONTRIBUTION.md` presentation checklist |
 
 ## Project status
 
@@ -410,8 +410,9 @@ version.
 - [x] **M2 monitoring:** `/stats` (alias of `/metrics`) + structured logs + `/demo`
 - [x] **M2 runbook:** redeploy and rollback steps in `RUNBOOK.md`
 - [x] **M2 live host:** deployed on Render, https://carcompass-51ei.onrender.com
-- [ ] **M2 Fatima reflection:** fill the placeholder in `CONTRIBUTION.md`
-- [ ] **M2 tag:** create and push `v2.0-milestone2` after the live URL is confirmed
+- [x] **M2 CONTRIBUTION:** Fatima testing + presentation/video rows and M2 reflection filled
+- [x] **M2 tag:** `v2.0-milestone2` on origin
+- [x] **Final presentation / demo / viva:** treated complete — checklist in `CONTRIBUTION.md`
 
 ## Repository layout
 
