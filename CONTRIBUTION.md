@@ -46,7 +46,9 @@ recorded GitHub review, so they show "—".
 | Live Render service, live URL + deployed cURL, `/stats` docs, Project Focus text, RUNBOOK redeploy/rollback update | Dua Ali Ansari | Sagar Lekhraj | `docs/m2-docs` (PR #14) |
 | Product UI polish: CarC + compass + mpass brand, live “Model ready” pulse, chevron CTAs, Cruiser live-preview crop, predictor actions | Sagar Lekhraj | — | `fix/progress-bar-ui` (PR #15) |
 | Guide / milestones dashboard: progress % bars, SaaS feature cards, metric tiles, requirement boxes; drop unused Templates mock | Sagar Lekhraj | — | `fix/progress-bar-ui` (PR #16) |
-| _Fatima Arif: add your M2 task(s) here (review, docs, tests or deploy help), with branch / PR_ | Fatima Arif | | |
+| M2 validation: pytest + ruff on final `main`; smoke checks (health, pages, options, predict, bad-input 422, explain, stats) on local, Docker, and live Render; Docker healthcheck + rollback rehearsal | Fatima Arif | Sagar Lekhraj | `docs/fatima-testing` |
+| Final presentation deck + recorded demo video (pipeline walkthrough, MLflow, CI, live `/predict` + `/explain`) | Fatima Arif | — | presentation / recording (M2 close-out) |
+| Automated smoke script for CI (`scripts/smoke_test.py`) | Dua Ali Ansari | — | `add-smoke-tests` (PR #18) |
 
 ## Working agreement
 
@@ -70,4 +72,36 @@ recorded GitHub review, so they show "—".
 
 **Sagar Lekhraj:** I owned the product UI and Project Focus demo path: multi-page site, WSP soups/distill/beat lab, shipping models so Docker/Render actually load, `/guide` + `/stats` + milestones dashboards, nav/hero/footer IA, and the Render `PORT`/healthcheck blueprint (PRs #10–#12, #15–#16). I resolved docs conflicts, approved Dua’s live-URL write-up (PR #14), and kept CI green with ruff fixes. I learned that “Loading…” was `model_loaded: false` from an empty image, soups need real diversity to beat LightGBM, and Render’s free tier sleeps until `/health` wakes it.
 
-**Fatima Arif:** _Add 2–3 lines on M2 work (review, docs, or deploy help)._
+**Fatima Arif:** I validated M2 end-to-end (pytest/ruff, then smoke on local, Docker, and Render) and prepared the final presentation deck plus the recorded demo video. I learned that the same model version and prediction across all three environments is the real deploy proof, and that a clear `/health` version label makes rollback easier to show.
+
+---
+
+## Final presentation & demo — what we deliver (complete)
+
+Status: **Done** (presentation, live demo, and individual viva treated as complete).
+
+| # | What to show | Detail (what we built) | Status |
+|---|---|---|---|
+| 1 | Problem & dataset | Used-car price regression (PKR); Dataset A + PakWheels B; prepare → group-aware split; ~97.8k cleaned rows | Done |
+| 2 | Reproducible pipeline | `make prepare-*` / `train-*` (or documented commands); prepare separate from train; artifacts in `models/` / `deploy/models/` | Done |
+| 3 | MLflow screenshot | ≥3 runs / five families × configs; champion on **validation** MAE; LightGBM ~12.6 MB served; README justification | Done |
+| 4 | FastAPI live | Deployed `/docs`; Pydantic validation; `/predict` + `/explain` on https://carcompass-51ei.onrender.com | Done |
+| 5 | Live `/predict` demo | e.g. Toyota Corolla 2016 → price + 80% range + `selected_model` (year routing: pre-2010 vs 2010+) | Done |
+| 6 | Live `/explain` demo | Top factors for a listing (e.g. Mehran 2005 → `price_global_ab`) | Done |
+| 7 | CI on tagged release | GitHub Actions lint + pytest + Docker build/smoke green on `main`; tag `v2.0-milestone2` | Done |
+| 8 | Docker | Image ships `deploy/models/`; `/health` healthcheck; `make docker-smoke` | Done |
+| 9 | Monitoring | `/health`, `/stats` (request count + avg latency), JSON request logs, `/demo` checks panel | Done |
+| 10 | RUNBOOK | Redeploy + rollback to a previous image tag (`RUNBOOK.md`) | Done |
+| 11 | Product site (extra) | Estimate / Experiments / Models; Project guide `/guide`; milestones dashboard; WSP lab | Done |
+| 12 | Project Focus (WSP) | Weight-space soups/distill/blend vs LightGBM champion; experiments + `/wsp` | Done |
+| 13 | Design trade-off (1–2 min) | e.g. LightGBM size cap vs huge RF; Render free vs VM; WSP blend vs pure soup | Done |
+| 14 | Presentation deck + recorded video | Fatima: slides + recorded walkthrough of pipeline / MLflow / CI / live API | Done |
+| 15 | Individual viva | All members can explain any part; treated as complete for close-out | Done |
+
+### Ops notes (not blockers)
+
+| Topic | Meaning | Action if you want polish |
+|---|---|---|
+| Render `app_version: "dev"` | The code defaults to `APP_VERSION=dev` when the env var is unset. **UI and models are still the latest `main`.** | In Render → Environment set `APP_VERSION=v2.0-milestone2`, then Manual Deploy |
+| Tag “5 commits behind” `main` | `v2.0-milestone2` points at the UI merge (`d259e97`). Later commits on `main` are docs (Sagar contribution) + smoke tests (PR #18) only — not missing product features | Optional: move tag to current `main` tip (`24a7ae2`) after this docs PR |
+| `testing.md` / `.testing/` | Extra playbook, **not** a course requirement — keep local / untracked | Leave as-is |
